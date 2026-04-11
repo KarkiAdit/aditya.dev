@@ -40,6 +40,16 @@ html, body {
 }
 
 @layer utilities {
+  /* Legal / display name — matches top heading scale */
+  .font-byline-name {
+    @apply font-extrabold;
+  }
+
+  /* Nav links, roles strapline — one step bolder than body */
+  .font-prominent-copy {
+    @apply font-semibold;
+  }
+
   /* Transparent frame — blends with background, holds content */
   .glass-frame {
     background: oklch(0.96 0.02 55 / 0.25);

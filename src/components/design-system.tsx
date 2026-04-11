@@ -89,11 +89,11 @@ const radiusSteps = [
 function HomeHero() {
   return (
     <section className="flex w-full flex-col items-center text-center">
-      <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+      <h1 className="text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
         {siteConfig.author}
       </h1>
-      <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-foreground-muted md:text-xl">
-        Software Engineer, Writer, and Spiritual Thinker
+      <p className="mt-6 max-w-xl text-pretty text-lg font-prominent-copy leading-relaxed text-foreground-muted md:text-xl">
+        {siteConfig.rolesLine}
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
         <Button size="lg" className="rounded-full px-8">

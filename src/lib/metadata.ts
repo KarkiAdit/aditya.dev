@@ -14,7 +14,8 @@ export const siteConfig = {
   name: "aditya.dev",
   title: "aditya.dev",
   description: "Personal portfolio — software, writing, and projects.",
-  author: "Aditya Karki",
+  author: "ADITYA KARKI",
+  rolesLine: "Software Engineer, Writer, and Spiritual Thinker",
   get url() {
     return siteUrl();
   },
