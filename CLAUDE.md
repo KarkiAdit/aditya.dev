@@ -9,24 +9,29 @@
 - Framer Motion for animations
 - Vercel for deployment
 
+## Design Philosophy
+- **Unified Color Palette:** Every token shares the warm hue range (20-80 in oklch), ensuring visual harmony where nothing feels foreign.
+- **Hierarchy via Lightness & Chroma:** Variation is achieved solely through lightness and chroma rather than competing hue families, maintaining a coherent visual language.
+- **Frame-based UI:** Cards act as frames rather than distinct surfaces, allowing them to blend seamlessly into the background.
+- **Material & Atmosphere:** A "Frosted White Glass" aesthetic applied to a soft gradient canvas creates an airy, clean, Apple-inspired interface where light bleeds through blurs.
+
 ## Project structure
-- `src/app/` — App Router pages and layouts
+- `src/app/` — App Router pages (`/`, `/thoughts`, `/projects`)
 - `src/components/ui/` — shadcn primitives, never modify directly
 - `src/components/layout/` — Navbar, Footer
-- `src/components/sections/` — Homepage sections (Hero, About, etc.)
-- `src/components/blog/` — Blog-specific components
-- `src/components/projects/` — Project-specific components
-- `src/components/career/` — Timeline, Contact
+- `src/components/homepage/` — Hero, Background, Career Roadmap, Life Philosophy
+- `src/components/thoughts/` — Blog index, Spiritual thoughts sections
+- `src/components/projects/` — Project dashboard, GitHub API integration, Skill visualization
 - `src/lib/` — Utilities, fonts, metadata helpers
 - `src/hooks/` — Custom React hooks
 - `src/types/` — Global TypeScript types
-- `src/styles/` - Global CSS styles and typography
-- `content/blog/` — MDX blog posts
-- `content/projects/` — MDX project pages
+- `src/styles/` — Global CSS styles and typography
+- `content/blog/` — MDX blog posts (General + Spiritual)
+- `content/projects/` — MDX project metadata
 
 ## Content
-- Blog posts live in `content/blog/*.mdx`
-- Projects live in `content/projects/*.mdx`
+- Blog/Spiritual posts live in `content/blog/*.mdx` (Use frontmatter `category: 'spiritual' | 'blog'` to differentiate)
+- Projects data logic lives in `content/projects/*.mdx` or fetched via GitHub API
 - Velite processes MDX and outputs typed collections to `.velite/`
 - Import content using: `import { posts, projects } from ".velite"`
 
