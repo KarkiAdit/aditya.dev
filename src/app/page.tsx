@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import { Hero } from "@/components/homepage/Hero";
+import { Navbar } from "@/components/layout/Navbar";
+import { publicAssets } from "@/lib/public-assets";
 import { siteConfig } from "@/lib/metadata";
 
 export function generateMetadata(): Metadata {
@@ -18,5 +21,14 @@ export function generateMetadata(): Metadata {
 }
 
 export default function Home() {
-  return null;
+  return (
+    <div className="relative isolate w-full">
+      <Navbar variant="overlay" />
+      <Hero
+        videoSrc={publicAssets.hero.video}
+        portraitSrc={publicAssets.hero.portrait}
+        portraitAlt={`${siteConfig.author} — portrait`}
+      />
+    </div>
+  );
 }
