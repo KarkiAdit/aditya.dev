@@ -1,53 +1,47 @@
 # aditya.dev
 
-Personal portfolio site: Next.js, MDX content via Velite, and a light, typography-forward UI.
+Personal portfolio: Astro 6, React for shadcn, Tailwind v4, and MDX in **`content/`**.
 
 ## Stack
 
-- [Next.js 16](https://nextjs.org) (App Router, React Server Components)
-- [TypeScript](https://www.typescriptlang.org) (strict)
-- [Tailwind CSS v4](https://tailwindcss.com)
-- [shadcn/ui](https://ui.shadcn.com) (Radix, Luma preset)
-- [Velite](https://velite.js.org) for blog and project MDX
-- [Framer Motion](https://www.framer.com/motion/) for motion
-- Typography: [Manrope](https://fonts.google.com/specimen/Manrope) via `next/font`
-
-## Prerequisites
-
-- Node.js 20+ (recommended)
+- [Astro 6](https://astro.build) (static `dist/` output)
+- [React 19](https://react.dev) + [shadcn/ui](https://ui.shadcn.com) (Radix Luma)
+- [Tailwind CSS v4](https://tailwindcss.com) via `@tailwindcss/vite`
+- [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) + `@astrojs/mdx`
 
 ## Scripts
 
-| Command        | Description                                      |
-| -------------- | ------------------------------------------------ |
-| `npm run dev`  | Velite in watch mode + Next dev (Turbopack)      |
-| `npm run build`| Velite build, then production Next build         |
-| `npm run start`| Production server (after `build`)               |
-| `npm run lint` | ESLint                                           |
+| Command           | Description                 |
+| ----------------- | --------------------------- |
+| `npm run dev`     | Astro dev server            |
+| `npm run build`   | Production build → `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run lint`    | ESLint                      |
 
-## Environment
+## Cloudflare Pages
 
-For correct canonical URLs and Open Graph `metadataBase` in production, set:
+1. Connect this repository in the Cloudflare dashboard.
+2. **Build command:** `npm run build`
+3. **Build output directory:** `dist`
+4. **Root directory:** `/` (repository root)
+5. **Environment variables (production):** set `PUBLIC_SITE_URL` to your live site URL (e.g. `https://aditya.dev`) for canonical URLs and the sitemap.
 
-```bash
-NEXT_PUBLIC_SITE_URL=https://aditya.dev
-```
+Preview deployments use **`CF_PAGES_URL`** automatically when `PUBLIC_SITE_URL` is not set (`src/lib/metadata.ts`).
 
-On Vercel, `VERCEL_URL` is used as a fallback when this is unset.
+Optional social link overrides: `PUBLIC_SOCIAL_X`, `PUBLIC_SOCIAL_LINKEDIN`, `PUBLIC_SOCIAL_MEDIUM`.
 
-## Project layout
+## Layout
 
-| Path                 | Role                                      |
-| -------------------- | ----------------------------------------- |
-| `src/app/`           | Routes, layout, global styles             |
-| `src/components/`    | UI, layout, sections, blog, projects      |
-| `src/lib/`           | Utilities, shared metadata                |
-| `content/blog/`      | Blog MDX                                  |
-| `content/projects/`  | Project MDX                                 |
-| `.velite/`           | Generated types and data (gitignored)     |
+| Path                    | Role                                                                 |
+| ----------------------- | -------------------------------------------------------------------- |
+| `src/pages/`            | Routes                                                               |
+| `src/layouts/`        | Shell + shared layout                                                |
+| `src/components/`     | UI                                                                   |
+| `src/content.config.ts` | Content collections → `content/blog`, `content/projects`          |
+| `public/`               | Static files (e.g. hero **video**); optimized stills in `src/assets/` |
 
-Content is imported from the Velite output, for example: `import { posts, projects } from ".velite"`.
+SEO meta: `src/components/SEO.astro` (used from `BaseLayout.astro`). Pass `ogImage` from a page when you have an absolute preview URL (`src/pages/index.astro`).
 
-## Deploy
+## Prerequisites
 
-The app is intended for [Vercel](https://vercel.com). Connect the repo, set `NEXT_PUBLIC_SITE_URL` to your live domain, and deploy.
+- Node.js 20+

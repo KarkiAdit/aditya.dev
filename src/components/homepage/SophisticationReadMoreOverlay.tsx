@@ -1,5 +1,3 @@
-"use client";
-
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -19,12 +17,6 @@ function ReadMoreOnNotionLabel() {
   return <span className={readMorePillClassName}>Read More on Notion</span>;
 }
 
-/**
- * Full-bleed layer over the About video card (`absolute inset-0 z-[3]` inside a `group` host).
- * Hover/focus shows the **secondary** “Read More on Notion” label (centered). Non-empty `notionHref` →
- * `<a target="_blank">`;
- * otherwise a no-op button until you set the URL.
- */
 export function SophisticationReadMoreOverlay({ notionHref }: { notionHref: string }) {
   const trimmed = notionHref.trim();
   const hasHref = trimmed.length > 0;

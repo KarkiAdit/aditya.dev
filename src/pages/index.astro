@@ -1,0 +1,49 @@
+---
+import { getImage } from "astro:assets";
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Hero } from "@/components/homepage/Hero";
+import { HumbleBackgroundSection } from "@/components/homepage/HumbleBackgroundSection";
+import { Navbar } from "@/components/layout/Navbar";
+import humbleBackground from "@/assets/images/humble-background-home.jpeg";
+import heroPortrait from "@/assets/images/hero.png";
+import { publicAssets } from "@/lib/public-assets";
+import { siteConfig } from "@/lib/metadata";
+
+const aboutStill = await getImage({
+  src: humbleBackground,
+  width: 1920,
+  format: "webp",
+});
+
+const portraitOptimized = await getImage({
+  src: heroPortrait,
+  width: 1200,
+  format: "webp",
+});
+
+const ogImage = new URL(portraitOptimized.src, siteConfig.url).href;
+
+const title = siteConfig.title;
+const description = siteConfig.description;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  pathname={Astro.url.pathname}
+  canonicalPath="/"
+  ogImage={ogImage}
+>
+  <div
+    class="relative isolate flex w-full flex-col gap-14 pb-14 sm:gap-16 sm:pb-16 md:gap-20 md:pb-20"
+  >
+    <Navbar variant="overlay" />
+    <Hero
+      videoSrc={publicAssets.hero.video}
+      portraitSrc={portraitOptimized.src}
+      portraitAlt={`${siteConfig.author} — portrait`}
+    />
+    <HumbleBackgroundSection backgroundImageSrc={aboutStill.src} />
+  </div>
+</BaseLayout>

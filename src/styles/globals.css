@@ -1,8 +1,7 @@
-/* src/app/globals.css */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "../styles/theme.css";
+@import "./theme.css";
 
 html,
 body {
@@ -13,7 +12,6 @@ body {
   scrollbar-width: none;
 }
 
-/* Hide scrollbars (scroll / wheel / touch still works) — Firefox + WebKit */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
@@ -51,17 +49,14 @@ body::-webkit-scrollbar {
 }
 
 @layer utilities {
-  /* Legal / display name — matches top heading scale */
   .font-byline-name {
     @apply font-extrabold;
   }
 
-  /* Nav links, roles strapline — one step bolder than body */
   .font-prominent-copy {
     @apply font-semibold;
   }
 
-  /* Hero wash — same palette as `body` background, over imagery so it matches the site canvas (darker than body for contrast). */
   .hero-canvas-overlay {
     pointer-events: none;
     position: absolute;
@@ -73,7 +68,6 @@ body::-webkit-scrollbar {
       radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.68 0.11 38 / 0.44) 0%, transparent 45%);
   }
 
-  /* Transparent frame — blends with background, holds content */
   .glass-frame {
     background: oklch(0.96 0.02 55 / 0.25);
     backdrop-filter: blur(2px) saturate(1.2);
@@ -85,7 +79,6 @@ body::-webkit-scrollbar {
       0 12px 32px -8px oklch(0.3 0.02 50 / 0.1);
   }
 
-  /* Slightly more visible variant for standalone cards */
   .glass-lit {
     background: oklch(0.96 0.02 55 / 0.35);
     backdrop-filter: blur(6px) saturate(1.3);
@@ -97,10 +90,6 @@ body::-webkit-scrollbar {
       0 4px 6px -2px oklch(0.3 0.02 50 / 0.06);
   }
 
-  /**
-   * Same weight as `.glass-lit` (blur, opacity, shadows) — hue/chroma nudged toward warm orange
-   * for the homepage about card.
-   */
   .glass-lit-warm {
     background: oklch(0.965 0.07 48 / 0.35);
     backdrop-filter: blur(6px) saturate(1.3);
@@ -111,4 +100,5 @@ body::-webkit-scrollbar {
       0 20px 40px -10px oklch(0.44 0.09 42 / 0.12),
       0 4px 6px -2px oklch(0.42 0.06 44 / 0.07);
   }
+
 }

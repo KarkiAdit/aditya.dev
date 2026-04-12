@@ -5,14 +5,12 @@ import { cn } from "@/lib/utils";
 
 export type SocialGlyphProps = SVGProps<SVGSVGElement>;
 
-/** X (Twitter) — Lucide stroke icon, matches other UI icons. */
 export function XSocialIcon({ className, ...props }: SocialGlyphProps) {
   return (
     <X aria-hidden className={cn("size-5 shrink-0", className)} strokeWidth={2} {...props} />
   );
 }
 
-/** LinkedIn “in” mark (filled, currentColor). */
 export function LinkedInGlyph({ className, ...props }: SocialGlyphProps) {
   return (
     <svg
@@ -27,7 +25,6 @@ export function LinkedInGlyph({ className, ...props }: SocialGlyphProps) {
   );
 }
 
-/** Medium wordmark bars (filled, currentColor). */
 export function MediumGlyph({ className, ...props }: SocialGlyphProps) {
   return (
     <svg

@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { SocialPlatformIcon } from "@/components/icons/social-platform-icons";
 import { linkHoverUnderline, mainNavLinkAppearance } from "@/lib/link-styles";
 import { siteConfig } from "@/lib/metadata";
@@ -16,30 +14,28 @@ export function Footer({ className }: { className?: string }) {
   );
 
   return (
-    <footer
-      className={cn("w-full bg-transparent", className)}
-    >
+    <footer className={cn("w-full bg-transparent", className)}>
       <div className={siteChromeGutters}>
         <div className={cn(siteChromeInner, "py-3 md:py-3.5")}>
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-8">
-          <p className="max-w-md text-pretty text-sm font-prominent-copy leading-relaxed text-foreground-muted">
-            <span className="font-byline-name text-primary">{siteConfig.author}</span>
-            {` is a ${siteConfig.rolesLine}.`}
-          </p>
-          <nav
-            aria-label="Footer"
-            className="flex flex-wrap gap-x-6 gap-y-2 md:justify-end"
-          >
-            {mainNav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(linkHoverUnderline, mainNavLinkAppearance)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+            <p className="max-w-md text-pretty text-sm font-prominent-copy leading-relaxed text-foreground-muted">
+              <span className="font-byline-name text-primary">{siteConfig.author}</span>
+              {` is a ${siteConfig.rolesLine}.`}
+            </p>
+            <nav
+              aria-label="Footer"
+              className="flex flex-wrap gap-x-6 gap-y-2 md:justify-end"
+            >
+              {mainNav.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className={cn(linkHoverUnderline, mainNavLinkAppearance)}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
           </div>
 
           <div
@@ -48,74 +44,74 @@ export function Footer({ className }: { className?: string }) {
               "text-xs text-foreground-muted",
             )}
           >
-          {visibleSocial.length > 0 ? (
-            <div className="grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-x-4 sm:gap-x-6">
-              <div className="flex min-w-0 flex-col gap-1.5 justify-self-start">
-                <span className="font-semibold uppercase tracking-widest">
-                  {`Follow ${firstName}:`}
-                </span>
-                <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                  {visibleSocial.map((profile) => (
-                    <li key={profile.id}>
-                      <a
-                        href={profile.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={profile.title}
-                        aria-label={profile.title}
-                        className={cn(
-                          linkHoverUnderline,
-                          "inline-flex items-center text-foreground-muted transition-colors hover:text-primary",
-                        )}
-                      >
-                        <SocialPlatformIcon id={profile.id} />
-                      </a>
-                    </li>
+            {visibleSocial.length > 0 ? (
+              <div className="grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-x-4 sm:gap-x-6">
+                <div className="flex min-w-0 flex-col gap-1.5 justify-self-start">
+                  <span className="font-semibold uppercase tracking-widest">
+                    {`Follow ${firstName}:`}
+                  </span>
+                  <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    {visibleSocial.map((profile) => (
+                      <li key={profile.id}>
+                        <a
+                          href={profile.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={profile.title}
+                          aria-label={profile.title}
+                          className={cn(
+                            linkHoverUnderline,
+                            "inline-flex items-center text-foreground-muted transition-colors hover:text-primary",
+                          )}
+                        >
+                          <SocialPlatformIcon id={profile.id} />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <p className="justify-self-center whitespace-nowrap text-center">
+                  {`© ${year} ${siteConfig.author}`}
+                </p>
+
+                <nav
+                  aria-label="Legal"
+                  className="flex flex-wrap items-center justify-end gap-x-5 justify-self-end sm:gap-x-6"
+                >
+                  {footerLegal.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        linkHoverUnderline,
+                        "font-semibold uppercase tracking-wider transition-colors hover:text-primary",
+                      )}
+                    >
+                      {item.label}
+                    </a>
                   ))}
-                </ul>
+                </nav>
               </div>
-
-              <p className="justify-self-center whitespace-nowrap text-center">
-                {`© ${year} ${siteConfig.author}`}
-              </p>
-
-              <nav
-                aria-label="Legal"
-                className="flex flex-wrap items-center justify-end gap-x-5 justify-self-end sm:gap-x-6"
-              >
-                {footerLegal.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      linkHoverUnderline,
-                      "font-semibold uppercase tracking-wider transition-colors hover:text-primary",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          ) : (
-            <div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-2">
-              <p className="whitespace-nowrap">{`© ${year} ${siteConfig.author}`}</p>
-              <nav aria-label="Legal" className="flex items-center gap-x-5 sm:gap-x-6">
-                {footerLegal.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      linkHoverUnderline,
-                      "font-semibold uppercase tracking-wider transition-colors hover:text-primary",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          )}
+            ) : (
+              <div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-2">
+                <p className="whitespace-nowrap">{`© ${year} ${siteConfig.author}`}</p>
+                <nav aria-label="Legal" className="flex items-center gap-x-5 sm:gap-x-6">
+                  {footerLegal.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        linkHoverUnderline,
+                        "font-semibold uppercase tracking-wider transition-colors hover:text-primary",
+                      )}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            )}
           </div>
         </div>
       </div>

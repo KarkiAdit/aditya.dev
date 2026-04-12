@@ -4,10 +4,6 @@ export type HeroEclipseOverlayVariant = "hero" | "bottom-mirrored";
 
 export type HeroEclipseOverlayProps = {
   className?: string;
-  /**
-   * `hero`: full inset, above wash, below card (default).
-   * `bottom-mirrored`: bottom band of parent; same paths mirrored left–right (About section).
-   */
   variant?: HeroEclipseOverlayVariant;
 };
 
@@ -28,10 +24,6 @@ const eclipsePaths = (
   </>
 );
 
-/**
- * Decorative layered waves above the hero canvas wash and below the card + portrait.
- * Muted blue-grey fills the lower area; pointer-events none.
- */
 export function HeroEclipseOverlay({
   className,
   variant = "hero",

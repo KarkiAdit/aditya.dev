@@ -1,0 +1,44 @@
+---
+import "@/styles/globals.css";
+
+import SEO from "@/components/SEO.astro";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { siteConfig } from "@/lib/metadata";
+
+interface Props {
+  title: string;
+  description: string;
+  pathname: string;
+  canonicalPath?: string;
+  ogImage?: string;
+}
+
+const { title, description, pathname, canonicalPath, ogImage } = Astro.props;
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? siteConfig.url);
+---
+
+<!doctype html>
+<html lang="en" class="h-full antialiased font-sans">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7efe3" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+    <SEO title={title} description={description} canonical={canonical.href} image={ogImage} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    {pathname !== "/" && <Navbar variant="static" />}
+    <main class="m-0 flex w-full min-w-0 flex-col p-0">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

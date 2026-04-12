@@ -1,11 +1,17 @@
-function readPublicEnv(key: string): string | undefined {
-  const value = process.env[key];
+type PublicSocialKey =
+  | "PUBLIC_SOCIAL_X"
+  | "PUBLIC_SOCIAL_LINKEDIN"
+  | "PUBLIC_SOCIAL_MEDIUM";
+
+function readPublicEnv(key: PublicSocialKey): string | undefined {
+  const value = import.meta.env[key];
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
 export const mainNav = [
   { href: "/thoughts", label: "My Thoughts" },
   { href: "/projects", label: "Projects" },
+  { href: "/", label: "Home" },
 ] as const;
 
 export const footerLegal = [
@@ -13,7 +19,6 @@ export const footerLegal = [
   { href: "/terms", label: "Terms" },
 ] as const;
 
-/** Default profile URLs; override with NEXT_PUBLIC_SOCIAL_* env vars if needed. */
 const socialDefaults = {
   x: "X",
   linkedin: "L",
@@ -25,18 +30,18 @@ export const socialProfiles = [
     id: "x",
     label: "X",
     title: "X",
-    href: readPublicEnv("NEXT_PUBLIC_SOCIAL_X") ?? socialDefaults.x,
+    href: readPublicEnv("PUBLIC_SOCIAL_X") ?? socialDefaults.x,
   },
   {
     id: "linkedin",
     label: "in",
     title: "LinkedIn",
-    href: readPublicEnv("NEXT_PUBLIC_SOCIAL_LINKEDIN") ?? socialDefaults.linkedin,
+    href: readPublicEnv("PUBLIC_SOCIAL_LINKEDIN") ?? socialDefaults.linkedin,
   },
   {
     id: "medium",
     label: "Medium",
     title: "Medium",
-    href: readPublicEnv("NEXT_PUBLIC_SOCIAL_MEDIUM") ?? socialDefaults.medium,
+    href: readPublicEnv("PUBLIC_SOCIAL_MEDIUM") ?? socialDefaults.medium,
   },
 ] as const;
