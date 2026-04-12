@@ -8,16 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { heroIntroLeadTypography } from "@/lib/link-styles";
+import { heroIntroLeadTypography, heroIntroMutedClauseInk } from "@/lib/link-styles";
 import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 /**
- * Full viewport width; height follows **16:9** (`aspect-video` = width × 9/16), not media intrinsics.
+ * Full viewport width; **16:9** (`aspect-video`) with at least **`65vh`** height.
  * On the home page the navbar is `absolute` in the same stacking context (`theme.css`).
  */
-const heroViewportFrame =
-  "relative isolate box-border aspect-video min-h-0 w-screen max-w-[100vw] shrink-0 overflow-x-clip overflow-y-hidden";
+export const heroViewportFrame =
+  "relative isolate box-border aspect-video min-h-[65vh] w-screen max-w-[100vw] shrink-0 overflow-x-clip overflow-y-hidden";
 
 export type HeroProps = {
   /** Root-relative or absolute URL to a muted looping background video */
@@ -53,9 +53,9 @@ function HeroIntroCopy() {
   return (
     <div className="flex w-full flex-col gap-3 text-left sm:gap-4 md:gap-6">
       <p className={cn("text-pretty", heroIntroLeadTypography)}>
-        <span className="font-semibold text-foreground-muted">Humans, </span>
+        <span className={heroIntroMutedClauseInk}>Humans, </span>
         <span className="text-primary">Aditya&apos;s here.</span>
-        <span className="font-semibold text-foreground-muted">
+        <span className={heroIntroMutedClauseInk}>
           {" My Yang flows as a Software Engineer, Yin as a Spiritual Thinker, bridging the two as a Writer."}
         </span>
       </p>
@@ -72,7 +72,7 @@ function HeroIntroCopy() {
 }
 
 /**
- * Full-bleed hero: `100vw` × **16:9**; stack: **video** → **canvas wash** → **eclipse** → **copy + portrait**.
+ * Full-bleed hero: `100vw` × **16:9** (min **65vh**); stack: **video** → **canvas wash** → **eclipse** → **copy + portrait**.
  */
 export function Hero({ videoSrc, posterSrc, portraitSrc, portraitAlt = "", className }: HeroProps) {
   return (

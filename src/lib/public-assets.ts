@@ -12,6 +12,11 @@ export const publicAssets = {
     /** Portrait / cutout layered above the video (left column on `md+`). */
     portrait: "/images/hero.png",
   },
+  about: {
+    /** About / sophistication band — static 16:9 crop behind copy + wash. */
+    backgroundImage: "/images/humble-background-home.jpeg",
+  },
 } as const satisfies {
   hero: { video: string; portrait?: string; poster?: string };
+  about: { backgroundImage: string };
 };
