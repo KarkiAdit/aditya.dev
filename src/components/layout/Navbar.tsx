@@ -1,42 +1,52 @@
 import Link from "next/link";
 
-import { linkHoverUnderline } from "@/lib/link-styles";
-import { siteConfig } from "@/lib/metadata";
+import { headerMainNavLinkAppearance, linkHoverUnderline } from "@/lib/link-styles";
 import { mainNav } from "@/lib/navigation";
+import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
-export function Navbar({ className }: { className?: string }) {
+/** Card-like cluster for main nav — same `glass-lit` surface language as the hero intro card */
+const mainNavShell =
+  "glass-lit flex flex-wrap items-center justify-end gap-x-2 gap-y-1 rounded-2xl px-2 py-1 sm:gap-x-4 sm:px-3 sm:py-1.5 md:gap-x-6 md:px-4 md:py-2";
+
+export type NavbarVariant = "overlay" | "static";
+
+export function Navbar({
+  className,
+  variant = "static",
+}: {
+  className?: string;
+  variant?: NavbarVariant;
+}) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full bg-transparent",
+        "z-50 w-full bg-transparent",
+        variant === "overlay"
+          ? "absolute left-0 right-0 top-0"
+          : "relative",
         className,
       )}
     >
-      <div className="mx-auto flex min-h-16 max-w-5xl items-center justify-between gap-6 px-6 py-2 md:py-2.5">
-        <Link
-          href="/"
+      <div className={siteChromeGutters}>
+        <div
           className={cn(
-            linkHoverUnderline,
-            "text-xl font-extrabold tracking-tighter text-primary transition-colors hover:text-primary/90 sm:text-2xl md:text-3xl",
+            siteChromeInner,
+            "flex min-h-[var(--navbar-height)] items-center justify-end py-2 md:py-2.5",
           )}
         >
-          {siteConfig.author}
-        </Link>
-        <nav aria-label="Main" className="flex items-center gap-8">
-          {mainNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                linkHoverUnderline,
-                "text-sm font-prominent-copy text-foreground-muted transition-colors hover:text-primary",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+          <nav aria-label="Main" className={mainNavShell}>
+            {mainNav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(linkHoverUnderline, headerMainNavLinkAppearance)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );

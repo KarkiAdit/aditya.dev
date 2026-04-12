@@ -1,20 +1,28 @@
 /* src/styles/theme.css */
 
 :root {
+  /* Fixed navbar + hero overlap — keep in sync with `Navbar` vertical size */
+  --navbar-height: 5.75rem;
+
   /* --- Core Colors --- */
   --background: oklch(0.96 0.02 55);
-  --foreground: oklch(0.25 0.02 50);
-  --foreground-muted: oklch(0.55 0.03 50);
-  --heading: oklch(0.58 0.18 42);
+  /* Softer charcoal than pure near-black (was ~0.25) */
+  --foreground: oklch(0.36 0.022 50);
+  --foreground-muted: oklch(0.52 0.03 50);
+  --heading: oklch(0.56 0.17 42);
 
   /* --- Cards & Surface Depth --- */
   --card: oklch(0.99 0.01 60 / 0.55);
   --card-subtle: oklch(0.99 0.01 60 / 0.3);
-  --card-foreground: oklch(0.25 0.02 50);
+  --card-foreground: oklch(0.36 0.022 50);
 
   /* --- Interactive --- */
-  --primary: oklch(0.52 0.16 40);
+  --primary: oklch(0.5 0.15 40);
   --primary-foreground: oklch(0.98 0.01 60);
+
+  /* Secondary surfaces + ink — warm gray fill, softer body-like text */
+  --secondary: oklch(0.9 0.018 58);
+  --secondary-foreground: oklch(0.38 0.024 48);
   
   /* --- Borders & UI --- */
   --border: oklch(0.3 0.02 50 / 0.1);
@@ -32,6 +40,10 @@
   --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  /* Aligns shadcn `CardDescription` with site strapline (`--foreground-muted`) */
+  --color-muted-foreground: var(--foreground-muted);
   --color-border: var(--border);
   --color-ring: var(--ring);
 

@@ -4,10 +4,21 @@
 @import "shadcn/tailwind.css";
 @import "../styles/theme.css";
 
-html, body {
+html,
+body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
+  overflow-x: clip;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbars (scroll / wheel / touch still works) — Firefox + WebKit */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 @layer base {
@@ -48,6 +59,18 @@ html, body {
   /* Nav links, roles strapline — one step bolder than body */
   .font-prominent-copy {
     @apply font-semibold;
+  }
+
+  /* Hero wash — same palette as `body` background, over imagery so it matches the site canvas (darker than body for contrast). */
+  .hero-canvas-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: oklch(0.78 0.024 54 / 0.64);
+    background-image:
+      radial-gradient(ellipse 70% 60% at 10% 15%, oklch(0.72 0.09 50 / 0.5) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.68 0.11 38 / 0.44) 0%, transparent 45%);
   }
 
   /* Transparent frame — blends with background, holds content */

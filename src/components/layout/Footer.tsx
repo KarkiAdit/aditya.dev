@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import { SocialPlatformIcon } from "@/components/icons/social-platform-icons";
-import { linkHoverUnderline } from "@/lib/link-styles";
+import { linkHoverUnderline, mainNavLinkAppearance } from "@/lib/link-styles";
 import { siteConfig } from "@/lib/metadata";
+import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { footerLegal, mainNav, socialProfiles } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -16,13 +17,11 @@ export function Footer({ className }: { className?: string }) {
 
   return (
     <footer
-      className={cn(
-        "mt-auto w-full bg-transparent",
-        className,
-      )}
+      className={cn("w-full bg-transparent", className)}
     >
-      <div className="mx-auto max-w-5xl px-6 py-3 md:py-3.5">
-        <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-8">
+      <div className={siteChromeGutters}>
+        <div className={cn(siteChromeInner, "py-3 md:py-3.5")}>
+          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-8">
           <p className="max-w-md text-pretty text-sm font-prominent-copy leading-relaxed text-foreground-muted">
             <span className="font-byline-name text-primary">{siteConfig.author}</span>
             {` is a ${siteConfig.rolesLine}.`}
@@ -35,23 +34,20 @@ export function Footer({ className }: { className?: string }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  linkHoverUnderline,
-                  "text-sm font-prominent-copy text-foreground-muted transition-colors hover:text-primary",
-                )}
+                className={cn(linkHoverUnderline, mainNavLinkAppearance)}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-        </div>
+          </div>
 
-        <div
-          className={cn(
-            "mt-2.5 overflow-x-auto py-1 md:mt-3",
-            "text-xs text-foreground-muted",
-          )}
-        >
+          <div
+            className={cn(
+              "mt-2.5 overflow-x-auto py-1 md:mt-3",
+              "text-xs text-foreground-muted",
+            )}
+          >
           {visibleSocial.length > 0 ? (
             <div className="grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-x-4 sm:gap-x-6">
               <div className="flex min-w-0 flex-col gap-1.5 justify-self-start">
@@ -120,6 +116,7 @@ export function Footer({ className }: { className?: string }) {
               </nav>
             </div>
           )}
+          </div>
         </div>
       </div>
     </footer>
