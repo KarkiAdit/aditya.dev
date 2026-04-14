@@ -151,6 +151,21 @@ body::-webkit-scrollbar {
   }
 
   /**
+   * Stub / placeholder pages: outer shell is invisible so the page shows the same body canvas
+   * (`background` + fixed radials) with no second “card” tint.
+   */
+  .placeholder-glass-hero {
+    position: relative;
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /**
    * Stacked homepage sections: same hue/chroma family as `body` + `.hero-canvas-overlay`,
    * translucent so the fixed canvas still reads through (coherent “ecosystem”).
    */

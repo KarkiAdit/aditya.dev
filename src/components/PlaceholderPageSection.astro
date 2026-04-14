@@ -1,0 +1,96 @@
+---
+import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
+import {
+  PLACEHOLDER_PAGE_BADGE,
+  PLACEHOLDER_PAGE_BODY,
+  PLACEHOLDER_PAGE_SUBLINE,
+} from "@/lib/placeholder-page";
+
+interface Props {
+  heading: string;
+}
+
+const { heading } = Astro.props;
+
+/** Mirrors `buttonVariants` default + lg from `@/components/ui/button` (static HTML). */
+const primaryButtonClass =
+  "inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-4xl border border-transparent bg-clip-padding bg-primary px-4 text-sm font-medium whitespace-nowrap text-primary-foreground transition-all outline-none select-none hover:bg-primary/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px";
+
+/** Mirrors secondary + lg. */
+const secondaryButtonClass =
+  "inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-4xl border border-transparent bg-clip-padding bg-secondary px-4 text-sm font-medium whitespace-nowrap text-secondary-foreground transition-all outline-none select-none hover:bg-secondary/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px";
+---
+
+<section
+  class:list={[
+    siteChromeGutters,
+    siteChromeInner,
+    "flex min-h-[min(88vh,44rem)] flex-col justify-center py-14 md:py-20",
+  ]}
+>
+  <article class="placeholder-glass-hero mx-auto w-full max-w-3xl p-7 sm:p-9 md:p-11">
+    <p
+      class="mb-4 inline-flex items-center rounded-full border border-border bg-background px-3 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.14em] text-muted-foreground"
+    >
+      {PLACEHOLDER_PAGE_BADGE}
+    </p>
+    <h1 class="heading-gradient text-balance text-3xl font-extrabold tracking-tighter sm:text-4xl md:text-[2.35rem]">
+      {heading}
+    </h1>
+    <p
+      class="mt-5 max-w-prose text-pretty text-base leading-[1.65] text-foreground-muted sm:text-lg sm:leading-relaxed"
+    >
+      {PLACEHOLDER_PAGE_BODY}
+    </p>
+    <p class="mt-4 max-w-prose text-pretty text-sm leading-relaxed text-foreground-muted/95 sm:text-base">
+      {PLACEHOLDER_PAGE_SUBLINE}
+    </p>
+
+    <nav class="mt-8 flex flex-wrap items-center gap-3" aria-label="Page actions">
+      <button type="button" id="placeholder-copy-site-link" class:list={[primaryButtonClass]}>
+        Copy site link
+      </button>
+      <span id="placeholder-copy-feedback" class="hidden text-sm font-medium text-primary" aria-live="polite">
+        Copied
+      </span>
+      <a href="/" class:list={[secondaryButtonClass]}>
+        ← Back to home
+      </a>
+    </nav>
+  </article>
+</section>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById("placeholder-copy-site-link");
+    const feedback = document.getElementById("placeholder-copy-feedback");
+    if (!btn || !feedback) return;
+    const origin = window.location.origin;
+    const text = origin + "/";
+    let hideTimer = 0;
+    btn.addEventListener("click", async function () {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        } catch {
+          return;
+        }
+      }
+      feedback.classList.remove("hidden");
+      window.clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(function () {
+        feedback.classList.add("hidden");
+      }, 2000);
+    });
+  })();
+</script>

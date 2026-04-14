@@ -1,19 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
-import { siteConfig } from "@/lib/metadata";
+import PlaceholderPageSection from "@/components/PlaceholderPageSection.astro";
+import { formatDocumentTitle } from "@/lib/metadata";
+import { PLACEHOLDER_PAGE_META_DESCRIPTION } from "@/lib/placeholder-page";
 
-const title = `My Thoughts · ${siteConfig.name}`;
-const description = "Writing and notes — coming soon.";
+const title = formatDocumentTitle("My Thoughts");
+const description = PLACEHOLDER_PAGE_META_DESCRIPTION;
 ---
 
 <BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
-  <section class:list={[siteChromeGutters, siteChromeInner, "py-16"]}>
-    <h1 class="heading-gradient text-3xl font-extrabold tracking-tighter sm:text-4xl">My Thoughts</h1>
-    <p class="mt-4 max-w-xl text-pretty text-foreground-muted">
-      This route is wired for Astro content collections in <code class="font-mono text-sm text-card-foreground"
-        >content/blog</code
-      >. Add MDX and a listing page when you are ready.
-    </p>
-  </section>
+  <PlaceholderPageSection heading="My Thoughts" />
 </BaseLayout>
