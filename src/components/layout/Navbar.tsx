@@ -4,7 +4,7 @@ import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 const mainNavShell =
-  "glass-lit flex flex-wrap items-center justify-end gap-x-2 gap-y-1 rounded-2xl px-2 py-1 sm:gap-x-4 sm:px-3 sm:py-1.5 md:gap-x-6 md:px-4 md:py-2";
+  "glass-lit flex flex-wrap items-center justify-start gap-x-2 gap-y-1 rounded-2xl px-2 py-1 sm:gap-x-4 sm:px-3 sm:py-1.5 md:gap-x-6 md:px-4 md:py-2";
 
 export type NavbarVariant = "overlay" | "static";
 
@@ -27,7 +27,7 @@ export function Navbar({
         <div
           className={cn(
             siteChromeInner,
-            "flex min-h-[var(--navbar-height)] items-center justify-end py-2 md:py-2.5",
+            "flex min-h-[var(--navbar-height)] items-center justify-start py-2 md:py-2.5",
           )}
         >
           <nav aria-label="Main" className={mainNavShell}>

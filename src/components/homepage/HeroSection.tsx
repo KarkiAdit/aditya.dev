@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  heroIntroLeadMutedClauseProfileTypography,
   heroIntroLeadTypography,
   heroIntroMutedClauseInk,
   primaryCtaInteractiveClassName,
@@ -15,7 +16,21 @@ import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 const heroSectionViewportFrame =
-  "relative isolate box-border aspect-video min-h-[65vh] w-screen max-w-[100vw] shrink-0 overflow-x-clip overflow-y-hidden";
+  "relative isolate box-border h-[100vh] max-h-[100vh] w-screen max-w-[100vw] shrink-0 overflow-x-clip overflow-y-hidden";
+
+const heroPortraitLane =
+  "pointer-events-auto absolute inset-y-0 right-0 z-0 flex items-end justify-end max-md:hidden md:left-[40%]";
+
+const heroPortraitImg =
+  "h-full w-full max-w-full origin-bottom-right object-cover object-bottom object-right drop-shadow-md scale-[0.85]";
+
+function HeroBodyChrome({ children }: { children: ReactNode }) {
+  return (
+    <div className={cn(siteChromeGutters, "w-full min-w-0")}>
+      <div className={cn(siteChromeInner, "w-full min-w-0")}>{children}</div>
+    </div>
+  );
+}
 
 export type HeroSectionProps = {
   videoSrc?: string;
@@ -43,53 +58,25 @@ function HeroSectionVideoPlaceholder() {
   );
 }
 
-type HeroSectionIntroCopyProps = {
-  className?: string;
-  /** `section` uses tighter vertical spacing for reuse beside imagery (no hero-only rhythm). */
-  variant?: "hero" | "section";
-};
-
-function HeroSectionIntroCopy({ className, variant = "hero" }: HeroSectionIntroCopyProps) {
-  const isHero = variant === "hero";
-
+function HeroSectionIntroCopy() {
   return (
-    <div
-      className={cn(
-        "flex w-full flex-col text-left",
-        isHero ? "gap-3 max-md:items-stretch sm:gap-4 md:gap-6" : "gap-3 items-stretch",
-        className,
-      )}
-    >
-      {isHero ? (
-        <p className={cn("text-pretty max-md:block max-md:w-full max-md:min-w-0 max-md:self-stretch", heroIntroLeadTypography)}>
-          <span className={heroIntroMutedClauseInk}>Humans, </span>
-          <span className="text-primary">Aditya&apos;s here.</span>
-          <span className={heroIntroMutedClauseInk}>
-            {
-              " My Yang flows as a Software Engineer, Yin as a Spiritual Thinker, bridging the two as a Writer."
-            }
-          </span>
-        </p>
-      ) : (
-        <p
-          className={cn(
-            "m-0 block w-full min-w-0 max-w-none self-stretch p-0 text-pretty",
-            heroIntroLeadMutedClauseProfileTypography,
-          )}
-        >
-          If the &apos;Self&apos;—the Atman—is just a mixed-tape of old associations, then why keep spinning your
-          wheels chasing a ghost of independence?
-        </p>
-      )}
+    <div className="flex w-full flex-col gap-3 text-left max-md:items-stretch sm:gap-4 md:gap-6">
+      <p className={cn("text-pretty max-md:block max-md:w-full max-md:min-w-0 max-md:self-stretch", heroIntroLeadTypography)}>
+        <span className={heroIntroMutedClauseInk}>Humans, </span>
+        <span className="text-primary">Aditya&apos;s here.</span>
+        <span className={heroIntroMutedClauseInk}>
+          {
+            " My Yang flows as a Software Engineer, Yin as a Spiritual Thinker, bridging the two as a Writer."
+          }
+        </span>
+      </p>
       <Button
         variant="default"
         size="lg"
         className={cn(
           primaryCtaInteractiveClassName,
           "h-auto min-h-9 w-fit max-w-full rounded-full px-4 py-2 text-sm font-semibold sm:min-h-10 sm:px-4 sm:py-2 sm:text-base",
-          isHero &&
-            "mt-1 max-md:w-full max-md:max-w-none max-md:self-stretch max-md:min-w-0 max-md:shrink md:mt-2 md:w-fit md:min-h-11 md:px-5 md:py-2.5 md:text-lg lg:text-xl",
-          !isHero && "mt-1 w-full max-w-none self-stretch min-w-0 shrink",
+          "mt-1 max-md:w-full max-md:max-w-none max-md:self-stretch max-md:min-w-0 max-md:shrink md:mt-2 md:w-fit md:min-h-11 md:px-5 md:py-2.5 md:text-lg lg:text-xl",
         )}
         asChild
       >
@@ -124,23 +111,18 @@ export function HeroSection({ videoSrc, posterSrc, portraitSrc, portraitAlt = ""
             <div className="relative h-full min-h-0 w-full">
               {portraitSrc ? (
                 <>
-                  <div
-                    className={cn(
-                      "pointer-events-auto absolute top-1/2 z-[1] flex w-full min-w-0 -translate-y-1/2 flex-col justify-center",
-                      "max-md:inset-x-0 max-md:max-w-none max-md:translate-x-0",
-                      "max-w-full md:left-[40%] md:w-[60%] md:-translate-x-1/2",
-                      "max-h-[min(100%,calc(100%-1rem))] overflow-y-auto",
-                    )}
-                  >
-                    <div className={cn(siteChromeGutters, "w-full max-md:max-w-none")}>
-                      <HeroSectionIntroCopy />
-                    </div>
+                  <div className="pointer-events-none absolute inset-0 z-[1] flex min-h-0 items-center">
+                    <HeroBodyChrome>
+                      <div className="pointer-events-auto relative z-[2] max-h-[min(100%,calc(100%-1rem))] min-w-0 w-full overflow-y-auto md:max-w-[min(55vw,100%)]">
+                        <HeroSectionIntroCopy />
+                      </div>
+                    </HeroBodyChrome>
                   </div>
-                  <div className="pointer-events-auto absolute bottom-0 left-0 z-0 flex min-h-[80%] w-full items-end justify-end p-0 max-md:hidden md:inset-y-0 md:left-1/2 md:right-0 md:h-auto md:w-auto">
+                  <div className={heroPortraitLane}>
                     <img
                       src={portraitSrc}
                       alt={portraitAlt}
-                      className="h-full min-h-0 w-full max-w-full object-contain object-bottom object-right drop-shadow-md"
+                      className={heroPortraitImg}
                       decoding="async"
                       fetchPriority="high"
                     />
@@ -148,11 +130,9 @@ export function HeroSection({ videoSrc, posterSrc, portraitSrc, portraitAlt = ""
                 </>
               ) : (
                 <div className="pointer-events-auto absolute inset-0 flex items-center justify-center pt-[var(--navbar-height)]">
-                  <div className={cn(siteChromeGutters, "w-full")}>
-                    <div className={cn(siteChromeInner, "w-full")}>
-                      <HeroSectionIntroCopy />
-                    </div>
-                  </div>
+                  <HeroBodyChrome>
+                    <HeroSectionIntroCopy />
+                  </HeroBodyChrome>
                 </div>
               )}
             </div>
