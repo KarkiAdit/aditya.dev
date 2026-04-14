@@ -1,0 +1,33 @@
+---
+import {
+  HOMEPAGE_STACK_ROLE,
+  homepageStackLayout,
+} from "@/lib/homepage-stack";
+---
+
+<div class={homepageStackLayout.column}>
+  <div class={homepageStackLayout.heroSlab}>
+    <div
+      class={homepageStackLayout.heroPanel}
+      data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.hero}
+    >
+      <slot name="hero" />
+    </div>
+  </div>
+  <div class={homepageStackLayout.experienceSlab}>
+    <div
+      class={homepageStackLayout.surfacePanel}
+      data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.surface}
+    >
+      <slot name="experience" />
+    </div>
+  </div>
+  <div class={homepageStackLayout.moreSlab}>
+    <div
+      class={homepageStackLayout.surfaceDeepPanel}
+      data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.surface}
+    >
+      <slot name="more" />
+    </div>
+  </div>
+</div>

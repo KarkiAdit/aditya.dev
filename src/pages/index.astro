@@ -2,25 +2,83 @@
 import { getImage } from "astro:assets";
 
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { Hero } from "@/components/homepage/Hero";
-import { HumbleBackgroundSection } from "@/components/homepage/HumbleBackgroundSection";
+import { HeroSection } from "@/components/homepage/HeroSection";
+import { MoreAboutMeSection } from "@/components/homepage/MoreAboutMeSection";
+import MoreAboutMeSectionFallback from "@/components/homepage/MoreAboutMeSectionFallback.astro";
+import { HomeEntranceSplash } from "@/components/homepage/HomeEntranceSplash";
+import HomeEntranceSplashFallback from "@/components/homepage/HomeEntranceSplashFallback.astro";
+import ExperienceSectionFallback from "@/components/homepage/ExperienceSectionFallback.astro";
+import { ExperienceSection } from "@/components/homepage/ExperienceSection";
+import HomepageStackSections from "@/components/homepage/HomepageStackSections.astro";
+import { HomepageStackScroll } from "@/components/homepage/HomepageStackScroll";
 import { Navbar } from "@/components/layout/Navbar";
-import humbleBackground from "@/assets/images/humble-background-home.jpeg";
+import { fetchGithubDashboard } from "@/lib/github-dashboard";
 import heroPortrait from "@/assets/images/hero.png";
+import professionalHeadshot from "@/assets/images/professional-headshot.jpeg";
+import memoryLaneHometown from "@/assets/images/memory-lane-hometown.jpeg";
+import memoryLaneReading from "@/assets/images/memory-lane-reading.jpeg";
+import memoryLaneRunning from "@/assets/images/memory-lane-running.jpeg";
+import memoryLaneExercise from "@/assets/images/memory-lane-exercise.jpeg";
+import memoryLaneMeditation from "@/assets/images/memory-lane-meditation.png";
+import memoryLaneNyc from "@/assets/images/memory-lane-nyc.jpeg";
+import memoryLaneSanFrancisco from "@/assets/images/memory-lane-sanfransisco.jpeg";
 import { publicAssets } from "@/lib/public-assets";
 import { siteConfig } from "@/lib/metadata";
 
-const aboutStill = await getImage({
-  src: humbleBackground,
-  width: 1920,
-  format: "webp",
-});
+const githubLogin = import.meta.env.PUBLIC_GITHUB_LOGIN?.trim() ?? "";
+const githubDashboardPromise =
+  githubLogin.length > 0
+    ? fetchGithubDashboard(githubLogin, import.meta.env.GITHUB_TOKEN)
+    : Promise.resolve({
+        ok: false as const,
+        error: "Set PUBLIC_GITHUB_LOGIN in your environment to load your GitHub profile on the homepage.",
+      });
 
-const portraitOptimized = await getImage({
-  src: heroPortrait,
-  width: 1200,
-  format: "webp",
-});
+const [
+  portraitOptimized,
+  githubDashboardAvatar,
+  githubDashboardResult,
+  mlHometown,
+  mlReading,
+  mlRunning,
+  mlExercise,
+  mlMeditation,
+  mlNyc,
+  mlSanFrancisco,
+] = await Promise.all([
+  getImage({ src: heroPortrait, width: 1200, format: "webp" }),
+  getImage({ src: professionalHeadshot, width: 960, format: "webp" }),
+  githubDashboardPromise,
+  getImage({ src: memoryLaneHometown, width: 960, format: "webp" }),
+  getImage({ src: memoryLaneReading, width: 960, format: "webp" }),
+  getImage({ src: memoryLaneRunning, width: 960, format: "webp" }),
+  getImage({ src: memoryLaneExercise, width: 960, format: "webp" }),
+  getImage({ src: memoryLaneMeditation, width: 960, format: "webp" }),
+  getImage({ src: memoryLaneNyc, width: 960, format: "webp" }),
+  getImage({ src: memoryLaneSanFrancisco, width: 960, format: "webp" }),
+]);
+
+const memoryLaneNoteImages = [
+  mlHometown.src,
+  mlReading.src,
+  mlRunning.src,
+  mlExercise.src,
+  mlMeditation.src,
+  mlNyc.src,
+  mlSanFrancisco.src,
+] as const;
+
+const memoryLaneNotionHrefs = ["", "", "", "", "", "", ""] as const;
+
+const memoryLaneNoteBodies = [
+  "I learned my first geography on a bicycle with bad brakes—every slope a small theory of consequence. These days I travel farther on keyboards, but something in me still lint-checks bold ideas against the weather of that place; it keeps the swagger honest.",
+  "A good book is a quiet debate you paid admission for. I scribble in the margins like I'm reviewing a stubborn pull request from the past: firm, fond, occasionally refusing to merge until I've slept on it.",
+  "The mind wants to spawn threads; the route keeps the meeting to one humble loop. Not every knot unties with intellect—sometimes it simply loses its lease around mile four, when the ego drops reception.",
+  "The barbell has no patience for your subplot—only whether you counted the rep honestly. There's a blunt comedy in that: gravity doesn't file issues; it just declines the merge when your form gets cute.",
+  "Sitting still used to feel like a syntax error in my schedule. Then I noticed how much noise default mode ships with. The breath isn't mystical branding—it's the smallest loop that still compiles when the rest of the system is spamming warnings.",
+  "New York teaches urgency with the patience of a recurring fire drill. You learn to walk fast without becoming cruel, to want out loud without confusing volume with north—and to treat every skyline as a hypothesis, not a verdict.",
+  "San Francisco slipped in like fog wearing a city badge—soft at the edges, rude on the inclines. You start layering for weather the way you layer for uncertainty, and every steep block becomes a gentle veto on the fantasy of a flat life.",
+] as const;
 
 const ogImage = new URL(portraitOptimized.src, siteConfig.url).href;
 
@@ -36,14 +94,40 @@ const description = siteConfig.description;
   ogImage={ogImage}
 >
   <div
-    class="relative isolate flex w-full flex-col gap-14 pb-14 sm:gap-16 sm:pb-16 md:gap-20 md:pb-20"
+    class="relative isolate flex w-full flex-col gap-0 pb-0"
   >
-    <Navbar variant="overlay" />
-    <Hero
-      videoSrc={publicAssets.hero.video}
-      portraitSrc={portraitOptimized.src}
-      portraitAlt={`${siteConfig.author} — portrait`}
-    />
-    <HumbleBackgroundSection backgroundImageSrc={aboutStill.src} />
+    <HomeEntranceSplash client:only="react">
+      <HomeEntranceSplashFallback slot="fallback" />
+    </HomeEntranceSplash>
+    <div id="home-main-gate" class="flex w-full min-w-0 flex-col">
+      <HomepageStackScroll client:load />
+      <Navbar variant="overlay" />
+      <HomepageStackSections>
+        <HeroSection
+          slot="hero"
+          videoSrc={publicAssets.hero.video}
+          portraitSrc={portraitOptimized.src}
+          portraitAlt={`${siteConfig.author} — portrait`}
+        />
+        <ExperienceSection
+          slot="experience"
+          client:only="react"
+          result={githubDashboardResult}
+          avatarSrc={githubDashboardAvatar.src}
+        >
+          <ExperienceSectionFallback slot="fallback" />
+        </ExperienceSection>
+        <MoreAboutMeSection
+          slot="more"
+          className="pt-0"
+          client:visible
+          noteImageSrcs={memoryLaneNoteImages}
+          notionHrefs={memoryLaneNotionHrefs}
+          noteBodies={memoryLaneNoteBodies}
+        >
+          <MoreAboutMeSectionFallback slot="fallback" />
+        </MoreAboutMeSection>
+      </HomepageStackSections>
+    </div>
   </div>
 </BaseLayout>

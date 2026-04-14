@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const firstName = siteConfig.author.split(" ")[0] ?? siteConfig.author;
 
-export function Footer({ className }: { className?: string }) {
+export function Footer({ className, flushTop = false }: { className?: string; flushTop?: boolean }) {
   const year = new Date().getFullYear();
   const visibleSocial = socialProfiles.filter(
     (profile): profile is (typeof profile & { href: string }) => Boolean(profile.href),
@@ -16,7 +16,12 @@ export function Footer({ className }: { className?: string }) {
   return (
     <footer className={cn("w-full bg-transparent", className)}>
       <div className={siteChromeGutters}>
-        <div className={cn(siteChromeInner, "py-3 md:py-3.5")}>
+        <div
+          className={cn(
+            siteChromeInner,
+            flushTop ? "pt-0 pb-3 md:pb-3.5" : "py-3 md:py-3.5",
+          )}
+        >
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-8">
             <p className="max-w-md text-pretty text-sm font-prominent-copy leading-relaxed text-foreground-muted">
               <span className="font-byline-name text-primary">{siteConfig.author}</span>

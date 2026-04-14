@@ -57,6 +57,27 @@ body::-webkit-scrollbar {
     @apply font-semibold;
   }
 
+  /* Entrance splash: `data-home-entrance` on html until dismiss; gates `#home-main-gate`. */
+  html[data-home-entrance] {
+    overflow: hidden;
+    height: 100%;
+  }
+
+  html[data-home-entrance] body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  #home-main-gate {
+    opacity: 1;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html[data-home-entrance] #home-main-gate {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .hero-canvas-overlay {
     pointer-events: none;
     position: absolute;
@@ -66,6 +87,34 @@ body::-webkit-scrollbar {
     background-image:
       radial-gradient(ellipse 70% 60% at 10% 15%, oklch(0.72 0.09 50 / 0.5) 0%, transparent 50%),
       radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.68 0.11 38 / 0.44) 0%, transparent 45%);
+  }
+
+  /** Same color wash as `.hero-canvas-overlay`, for card-sized surfaces (not full-bleed). */
+  .hero-canvas-overlay-tint {
+    background-color: oklch(0.78 0.024 54 / 0.64);
+    background-image:
+      radial-gradient(ellipse 70% 60% at 10% 15%, oklch(0.72 0.09 50 / 0.5) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.68 0.11 38 / 0.44) 0%, transparent 45%);
+  }
+
+  /**
+   * Vignette + corona pockets (stacked radial-gradients).
+   * Reserved for full-bleed image treatments (e.g. More About Me / memory lane imagery).
+   */
+  .more-about-me-eclipse-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image:
+      radial-gradient(
+        ellipse 82% 78% at 50% 46%,
+        transparent 22%,
+        oklch(0.28 0.05 46 / 0.45) 58%,
+        oklch(0.1 0.03 42 / 0.82) 100%
+      ),
+      radial-gradient(ellipse 58% 52% at 82% 14%, oklch(0.82 0.07 50 / 0.2) 0%, transparent 48%),
+      radial-gradient(ellipse 50% 45% at 14% 82%, oklch(0.58 0.1 40 / 0.18) 0%, transparent 46%);
   }
 
   .glass-frame {
@@ -101,4 +150,120 @@ body::-webkit-scrollbar {
       0 4px 6px -2px oklch(0.42 0.06 44 / 0.07);
   }
 
+  /**
+   * Stacked homepage sections: same hue/chroma family as `body` + `.hero-canvas-overlay`,
+   * translucent so the fixed canvas still reads through (coherent “ecosystem”).
+   */
+  .homepage-stack-surface {
+    background-color: oklch(0.96 0.02 55 / 0.58);
+    background-image:
+      radial-gradient(ellipse 70% 60% at 10% 15%, oklch(0.85 0.1 50 / 0.42) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.82 0.12 35 / 0.34) 0%, transparent 45%);
+    backdrop-filter: blur(12px) saturate(1.22);
+    -webkit-backdrop-filter: blur(12px) saturate(1.22);
+    border: 1px solid oklch(0.3 0.02 50 / 0.09);
+    box-shadow:
+      inset 0 0 0 1px oklch(1 0.01 60 / 0.11),
+      0 -10px 36px -14px oklch(0.38 0.04 50 / 0.09);
+  }
+
+  /** Slightly shifted focal points — same palette, subtle depth between stacked layers. */
+  .homepage-stack-surface-deep {
+    background-color: oklch(0.965 0.022 54 / 0.55);
+    background-image:
+      radial-gradient(ellipse 62% 58% at 86% 18%, oklch(0.84 0.1 48 / 0.38) 0%, transparent 50%),
+      radial-gradient(ellipse 58% 52% at 14% 80%, oklch(0.8 0.11 38 / 0.32) 0%, transparent 46%);
+    backdrop-filter: blur(12px) saturate(1.22);
+    -webkit-backdrop-filter: blur(12px) saturate(1.22);
+    border: 1px solid oklch(0.3 0.02 50 / 0.09);
+    box-shadow:
+      inset 0 0 0 1px oklch(1 0.01 60 / 0.1),
+      0 -10px 36px -14px oklch(0.38 0.04 48 / 0.1);
+  }
+
+  /* Career road mini-scene (homepage) — motion respects prefers-reduced-motion */
+  @keyframes career-cloud-drift-a {
+    0%,
+    100% {
+      transform: translateX(0) scale(1);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translateX(18px) scale(1.03);
+      opacity: 0.72;
+    }
+  }
+
+  @keyframes career-cloud-drift-b {
+    0%,
+    100% {
+      transform: translateX(0) scale(1);
+      opacity: 0.4;
+    }
+    50% {
+      transform: translateX(-22px) scale(1.04);
+      opacity: 0.62;
+    }
+  }
+
+  @keyframes career-sun-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.88;
+    }
+    50% {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+  }
+
+  @keyframes career-shimmer {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+
+  .career-cloud-a {
+    animation: career-cloud-drift-a 14s ease-in-out infinite;
+  }
+
+  .career-cloud-b {
+    animation: career-cloud-drift-b 18s ease-in-out infinite;
+  }
+
+  .career-sun-pulse {
+    animation: career-sun-pulse 7s ease-in-out infinite;
+  }
+
+  .career-shimmer {
+    animation: career-shimmer 5s ease-in-out infinite;
+  }
+
+  @keyframes experience-section-ocean-wave-drift {
+    from {
+      transform: translate3d(-2.2%, 0, 0);
+    }
+    to {
+      transform: translate3d(2.2%, 0, 0);
+    }
+  }
+
+  .experience-section-ocean-wave-drift {
+    animation: experience-section-ocean-wave-drift 22s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .career-cloud-a,
+    .career-cloud-b,
+    .career-sun-pulse,
+    .career-shimmer,
+    .experience-section-ocean-wave-drift {
+      animation: none;
+    }
+  }
 }

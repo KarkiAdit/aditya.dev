@@ -26,9 +26,22 @@ export const heroIntroLeadPrimaryForegroundTypography = cn(
   "text-primary-foreground",
 );
 
+/** Hero lead line scale + muted clause (e.g. “bridging the two as a Writer.”). */
 export const heroIntroLeadMutedClauseTypography = cn(
   heroIntroLeadScaleTypography,
   heroIntroMutedClauseInk,
+);
+
+/** Same color/weight as `heroIntroLeadMutedClauseTypography`; reduced scale for dense UI. */
+export const heroIntroLeadMutedClauseCompactTypography = cn(
+  heroIntroMutedClauseInk,
+  "text-sm tracking-tight leading-snug sm:text-base md:text-lg",
+);
+
+/** Muted clause ink at a prominent scale for profile / display names (sidebar). */
+export const heroIntroLeadMutedClauseProfileTypography = cn(
+  heroIntroMutedClauseInk,
+  "text-xl tracking-tight leading-snug sm:text-2xl md:text-3xl",
 );
 
 export const aboutSectionHeroContinuationTypography = cn(
@@ -39,6 +52,17 @@ export const aboutSectionHeroContinuationTypography = cn(
 export const heroIntroRolesDisplayTypography = cn(
   heroIntroSupportingText,
   "text-lg leading-relaxed md:text-xl",
+);
+
+/**
+ * Primary `Button variant="default"` surfaces: readable ink on `--primary`,
+ * `--secondary` hover / focus / active (hero, entrance splash, Notion CTAs).
+ */
+export const primaryCtaInteractiveClassName = cn(
+  "shadow-none transition-colors duration-200 !text-background/82",
+  "hover:!bg-secondary hover:!text-secondary-foreground",
+  "focus-visible:!bg-secondary focus-visible:!text-secondary-foreground",
+  "active:!bg-secondary/80 active:!text-secondary-foreground",
 );
 
 export const mainNavLinkAppearance = cn(

@@ -1,0 +1,21 @@
+---
+import { cn } from "@/lib/utils";
+---
+
+<div
+  slot="fallback"
+  class={cn(
+    "fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-background/94 backdrop-blur-md",
+    "supports-[backdrop-filter]:bg-background/78",
+  )}
+  role="status"
+  aria-live="polite"
+  aria-busy="true"
+  aria-label="Loading entrance"
+>
+  <div
+    class="size-10 shrink-0 animate-spin rounded-full border-2 border-primary/35 border-t-primary"
+    aria-hidden="true"
+  />
+  <p class="text-xs font-semibold text-foreground-muted">Preparing your visit…</p>
+</div>

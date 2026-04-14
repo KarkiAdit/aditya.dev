@@ -39,6 +39,6 @@ const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? sit
     <main class="m-0 flex w-full min-w-0 flex-col p-0">
       <slot />
     </main>
-    <Footer />
+    <Footer flushTop={pathname === "/"} />
   </body>
 </html>

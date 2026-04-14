@@ -3,7 +3,8 @@
 ## Stack & Architecture
 - **Framework:** Astro 6 (Static Build).
 - **Deployment:** Optimized for Cloudflare Pages (`npm run build`).
-- **Styling:** Tailwind CSS v4, shadcn/ui (Radix), Framer Motion.
+- **Styling:** Tailwind CSS v4, shadcn/ui (Radix).
+- **Motion:** Framer Motion (entrance splash, Experience, More About Me micro-interactions); GSAP + ScrollTrigger (`HomepageStackScroll`) for sticky stack panel intros on `/`.
 - **TypeScript:** Strict mode (no `any`).
 
 ## Design Philosophy
@@ -19,8 +20,8 @@
 - `/src/layouts/` — Base layouts using `<slot />`.
 - `/src/components/` — Static `.astro` components.
 - `/src/components/react/` — Interactive React/shadcn islands.
-- `/src/components/homepage/` — Hero, Background, and Overlay components.
-- `/src/lib/` — Shared utilities (`cn`, `metadata`, `navigation`, `site-chrome`).
+- `/src/components/homepage/` — `HeroSection`, `ExperienceSection`, `MoreAboutMeSection`, `HomepageStackSections.astro`, `HomepageStackScroll.tsx`, entrance splash, overlays.
+- `/src/lib/` — Shared utilities (`cn`, `metadata`, `navigation`, `site-chrome`, `homepage-stack` layout hooks for the index stack).
 - `/src/styles/` — Global CSS (`theme.css`, `globals.css`).
 - `/content/blog/` — MDX blog posts (Spiritual + General).
 - `/content/projects/` — MDX project metadata.
