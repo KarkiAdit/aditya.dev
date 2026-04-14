@@ -7,19 +7,36 @@ const overlayClassName = cn(
   "focus-visible:bg-black/50 focus-visible:ring-2 focus-visible:ring-ring",
 );
 
-const readMorePillClassName = cn(
-  buttonVariants({ variant: "secondary", size: "lg" }),
-  "pointer-events-none shadow-sm transition-opacity duration-200",
-  "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100",
-);
+export type SophisticationReadMoreOverlayProps = {
+  notionHref: string;
+  /** `compact` = smaller pill for narrow cards (e.g. memory lane). */
+  pillSize?: "comfortable" | "compact";
+  /** Merged onto the interactive overlay root. */
+  className?: string;
+};
 
-function ReadMoreOnNotionLabel() {
-  return <span className={readMorePillClassName}>Read More on Notion</span>;
+function readMorePillClassName(pillSize: SophisticationReadMoreOverlayProps["pillSize"]) {
+  const size = pillSize === "compact" ? "sm" : "lg";
+  return cn(
+    buttonVariants({ variant: "secondary", size }),
+    "pointer-events-none shadow-sm transition-opacity duration-200",
+    pillSize === "compact" && "max-w-[min(100%,11rem)] px-2.5 text-xs",
+    "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100",
+  );
 }
 
-export function SophisticationReadMoreOverlay({ notionHref }: { notionHref: string }) {
+function ReadMoreOnNotionLabel({ pillSize }: Pick<SophisticationReadMoreOverlayProps, "pillSize">) {
+  return <span className={readMorePillClassName(pillSize)}>Read More on Notion</span>;
+}
+
+export function SophisticationReadMoreOverlay({
+  notionHref,
+  pillSize = "comfortable",
+  className,
+}: SophisticationReadMoreOverlayProps) {
   const trimmed = notionHref.trim();
   const hasHref = trimmed.length > 0;
+  const rootClass = cn(overlayClassName, className);
 
   if (hasHref) {
     return (
@@ -27,17 +44,17 @@ export function SophisticationReadMoreOverlay({ notionHref }: { notionHref: stri
         href={trimmed}
         target="_blank"
         rel="noopener noreferrer"
-        className={overlayClassName}
+        className={rootClass}
         aria-label="Read More on Notion — opens in a new tab"
       >
-        <ReadMoreOnNotionLabel />
+        <ReadMoreOnNotionLabel pillSize={pillSize} />
       </a>
     );
   }
 
   return (
-    <button type="button" className={overlayClassName} aria-label="Read More on Notion — link not set yet">
-      <ReadMoreOnNotionLabel />
+    <button type="button" className={rootClass} aria-label="Read More on Notion — link not set yet">
+      <ReadMoreOnNotionLabel pillSize={pillSize} />
     </button>
   );
 }
