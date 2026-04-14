@@ -1,5 +1,5 @@
 ---
-import { siteConfig } from "@/lib/metadata";
+import { robotsMetaContent, siteConfig, siteJsonLd } from "@/lib/metadata";
 
 interface Props {
   title: string;
@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { title, description, canonical, image } = Astro.props;
+const structuredData = siteJsonLd({ personImage: image });
 ---
 
 <link rel="canonical" href={canonical} />
@@ -25,6 +26,7 @@ const { title, description, canonical, image } = Astro.props;
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 {image ? <meta name="twitter:image" content={image} /> : null}
-<meta name="robots" content="index, follow" />
+<meta name="robots" content={robotsMetaContent()} />
 <meta name="application-name" content={siteConfig.name} />
 <meta name="author" content={siteConfig.author} />
+<script type="application/ld+json" set:html={structuredData} />

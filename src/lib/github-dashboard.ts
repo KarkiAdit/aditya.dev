@@ -251,7 +251,7 @@ function ghHeaders(token?: string): HeadersInit {
   return {
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": "aditya.dev-portfolio",
+    "User-Agent": "adityakarki.com.np-portfolio",
     ...(token && token.length > 0 ? { Authorization: `Bearer ${token}` } : {}),
   };
 }

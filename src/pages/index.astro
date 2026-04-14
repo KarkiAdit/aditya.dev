@@ -23,7 +23,7 @@ import memoryLaneMeditation from "@/assets/images/memory-lane-meditation.png";
 import memoryLaneNyc from "@/assets/images/memory-lane-nyc.jpeg";
 import memoryLaneSanFrancisco from "@/assets/images/memory-lane-sanfransisco.jpeg";
 import { publicAssets } from "@/lib/public-assets";
-import { siteConfig } from "@/lib/metadata";
+import { absoluteOnSite, siteConfig } from "@/lib/metadata";
 
 const githubLogin = import.meta.env.PUBLIC_GITHUB_LOGIN?.trim() ?? "";
 const githubDashboardPromise =
@@ -80,10 +80,10 @@ const memoryLaneNoteBodies = [
   "San Francisco slipped in like fog wearing a city badge—soft at the edges, rude on the inclines. You start layering for weather the way you layer for uncertainty, and every steep block becomes a gentle veto on the fantasy of a flat life.",
 ] as const;
 
-const ogImage = new URL(portraitOptimized.src, siteConfig.url).href;
+const ogImage = absoluteOnSite(portraitOptimized.src);
 
 const title = siteConfig.title;
-const description = siteConfig.description;
+const description = siteConfig.bio;
 ---
 
 <BaseLayout

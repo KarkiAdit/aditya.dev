@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { Context as GsapContext } from "gsap/gsap-core";
 
 import { HOME_MAIN_GATE_ID } from "@/lib/home-entrance";
 import {
   HOMEPAGE_STACK_PANEL_SELECTOR,
   HOMEPAGE_STACK_ROLE,
 } from "@/lib/homepage-stack";
+
+/** Return type of `gsap.context` — avoids importing non-exported types from `gsap/gsap-core`. */
+type GsapContext = { revert: (config?: object) => void };
 
 export function HomepageStackScroll() {
   const lastLenRef = useRef(0);
