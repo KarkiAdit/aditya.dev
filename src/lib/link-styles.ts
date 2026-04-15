@@ -17,7 +17,7 @@ export const heroIntroHeadlineTypography =
   "text-4xl font-extrabold tracking-tight text-primary md:text-5xl";
 
 export const heroIntroLeadScaleTypography =
-  "text-xl font-extrabold tracking-tight leading-snug sm:text-2xl sm:leading-snug md:text-3xl md:leading-snug lg:text-4xl lg:leading-tight xl:text-5xl xl:leading-tight";
+  "text-2xl font-extrabold tracking-tight leading-snug sm:text-2xl sm:leading-snug md:text-3xl md:leading-snug lg:text-4xl lg:leading-tight xl:text-5xl xl:leading-tight";
 
 export const heroIntroLeadTypography = cn(heroIntroLeadScaleTypography, "text-foreground");
 
@@ -42,6 +42,12 @@ export const heroIntroLeadMutedClauseCompactTypography = cn(
 export const heroIntroLeadMutedClauseProfileTypography = cn(
   heroIntroMutedClauseInk,
   "text-xl tracking-tight leading-snug sm:text-2xl md:text-3xl",
+);
+
+/** Memory-lane polaroid captions: tighter on phones so long lines stay scannable. */
+export const memoryLaneNoteBodyTypography = cn(
+  heroIntroMutedClauseInk,
+  "text-sm tracking-tight leading-relaxed sm:text-base sm:leading-snug md:text-lg md:leading-snug lg:text-xl xl:text-2xl",
 );
 
 export const aboutSectionHeroContinuationTypography = cn(
@@ -72,7 +78,7 @@ export const mainNavLinkAppearance = cn(
 
 export const headerMainNavBodyTypography = cn(
   heroIntroSupportingText,
-  "text-xs sm:text-sm md:text-base lg:text-lg",
+  "text-sm sm:text-base md:text-base lg:text-lg",
 );
 
 export const headerMainNavBodyTypographyRoomy = cn(

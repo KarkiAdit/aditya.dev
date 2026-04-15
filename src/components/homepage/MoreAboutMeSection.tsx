@@ -6,10 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { SophisticationReadMoreOverlay } from "@/components/homepage/SophisticationReadMoreOverlay";
 import { Button } from "@/components/ui/button";
 import { careerCreamControlStyle, careerCreamControlSurfaceDisabled } from "@/lib/career-roadmap";
-import {
-  heroIntroLeadMutedClauseProfileTypography,
-  primaryCtaInteractiveClassName,
-} from "@/lib/link-styles";
+import { memoryLaneNoteBodyTypography, primaryCtaInteractiveClassName } from "@/lib/link-styles";
 import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +51,7 @@ function ClipboardMeroInfoElement({
   const hasNotion = trimmed.length > 0;
 
   return (
-    <div className="flex w-full flex-col gap-3 max-md:items-center md:items-stretch">
+    <div className="flex w-full flex-col gap-3 items-stretch">
       <motion.div
         key={noteIdx}
         className="w-full"
@@ -64,14 +61,14 @@ function ClipboardMeroInfoElement({
       >
         <p
           className={cn(
-            "m-0 block w-full min-w-0 max-w-none self-stretch p-0 text-pretty max-md:text-center md:text-left",
-            heroIntroLeadMutedClauseProfileTypography,
+            "m-0 block w-full min-w-0 max-w-none self-stretch p-0 text-pretty text-left",
+            memoryLaneNoteBodyTypography,
           )}
         >
           {body}
         </p>
       </motion.div>
-      <div className="flex w-full max-md:justify-center md:justify-start">
+      <div className="flex w-full justify-start">
         {hasNotion ? (
           <Button variant="default" size="lg" className={notionCtaEnabledClassName} asChild>
             <a href={trimmed} target="_blank" rel="noopener noreferrer">
@@ -302,7 +299,7 @@ export function MoreAboutMeSection({ noteImageSrcs, notionHrefs, noteBodies, cla
                 />
               </div>
 
-              <div className="flex w-full min-w-0 max-w-none shrink-0 flex-col items-center justify-start self-stretch py-0 max-md:text-center md:min-h-0 md:min-w-0 md:items-stretch md:justify-center md:py-0 md:text-left md:flex-1 md:basis-0">
+              <div className="flex w-full min-w-0 max-w-none shrink-0 flex-col items-stretch justify-start self-stretch py-0 text-left md:min-h-0 md:min-w-0 md:justify-center md:py-0 md:flex-1 md:basis-0">
                 <div className="w-full max-w-none md:shrink-0">
                   <ClipboardMeroInfoElement
                     noteIdx={noteIdx}
