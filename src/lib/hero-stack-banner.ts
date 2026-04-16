@@ -10,7 +10,7 @@ export const HERO_STACK_BANNER_SECTION_CLASS =
  * - `sm+`: 16:9 band, capped at 100vh
  */
 export const HERO_STACK_BANNER_FRAME_CLASS =
-  "relative w-full overflow-hidden h-screen sm:h-[min(100vh,56.25vw)]";
+  "relative w-full overflow-hidden h-[85vh] sm:h-[min(100vh,56.25vw)]";
 
 export const HERO_STACK_BANNER_IMG_CLASS =
   "absolute inset-0 h-full w-full object-cover object-center";
