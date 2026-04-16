@@ -9,10 +9,14 @@ function readPublicEnv(key: PublicSocialKey): string | undefined {
 }
 
 export const mainNav = [
-  { href: "/thoughts", label: "My Thoughts" },
+  { href: "/thoughts", label: "My Thoughts", shortLabel: "Thoughts" },
   { href: "/projects", label: "Projects" },
   { href: "/", label: "Home" },
-] as const;
+] as const satisfies ReadonlyArray<{
+  readonly href: string;
+  readonly label: string;
+  readonly shortLabel?: string;
+}>;
 
 export const footerLegal = [
   { href: "/privacy-policy", label: "Privacy Policy" },

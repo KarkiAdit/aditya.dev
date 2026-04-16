@@ -1,13 +1,75 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import PlaceholderPageSection from "@/components/PlaceholderPageSection.astro";
-import { formatDocumentTitle } from "@/lib/metadata";
-import { PLACEHOLDER_PAGE_META_DESCRIPTION } from "@/lib/placeholder-page";
+import StackHeroBanner from "@/components/StackHeroBanner.astro";
+import { HomeEntranceSplash } from "@/components/homepage/HomeEntranceSplash";
+import HomeEntranceSplashFallback from "@/components/homepage/HomeEntranceSplashFallback.astro";
+import { HomepageStackScroll } from "@/components/homepage/HomepageStackScroll";
+import ProjectsFeaturedNicheSection from "@/components/projects/ProjectsFeaturedNicheSection.astro";
+import ProjectsKnowledgeSection from "@/components/projects/ProjectsKnowledgeSection.astro";
+import PageStackBody from "@/components/layout/PageStackBody.astro";
+import projectsBannerImage from "@/assets/images/additional/career-banner-image-desktop.png";
+import projectsBannerImageMobile from "@/assets/images/additional/career-banner-image-mobile.png";
+import { formatDocumentTitle, siteConfig } from "@/lib/metadata";
+import {
+  HOMEPAGE_STACK_ROLE,
+  homepageStackLayout,
+  PROJECTS_STACK_GATE_ID,
+} from "@/lib/homepage-stack";
+import {
+  loadCurrentFocusBookCards,
+  loadFeaturedNicheScreenshotMap,
+} from "@/lib/projects-assets";
+import { getHeroStackBannerSources } from "@/lib/hero-stack-banner";
+import { pageStackContentInner } from "@/lib/site-page-layout";
 
 const title = formatDocumentTitle("Projects");
-const description = PLACEHOLDER_PAGE_META_DESCRIPTION;
+const description = "A projects dashboard: current reading and featured work.";
+
+const [currentFocusBookCards, projectsHeroBanner, nicheScreenshotSrc] = await Promise.all([
+  loadCurrentFocusBookCards(),
+  getHeroStackBannerSources(projectsBannerImage, projectsBannerImageMobile),
+  loadFeaturedNicheScreenshotMap(),
+]);
+
+const bannerAlt = `${siteConfig.name} — career and projects`;
 ---
 
-<BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
-  <PlaceholderPageSection heading="Projects" />
+<BaseLayout title={title} description={description} pathname={Astro.url.pathname} overlayNavbar>
+  <div class="relative isolate flex w-full flex-col gap-0 pb-0">
+    <HomeEntranceSplash client:only="react" mainGateId={PROJECTS_STACK_GATE_ID}>
+      <HomeEntranceSplashFallback slot="fallback" />
+    </HomeEntranceSplash>
+    <div id={PROJECTS_STACK_GATE_ID} class="flex w-full min-w-0 flex-col">
+      <HomepageStackScroll client:load gateId={PROJECTS_STACK_GATE_ID} />
+      <div class={homepageStackLayout.column}>
+        <div class={homepageStackLayout.heroSlab}>
+          <div
+            class={homepageStackLayout.heroPanel}
+            data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.hero}
+          >
+            <StackHeroBanner
+              imageSrc={projectsHeroBanner.srcDesktop}
+              imageSrcSmall={projectsHeroBanner.srcSmall}
+              imageAlt={bannerAlt}
+              sectionAriaLabel="Projects banner"
+            />
+          </div>
+        </div>
+        <div class={homepageStackLayout.experienceSlab}>
+          <PageStackBody stackScrollSurface>
+            <div class:list={[pageStackContentInner]}>
+              <ProjectsKnowledgeSection currentFocusBooks={currentFocusBookCards} />
+            </div>
+          </PageStackBody>
+        </div>
+        <div class={homepageStackLayout.moreSlab}>
+          <PageStackBody stackScrollSurface stackSurfaceLayer="deep">
+            <div class:list={[pageStackContentInner]}>
+              <ProjectsFeaturedNicheSection nicheScreenshotSrc={nicheScreenshotSrc} />
+            </div>
+          </PageStackBody>
+        </div>
+      </div>
+    </div>
+  </div>
 </BaseLayout>

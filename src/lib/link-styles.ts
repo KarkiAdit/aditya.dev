@@ -44,10 +44,24 @@ export const heroIntroLeadMutedClauseProfileTypography = cn(
   "text-xl tracking-tight leading-snug sm:text-2xl md:text-3xl",
 );
 
-/** Memory-lane polaroid captions: tighter on phones so long lines stay scannable. */
+/**
+ * Responsive scale for muted supporting body copy: memory-lane polaroid captions, featured
+ * niche project descriptions, and dense project labels. Slightly larger than `text-xs` on
+ * small viewports so long lines (e.g. project blurbs) stay readable without touching desktop sizes.
+ */
+export const denseMutedSupportingBodyTextScale =
+  "text-sm tracking-tight leading-relaxed sm:text-base sm:leading-snug md:text-base md:leading-snug lg:text-lg xl:text-xl";
+
+/** Memory-lane polaroid captions — uses {@link denseMutedSupportingBodyTextScale}. */
 export const memoryLaneNoteBodyTypography = cn(
   heroIntroMutedClauseInk,
-  "text-sm tracking-tight leading-relaxed sm:text-base sm:leading-snug md:text-lg md:leading-snug lg:text-xl xl:text-2xl",
+  denseMutedSupportingBodyTextScale,
+);
+
+/** Featured niche project description `<p>` — same tokens as memory-lane body (see {@link denseMutedSupportingBodyTextScale}). */
+export const featuredNicheDescriptionTypography = cn(
+  memoryLaneNoteBodyTypography,
+  "text-pretty w-full min-w-0 max-w-prose sm:max-w-none",
 );
 
 export const aboutSectionHeroContinuationTypography = cn(

@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_SOCIAL_MEDIUM?: string;
   /** GitHub username for the homepage dashboard (build-time fetch). */
   readonly PUBLIC_GITHUB_LOGIN?: string;
+  /** Optional Surf Shelter featured-card research link (overrides empty `researchPaper.href` in content). */
+  readonly PUBLIC_SURF_SHELTER_RESEARCH_URL?: string;
   /** Optional PAT for higher rate limits during `astro build` only (never `PUBLIC_`). */
   readonly GITHUB_TOKEN?: string;
   readonly CF_PAGES_URL?: string;

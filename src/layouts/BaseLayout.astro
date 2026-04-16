@@ -12,9 +12,11 @@ interface Props {
   pathname: string;
   canonicalPath?: string;
   ogImage?: string;
+  /** When true, nav floats over the first viewport (e.g. full-bleed hero). Home still omits layout nav. */
+  overlayNavbar?: boolean;
 }
 
-const { title, description, pathname, canonicalPath, ogImage } = Astro.props;
+const { title, description, pathname, canonicalPath, ogImage, overlayNavbar = false } = Astro.props;
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? siteConfig.url);
 ---
 
@@ -38,7 +40,7 @@ const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? sit
     <SEO title={title} description={description} canonical={canonical.href} image={ogImage} />
   </head>
   <body class="flex min-h-dvh flex-col">
-    {pathname !== "/" && <Navbar variant="static" />}
+    {pathname !== "/" && <Navbar variant={overlayNavbar ? "overlay" : "static"} />}
     <main class="m-0 flex w-full min-w-0 flex-col p-0">
       <slot />
     </main>

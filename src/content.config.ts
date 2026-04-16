@@ -22,6 +22,17 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
+    /**
+     * Optional “dashboard” metadata for the Projects page. Keeping everything optional lets you
+     * incrementally enrich entries without breaking existing content.
+     */
+    featured: z.boolean().optional(),
+    githubUrl: z.string().url().optional(),
+    readMoreUrl: z.string().url().optional(),
+    prdUrl: z.string().url().optional(),
+    systemDesignUrl: z.string().url().optional(),
+    languages: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
   }),
 });
 

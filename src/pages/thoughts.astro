@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageStackBody from "@/components/layout/PageStackBody.astro";
 import PlaceholderPageSection from "@/components/PlaceholderPageSection.astro";
 import { formatDocumentTitle } from "@/lib/metadata";
 import { PLACEHOLDER_PAGE_META_DESCRIPTION } from "@/lib/placeholder-page";
@@ -9,5 +10,7 @@ const description = PLACEHOLDER_PAGE_META_DESCRIPTION;
 ---
 
 <BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
-  <PlaceholderPageSection heading="My Thoughts" />
+  <PageStackBody stackVariant="standalone" wrapInnerColumn>
+    <PlaceholderPageSection heading="My Thoughts" />
+  </PageStackBody>
 </BaseLayout>
