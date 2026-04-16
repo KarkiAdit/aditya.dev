@@ -2,7 +2,7 @@
 import { getImage } from "astro:assets";
 
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { HeroSection } from "@/components/homepage/HeroSection";
+import StackHeroBanner from "@/components/StackHeroBanner.astro";
 import { MoreAboutMeSection } from "@/components/homepage/MoreAboutMeSection";
 import MoreAboutMeSectionFallback from "@/components/homepage/MoreAboutMeSectionFallback.astro";
 import { HomeEntranceSplash } from "@/components/homepage/HomeEntranceSplash";
@@ -13,16 +13,17 @@ import HomepageStackSections from "@/components/homepage/HomepageStackSections.a
 import { HomepageStackScroll } from "@/components/homepage/HomepageStackScroll";
 import { Navbar } from "@/components/layout/Navbar";
 import { fetchGithubDashboard } from "@/lib/github-dashboard";
-import heroPortrait from "@/assets/images/hero.png";
-import professionalHeadshot from "@/assets/images/professional-headshot.jpeg";
-import memoryLaneHometown from "@/assets/images/memory-lane-hometown.jpeg";
-import memoryLaneReading from "@/assets/images/memory-lane-reading.jpeg";
-import memoryLaneRunning from "@/assets/images/memory-lane-running.jpeg";
-import memoryLaneExercise from "@/assets/images/memory-lane-exercise.jpeg";
-import memoryLaneMeditation from "@/assets/images/memory-lane-meditation.png";
-import memoryLaneNyc from "@/assets/images/memory-lane-nyc.jpeg";
-import memoryLaneSanFrancisco from "@/assets/images/memory-lane-sanfransisco.jpeg";
-import { publicAssets } from "@/lib/public-assets";
+import homeHero from "@/assets/images/additional/home-hero-image-desktop.png";
+import homeHeroSmallScreens from "@/assets/images/additional/home-hero-image-mobile.png";
+import professionalHeadshot from "@/assets/images/additional/professional-headshot.jpeg";
+import memoryLaneHometown from "@/assets/images/memory-lane/memory-lane-hometown.jpeg";
+import memoryLaneReading from "@/assets/images/memory-lane/memory-lane-reading.jpeg";
+import memoryLaneRunning from "@/assets/images/memory-lane/memory-lane-running.jpeg";
+import memoryLaneExercise from "@/assets/images/memory-lane/memory-lane-exercise.jpeg";
+import memoryLaneMeditation from "@/assets/images/memory-lane/memory-lane-meditation.png";
+import memoryLaneNyc from "@/assets/images/memory-lane/memory-lane-nyc.jpeg";
+import memoryLaneSanFrancisco from "@/assets/images/memory-lane/memory-lane-sanfransisco.jpeg";
+import { getHeroStackBannerSources } from "@/lib/hero-stack-banner";
 import { absoluteOnSite, siteConfig } from "@/lib/metadata";
 
 const githubLogin = import.meta.env.PUBLIC_GITHUB_LOGIN?.trim() ?? "";
@@ -35,7 +36,7 @@ const githubDashboardPromise =
       });
 
 const [
-  portraitOptimized,
+  homeHeroBanner,
   githubDashboardAvatar,
   githubDashboardResult,
   mlHometown,
@@ -46,7 +47,7 @@ const [
   mlNyc,
   mlSanFrancisco,
 ] = await Promise.all([
-  getImage({ src: heroPortrait, width: 1200, format: "webp" }),
+  getHeroStackBannerSources(homeHero, homeHeroSmallScreens),
   getImage({ src: professionalHeadshot, width: 960, format: "webp" }),
   githubDashboardPromise,
   getImage({ src: memoryLaneHometown, width: 960, format: "webp" }),
@@ -80,7 +81,7 @@ const memoryLaneNoteBodies = [
   "San Francisco slipped in like fog wearing a city badge—soft at the edges, rude on the inclines. You start layering for weather the way you layer for uncertainty, and every steep block becomes a gentle veto on the fantasy of a flat life.",
 ] as const;
 
-const ogImage = absoluteOnSite(portraitOptimized.src);
+const ogImage = absoluteOnSite(homeHeroBanner.srcDesktop);
 
 const title = siteConfig.title;
 const description = siteConfig.bio;
@@ -103,11 +104,12 @@ const description = siteConfig.bio;
       <HomepageStackScroll client:load />
       <Navbar variant="overlay" />
       <HomepageStackSections>
-        <HeroSection
+        <StackHeroBanner
           slot="hero"
-          videoSrc={publicAssets.hero.video}
-          portraitSrc={portraitOptimized.src}
-          portraitAlt={`${siteConfig.author} — portrait`}
+          imageSrc={homeHeroBanner.srcDesktop}
+          imageSrcSmall={homeHeroBanner.srcSmall}
+          imageAlt={`${siteConfig.name} — ${siteConfig.rolesLine}`}
+          sectionAriaLabel="Hero section"
         />
         <ExperienceSection
           slot="experience"

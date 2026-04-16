@@ -20,9 +20,9 @@ export function setHomeEntranceDismissedUntilEndOfLocalDay(): void {
   ].join("; ");
 }
 
-export function releaseHomeEntranceGate(): void {
+export function releaseHomeEntranceGate(gateId: string = HOME_MAIN_GATE_ID): void {
   document.documentElement.removeAttribute("data-home-entrance");
-  const gate = document.getElementById(HOME_MAIN_GATE_ID);
+  const gate = document.getElementById(gateId);
   if (gate) gate.inert = false;
 }
 

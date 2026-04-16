@@ -14,6 +14,11 @@ import {
 import { primaryCtaInteractiveClassName } from "@/lib/link-styles";
 import { cn } from "@/lib/utils";
 
+type HomeEntranceSplashProps = {
+  /** Main stack gate to keep inert until the splash dismisses (default: homepage `#home-main-gate`). */
+  mainGateId?: string;
+};
+
 const THESIS_LEAD =
   "If the 'Self'—the Atman—is just a mixed-tape of old associations,";
 const THESIS_TAIL = "then why keep spinning your wheels chasing a ghost of independence?";
@@ -80,7 +85,7 @@ function MeditationBreath() {
   );
 }
 
-export function HomeEntranceSplash() {
+export function HomeEntranceSplash({ mainGateId = HOME_MAIN_GATE_ID }: HomeEntranceSplashProps) {
   const [splashOpen, setSplashOpen] = useState(() => !hasHomeEntranceDismissedToday());
   const [entranceComplete, setEntranceComplete] = useState(() => hasHomeEntranceDismissedToday());
   const reduceMotion = useReducedMotion();
@@ -95,9 +100,9 @@ export function HomeEntranceSplash() {
   useLayoutEffect(() => {
     if (entranceComplete) return;
     document.documentElement.setAttribute("data-home-entrance", "");
-    const gate = document.getElementById(HOME_MAIN_GATE_ID);
+    const gate = document.getElementById(mainGateId);
     if (gate) gate.inert = true;
-  }, [entranceComplete]);
+  }, [entranceComplete, mainGateId]);
 
   const close = useCallback(() => {
     setSplashOpen(false);
@@ -114,9 +119,9 @@ export function HomeEntranceSplash() {
 
   const handleExitComplete = useCallback(() => {
     setHomeEntranceDismissedUntilEndOfLocalDay();
-    releaseHomeEntranceGate();
+    releaseHomeEntranceGate(mainGateId);
     setEntranceComplete(true);
-  }, []);
+  }, [mainGateId]);
 
   return (
     <AnimatePresence onExitComplete={handleExitComplete}>

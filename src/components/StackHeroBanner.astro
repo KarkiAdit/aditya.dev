@@ -1,0 +1,32 @@
+---
+import {
+  HERO_STACK_BANNER_FRAME_CLASS,
+  HERO_STACK_BANNER_IMG_CLASS,
+  HERO_STACK_BANNER_SECTION_CLASS,
+  HERO_STACK_BANNER_SMALL_MEDIA,
+} from "@/lib/hero-stack-banner";
+
+interface Props {
+  imageSrc: string;
+  imageSrcSmall: string;
+  imageAlt: string;
+  sectionAriaLabel: string;
+}
+
+const { imageSrc, imageSrcSmall, imageAlt, sectionAriaLabel } = Astro.props;
+---
+
+<section class:list={[HERO_STACK_BANNER_SECTION_CLASS]} aria-label={sectionAriaLabel}>
+  <div class:list={[HERO_STACK_BANNER_FRAME_CLASS]}>
+    <picture>
+      <source media={HERO_STACK_BANNER_SMALL_MEDIA} srcset={imageSrcSmall} />
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        class:list={[HERO_STACK_BANNER_IMG_CLASS]}
+        decoding="async"
+        fetchpriority="high"
+      />
+    </picture>
+  </div>
+</section>

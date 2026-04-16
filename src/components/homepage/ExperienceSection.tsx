@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ChevronRight, Cloud, ExternalLink, GitCommit, Globe2, MapPinned, Search, Star } from "lucide-react";
 import {
@@ -23,22 +23,19 @@ import {
   type GithubDashboardRepo,
   type GithubDashboardResult,
 } from "@/lib/github-dashboard";
-import { ExperienceSectionOceanWaveElement } from "@/components/homepage/ExperienceSectionOceanWaveElement";
-import { formatRepoByteLabel, getRepoLanguageColor } from "@/lib/github-repo-language-colors";
+import { githubDashboardRepoCardClassName } from "@/lib/github-dashboard-card";
+import {
+  formatRepoByteLabel,
+  getRepoLanguageChipBackgroundColor,
+  getRepoLanguageColor,
+  githubDashboardLanguageChipClassName,
+} from "@/lib/github-repo-language-colors";
 import {
   heroIntroLeadMutedClauseCompactTypography,
   heroIntroLeadMutedClauseProfileTypography,
 } from "@/lib/link-styles";
 import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
-
-function ExperienceSectionWave() {
-  const rootClassName = cn(
-    "pointer-events-none relative z-0 h-full min-h-0 w-full overflow-hidden",
-    "origin-bottom scale-y-[-1] translate-y-[var(--experience-wave-shift-y)]",
-  );
-  return <ExperienceSectionOceanWaveElement idPrefix="experience" rootClassName={rootClassName} />;
-}
 
 export type ExperienceSectionProps = {
   result: GithubDashboardResult;
@@ -301,7 +298,7 @@ function CareerRegulatorySign({
   );
 }
 
-function CareerRoadmapInteractiveSceneElement({ belowNextStopSlot }: { belowNextStopSlot?: ReactNode }) {
+function CareerRoadmapInteractiveSceneElement() {
   const stops = CAREER_ROAD_STOPS;
   const n = stops.length;
   const [stopIdx, setStopIdx] = useState(0);
@@ -353,7 +350,7 @@ function CareerRoadmapInteractiveSceneElement({ belowNextStopSlot }: { belowNext
   return (
     <div
       id="career-roadmap-interactive-scene"
-      className="relative mt-12 sm:mt-16"
+      className="relative mt-12 sm:mt-16 pb-4 sm:pb-8 md:pb-12 lg:pb-14"
       aria-label="Interactive career roadmap"
     >
       <div className="relative z-10 flex flex-col gap-4">
@@ -475,18 +472,6 @@ function CareerRoadmapInteractiveSceneElement({ belowNextStopSlot }: { belowNext
           </div>
         </div>
       </div>
-
-      {belowNextStopSlot !== undefined ? (
-        <div
-          className={cn(
-            "pointer-events-none absolute bottom-8 left-1/2 z-0 w-screen max-w-none -translate-x-1/2 sm:bottom-10",
-            "[height:min(220px,30dvh)] min-h-[5rem] md:[height:min(200px,26dvh)] md:min-h-[6rem]",
-          )}
-          aria-hidden
-        >
-          {belowNextStopSlot}
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -631,13 +616,7 @@ function GitHubDashboardElement({ data }: { data: GithubDashboardData }) {
                 href={repo.htmlUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(
-                  "flex h-full flex-col rounded-2xl border border-border/30 bg-card/55 p-4 ring-1 ring-inset ring-white/12",
-                  "shadow-[0_2px_4px_-1px_oklch(0.32_0.035_48_/_0.09),0_8px_24px_-6px_oklch(0.36_0.04_50_/_0.18)]",
-                  "transition-[box-shadow,background-color,border-color]",
-                  "hover:border-border/45 hover:bg-card/72",
-                  "hover:shadow-[0_4px_8px_-2px_oklch(0.32_0.035_48_/_0.11),0_14px_34px_-8px_oklch(0.38_0.04_50_/_0.22)]",
-                )}
+                className={githubDashboardRepoCardClassName}
               >
                 <div className="flex items-start justify-between gap-2">
                   <span className={cn("min-w-0 truncate", heroIntroLeadMutedClauseCompactTypography)}>{repo.name}</span>
@@ -662,11 +641,8 @@ function GitHubDashboardElement({ data }: { data: GithubDashboardData }) {
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {repo.language ? (
                     <span
-                      className={cn(
-                        "rounded-full px-2 py-0.5 text-[0.65rem] font-medium text-white ring-1 ring-black/15",
-                        "shadow-[0_2px_4px_rgba(0,0,0,0.2),0_4px_10px_-2px_rgba(0,0,0,0.32)]",
-                      )}
-                      style={{ backgroundColor: getRepoLanguageColor(repo.language) }}
+                      className={githubDashboardLanguageChipClassName}
+                      style={{ backgroundColor: getRepoLanguageChipBackgroundColor(repo.language) }}
                     >
                       {repo.language}
                     </span>
@@ -695,11 +671,7 @@ export function ExperienceSection({ result, avatarSrc, className }: ExperienceSe
 
   return (
     <section
-      className={cn(
-        "w-full scroll-mt-[var(--navbar-height)]",
-        "[--experience-wave-shift-y:min(0.35rem,0.6dvh)]",
-        className,
-      )}
+      className={cn("w-full scroll-mt-[var(--navbar-height)]", className)}
       aria-labelledby="works-heading"
     >
       <div className={cn(siteChromeGutters)}>
@@ -726,7 +698,7 @@ export function ExperienceSection({ result, avatarSrc, className }: ExperienceSe
             <GitHubDashboardElement data={displayData} />
           </div>
 
-          <CareerRoadmapInteractiveSceneElement belowNextStopSlot={<ExperienceSectionWave />} />
+          <CareerRoadmapInteractiveSceneElement />
         </div>
       </div>
     </section>

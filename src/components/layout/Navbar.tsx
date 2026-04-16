@@ -4,7 +4,7 @@ import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 const mainNavShell =
-  "glass-lit flex flex-wrap items-center justify-start gap-x-2 gap-y-1 rounded-2xl px-2 py-1 sm:gap-x-4 sm:px-3 sm:py-1.5 md:gap-x-6 md:px-4 md:py-2";
+  "glass-lit flex max-w-full flex-wrap items-center justify-start gap-x-1.5 gap-y-1 rounded-2xl px-1.5 py-1 sm:gap-x-4 sm:px-3 sm:py-1.5 md:gap-x-6 md:px-4 md:py-2";
 
 export type NavbarVariant = "overlay" | "static";
 
@@ -35,9 +35,20 @@ export function Navbar({
               <a
                 key={item.href}
                 href={item.href}
-                className={cn(linkHoverUnderline, headerMainNavLinkAppearance)}
+                className={cn(
+                  linkHoverUnderline,
+                  headerMainNavLinkAppearance,
+                  "min-w-0 shrink whitespace-nowrap",
+                )}
               >
-                {item.label}
+                {"shortLabel" in item ? (
+                  <>
+                    <span className="sm:hidden">{item.shortLabel}</span>
+                    <span className="hidden sm:inline">{item.label}</span>
+                  </>
+                ) : (
+                  item.label
+                )}
               </a>
             ))}
           </nav>

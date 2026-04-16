@@ -4,23 +4,32 @@ import { useEffect, useRef } from "react";
 
 import { HOME_MAIN_GATE_ID } from "@/lib/home-entrance";
 import {
-  HOMEPAGE_STACK_PANEL_SELECTOR,
-  HOMEPAGE_STACK_ROLE,
-} from "@/lib/homepage-stack";
+  attachStackIntroScrollTrigger,
+  forEachNonHeroPanel,
+  getStackIntroViewportEnterY,
+  getStackMountSignature,
+  type HomepageStackGsapContext,
+  playNonHeroPanelStackIntrosIfInViewport,
+  playStackIntrosIfAlreadyEntered,
+  queryStackIntroCards,
+  queryStackIntroPanels,
+} from "@/lib/homepage-stack-scroll";
 
-/** Return type of `gsap.context` — avoids importing non-exported types from `gsap/gsap-core`. */
-type GsapContext = { revert: (config?: object) => void };
+type HomepageStackScrollProps = {
+  /** Scope panel queries + GSAP context to this element (default: homepage main gate). */
+  gateId?: string;
+};
 
-export function HomepageStackScroll() {
-  const lastLenRef = useRef(0);
-  const ctxRef = useRef<GsapContext | null>(null);
+export function HomepageStackScroll({ gateId = HOME_MAIN_GATE_ID }: HomepageStackScrollProps) {
+  const lastStackSigRef = useRef("");
+  const ctxRef = useRef<HomepageStackGsapContext | null>(null);
   const moRef = useRef<MutationObserver | null>(null);
   const loadListenerRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const gate = document.getElementById(HOME_MAIN_GATE_ID);
+    const gate = document.getElementById(gateId);
     if (!gate) return;
 
     let disposed = false;
@@ -42,47 +51,29 @@ export function HomepageStackScroll() {
           ctxRef.current?.revert();
           ctxRef.current = null;
 
-          const panels = Array.from(
-            gate.querySelectorAll<HTMLElement>(HOMEPAGE_STACK_PANEL_SELECTOR),
-          );
-          if (panels.length === 0) return;
+          const panels = queryStackIntroPanels(gate);
+          const introCards = queryStackIntroCards(gate);
 
-          lastLenRef.current = panels.length;
+          if (panels.length === 0 && introCards.length === 0) return;
+
+          lastStackSigRef.current = getStackMountSignature(gate);
+
+          const playIntroByEl = new Map<HTMLElement, () => void>();
 
           ctxRef.current = gsap.context(() => {
-            for (const panel of panels) {
-              const role = panel.dataset.homepageStackPanel;
-              if (role === HOMEPAGE_STACK_ROLE.hero) continue;
-
-              const playIntro = () => {
-                if (panel.dataset.stackIntroPlayed === "1") return;
-                panel.dataset.stackIntroPlayed = "1";
-
-                gsap.fromTo(
-                  panel,
-                  { yPercent: 11, scale: 0.93, transformOrigin: "50% 0%" },
-                  {
-                    yPercent: 0,
-                    scale: 1,
-                    duration: 1.05,
-                    ease: "elastic.out(1, 0.5)",
-                    overwrite: "auto",
-                  },
-                );
-              };
-
-              ScrollTrigger.create({
-                trigger: panel,
-                start: "top bottom-=10%",
-                onEnter: playIntro,
-                onLeaveBack: () => {
-                  panel.dataset.stackIntroPlayed = "";
-                },
-              });
+            forEachNonHeroPanel(panels, (panel) => {
+              attachStackIntroScrollTrigger(gsap, ScrollTrigger, panel, playIntroByEl);
+            });
+            for (const card of introCards) {
+              attachStackIntroScrollTrigger(gsap, ScrollTrigger, card, playIntroByEl);
             }
           }, gate);
 
           ScrollTrigger.refresh();
+
+          const viewportEnterY = getStackIntroViewportEnterY();
+          playNonHeroPanelStackIntrosIfInViewport(panels, playIntroByEl, viewportEnterY);
+          playStackIntrosIfAlreadyEntered(introCards, playIntroByEl, viewportEnterY);
         };
 
         mount();
@@ -91,8 +82,8 @@ export function HomepageStackScroll() {
 
         moRef.current?.disconnect();
         moRef.current = new MutationObserver(() => {
-          const n = gate.querySelectorAll(HOMEPAGE_STACK_PANEL_SELECTOR).length;
-          if (n !== lastLenRef.current) {
+          const sig = getStackMountSignature(gate);
+          if (sig !== lastStackSigRef.current) {
             mount();
           }
         });
@@ -112,7 +103,7 @@ export function HomepageStackScroll() {
       ctxRef.current?.revert();
       ctxRef.current = null;
     };
-  }, []);
+  }, [gateId]);
 
   return null;
 }

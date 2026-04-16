@@ -1,0 +1,80 @@
+---
+import { siteChromeGutters } from "@/lib/site-chrome";
+import { HOMEPAGE_STACK_ROLE } from "@/lib/homepage-stack";
+import {
+  pageStackColumnBottomPaddingClass,
+  pageStackContentInner,
+  pageStackSurfaceBelowHeroClass,
+  pageStackSurfaceDeepBelowHeroClass,
+  pageStackSurfaceStandaloneClass,
+} from "@/lib/site-page-layout";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  /**
+   * `belowHero` — rounded top + padding under `StackHeroBanner` (default).
+   * `standalone` — same frosted surface for pages without a hero slab (e.g. thoughts placeholder).
+   */
+  stackVariant?: "belowHero" | "standalone";
+  /**
+   * When true, wraps the default slot in `pageStackContentInner` (max width + section vertical gaps).
+   * Set false when a child already applies `pageStackContentInner` (e.g. `/projects` inner column).
+   */
+  wrapInnerColumn?: boolean;
+  /**
+   * When true, this frosted panel gets `data-homepage-stack-panel="surface"` for the same GSAP
+   * stack intro as homepage experience / more slabs (`HomepageStackScroll`).
+   */
+  stackScrollSurface?: boolean;
+  /**
+   * When `stackScrollSurface` is set on a below-hero slab, mirrors homepage z-order / wash: first
+   * surface (`primary`, default) vs deeper slab (`deep`) like Experience vs More About Me.
+   */
+  stackSurfaceLayer?: "primary" | "deep";
+}
+
+const {
+  stackVariant = "belowHero",
+  wrapInnerColumn = false,
+  stackScrollSurface = false,
+  stackSurfaceLayer = "primary",
+} = Astro.props;
+
+const useDeepSurface =
+  stackScrollSurface && stackVariant === "belowHero" && stackSurfaceLayer === "deep";
+
+const surfaceClass =
+  stackVariant === "standalone"
+    ? pageStackSurfaceStandaloneClass
+    : useDeepSurface
+      ? pageStackSurfaceDeepBelowHeroClass
+      : pageStackSurfaceBelowHeroClass;
+
+const stackStickyClass =
+  stackScrollSurface && stackVariant === "belowHero"
+    ? useDeepSurface
+      ? "sticky top-0 z-[16]"
+      : "sticky top-0 z-[14]"
+    : "";
+---
+
+<div
+  class:list={[
+    siteChromeGutters,
+    cn(surfaceClass, stackStickyClass),
+    pageStackColumnBottomPaddingClass,
+  ]}
+  {...(stackScrollSurface
+    ? { "data-homepage-stack-panel": HOMEPAGE_STACK_ROLE.surface }
+    : {})}
+>
+  {
+    wrapInnerColumn ? (
+      <div class:list={[pageStackContentInner]}>
+        <slot />
+      </div>
+    ) : (
+      <slot />
+    )
+  }
+</div>
