@@ -5,11 +5,12 @@ export const HERO_STACK_BANNER_SECTION_CLASS =
   "homepage-stack-surface relative isolate box-border w-screen max-w-[100vw] shrink-0 overflow-x-clip";
 
 /**
- * Fixed band for `object-cover` hero art: portrait-leaning below `sm`, 16:9 from `sm` up;
- * never taller than 100vh (Tailwind `sm` = 640px).
+ * Fixed band for `object-cover` hero art:
+ * - below `sm`: always 100vh (full-viewport slab)
+ * - `sm+`: 16:9 band, capped at 100vh
  */
 export const HERO_STACK_BANNER_FRAME_CLASS =
-  "relative w-full overflow-hidden max-h-[100vh] h-[min(100vh,calc(100vw*4/3))] sm:h-[min(100vh,56.25vw)]";
+  "relative w-full overflow-hidden h-screen sm:h-[min(100vh,56.25vw)]";
 
 export const HERO_STACK_BANNER_IMG_CLASS =
   "absolute inset-0 h-full w-full object-cover object-center";
