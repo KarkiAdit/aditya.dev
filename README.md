@@ -1,4 +1,4 @@
-# aditya.dev
+# adityakarki.me
 
 Personal portfolio: Astro 6, React for shadcn, Tailwind v4, and MDX in **`content/`**.
 

@@ -1,4 +1,4 @@
-# Project: aditya.dev — Personal Portfolio
+# Project: adityakarki.me — Personal Portfolio
 
 ## Stack & Architecture
 - **Framework:** Astro 6 (Static Build).
