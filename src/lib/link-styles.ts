@@ -1,4 +1,3 @@
-import { THOUGHT_HUB_PILL_ON_MEDIA } from "@/lib/thoughts-hub-layout";
 import { cn } from "@/lib/utils";
 
 export const linkHoverUnderline =
@@ -68,13 +67,12 @@ export const memoryLaneNoteBodyTypography = cn(
 );
 
 /**
- * Overlay copy on polaroid-style cards — same chip shell as Thoughts featured media
- * ({@link THOUGHT_HUB_PILL_ON_MEDIA}), with sentence case and fluid type slightly above the stock
- * `text-[0.7rem]` pill (`cqi` vs `polaroidCardImageWellClassName`).
+ * Overlay copy on polaroid-style cards — outline pill on photo (no fill), with sentence case and
+ * fluid type slightly above the stock `text-[0.7rem]` pill (`cqi` vs `polaroidCardImageWellClassName`).
  */
 export const polaroidOverlayCaptionTypography = cn(
-  THOUGHT_HUB_PILL_ON_MEDIA,
-  /** Shrink-wrap the glass chip to the text (up to max width); avoid full-bleed colored bar. */
+  "inline-flex items-center justify-center rounded-full border border-white bg-transparent text-white shadow-none",
+  /** Shrink-wrap the chip to the text (up to max width); avoid full-bleed bar. */
   "w-fit max-w-[min(100%,min(42rem,92vw))] min-w-0 whitespace-normal text-pretty text-center normal-case font-medium tracking-tight",
   "px-3.5 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3",
   /** ~0.8rem floor → ~1.45rem cap; a step larger than the default pill body size. */
