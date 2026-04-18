@@ -3,8 +3,8 @@ import type { CollectionEntry } from "astro:content";
 
 import { ThoughtShareButton } from "@/components/thoughts/ThoughtShareButton";
 import { absoluteOnSite } from "@/lib/metadata";
+import { featuredNicheTechStackChipClassName } from "@/lib/projects-page";
 import {
-  THOUGHT_HUB_FEED_GENRE_CHIP,
   THOUGHT_HUB_FEED_META_READ,
   THOUGHT_HUB_FEED_META_READ_DISABLED,
   THOUGHT_HUB_FEED_ROW,
@@ -15,7 +15,6 @@ import {
 } from "@/lib/thoughts-hub-layout";
 import {
   THOUGHT_SECONDARY_MUTED_CLASS,
-  thoughtGenreLabel,
   thoughtIsUnreleased,
   thoughtPostHref,
   thoughtReleaseIsoAndDisplay,
@@ -74,7 +73,7 @@ const { feed } = Astro.props;
                     THOUGHT_SECONDARY_MUTED_CLASS,
                   ]}
                 >
-                  <span class:list={[THOUGHT_HUB_FEED_GENRE_CHIP]}>{thoughtGenreLabel(post.data.genre)}</span>
+                  {post.data.subgenres.map((s) => <span class:list={[featuredNicheTechStackChipClassName]}>{s}</span>)}
                   <span class="text-foreground-muted/50" aria-hidden="true">
                     ·
                   </span>

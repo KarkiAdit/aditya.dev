@@ -54,6 +54,8 @@ const blog = defineCollection({
     summary: z.string(),
     /** Primary shelf for hub filters. */
     genre: thoughtGenreSchema,
+    /** Narrower topics for chips (navbar already shows the main genre); exactly two per post. */
+    subgenres: z.array(z.string().min(1)).length(2),
     /** When true, prefer this post as the featured hero (otherwise the newest post is featured). */
     featured: z.boolean().optional(),
     /** Optional hero / card image (`public/` path, e.g. `/photos/post-cover.jpg`). */

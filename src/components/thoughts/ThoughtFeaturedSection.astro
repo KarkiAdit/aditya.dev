@@ -15,7 +15,6 @@ import {
   THOUGHT_FEATURED_CREAM_FAINT_CLASS,
   THOUGHT_SECONDARY_META_ON_DARK_CLASS,
   THOUGHT_SECONDARY_ON_DARK_CLASS,
-  thoughtGenreLabel,
   thoughtIsUnreleased,
   thoughtPostHref,
   thoughtReleaseIsoAndDisplay,
@@ -78,10 +77,7 @@ const release = thoughtReleaseIsoAndDisplay(featured);
             <div class="block max-w-3xl min-w-0 cursor-default">
               <header class="flex flex-col gap-3 sm:gap-4">
                 <div class="flex flex-wrap items-center gap-2" aria-label="Topics">
-                  <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{thoughtGenreLabel(featured.data.genre)}</span>
-                  {featured.data.tags?.slice(0, 1).map((tag) => (
-                    <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{tag}</span>
-                  ))}
+                  {featured.data.subgenres.map((s) => <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{s}</span>)}
                 </div>
                 <div class="flex flex-col gap-2 sm:gap-3">
                   <h3 class:list={[THOUGHT_HUB_FEATURED_TITLE, THOUGHT_FEATURED_CREAM_CLASS]}>
@@ -98,10 +94,7 @@ const release = thoughtReleaseIsoAndDisplay(featured);
             >
               <header class="flex flex-col gap-3 sm:gap-4">
                 <div class="flex flex-wrap items-center gap-2" aria-label="Topics">
-                  <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{thoughtGenreLabel(featured.data.genre)}</span>
-                  {featured.data.tags?.slice(0, 1).map((tag) => (
-                    <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{tag}</span>
-                  ))}
+                  {featured.data.subgenres.map((s) => <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{s}</span>)}
                 </div>
                 <div class="flex flex-col gap-2 sm:gap-3">
                   <h3 class:list={[THOUGHT_HUB_FEATURED_TITLE, THOUGHT_FEATURED_CREAM_CLASS]}>

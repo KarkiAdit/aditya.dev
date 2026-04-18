@@ -15,11 +15,9 @@ export const THOUGHT_HUB_FEED_ROW = "thought-feed-row min-w-0 py-4 sm:py-5";
 export const THOUGHT_HUB_FEED_THUMB =
   "relative h-[4.75rem] w-full shrink-0 overflow-hidden rounded-md bg-transparent sm:h-[5.75rem] sm:rounded-lg";
 
-export const THOUGHT_HUB_FEED_GENRE_CHIP =
-  "rounded-full bg-primary/14 px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-heading sm:px-2.5 sm:py-1";
-
+/** Subgenre chips on the featured hero cover (`ThoughtFeaturedSection`) — outline on photo, no fill. */
 export const THOUGHT_HUB_PILL_ON_MEDIA =
-  "inline-flex items-center rounded-full border-0 bg-black/50 px-2.5 py-1 text-xs font-bold uppercase tracking-[0.08em] text-white/82 shadow-[0_2px_10px_rgba(0,0,0,0.45)] backdrop-blur-md sm:px-3 sm:py-1.5 sm:text-[0.8125rem]";
+  "inline-flex items-center rounded-full border border-white/88 bg-transparent px-2.5 py-1 text-xs font-bold uppercase tracking-[0.08em] text-white/88 shadow-none sm:px-3 sm:py-1.5 sm:text-[0.8125rem]";
 
 export const THOUGHT_HUB_FEED_META_READ =
   "text-base font-semibold text-primary underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-lg";
