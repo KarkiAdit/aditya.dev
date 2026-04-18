@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PageStackBody from "@/components/layout/PageStackBody.astro";
 import ThoughtsDashboard from "@/components/thoughts/ThoughtsDashboard.astro";
-import { formatDocumentTitle } from "@/lib/metadata";
+import { formatDocumentTitle, thoughtsHubMetaDescription } from "@/lib/metadata";
 import {
   compareThoughtPostsByDate,
   featuredFirstPostByGenre,
@@ -15,7 +15,7 @@ import {
 } from "@/lib/thoughts";
 
 const title = formatDocumentTitle("My Thoughts");
-const description = "Writing and essays.";
+const description = thoughtsHubMetaDescription;
 
 const posts = await getCollection("blog");
 const sorted = [...posts].sort(compareThoughtPostsByDate);

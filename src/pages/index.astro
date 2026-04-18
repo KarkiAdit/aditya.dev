@@ -62,7 +62,7 @@ const memoryLaneNoteImages = [
 const ogImage = absoluteOnSite(homeHeroBanner.srcDesktop);
 
 const title = siteConfig.title;
-const description = siteConfig.bio;
+const description = siteConfig.metaDescription;
 ---
 
 <BaseLayout
@@ -71,6 +71,7 @@ const description = siteConfig.bio;
   pathname={Astro.url.pathname}
   canonicalPath="/"
   ogImage={ogImage}
+  personSchemaImage={ogImage}
   overlayNavbar
 >
   <script is:inline define:vars={{ homeEntranceCookie: HOME_ENTRANCE_COOKIE }}>

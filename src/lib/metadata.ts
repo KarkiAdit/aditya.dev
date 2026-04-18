@@ -33,6 +33,19 @@ export function absoluteOnSite(assetHref: string): string {
   }
 }
 
+/**
+ * Trim text to a snippet-friendly length for `<meta name="description">` (search engines often show ~155–160 characters).
+ * Avoids cutting mid-word when possible.
+ */
+export function clampMetaDescription(text: string, maxChars = 158): string {
+  const normalized = text.trim().replace(/\s+/g, " ");
+  if (normalized.length <= maxChars) return normalized;
+  const slice = normalized.slice(0, maxChars);
+  const lastSpace = slice.lastIndexOf(" ");
+  const head = lastSpace > 40 ? slice.slice(0, lastSpace) : slice;
+  return `${head.trimEnd()}…`;
+}
+
 /** Document `<title>`: home is just the name; inner pages use `Section | Name`. */
 export function formatDocumentTitle(pageHeadline: string): string {
   const name = siteConfig.name;
@@ -67,6 +80,78 @@ export function profileSameAs(): string[] {
   return [...new Set(urls)];
 }
 
+/** ISO date (YYYY-MM-DD) for legal pages; update when privacy or terms copy changes meaningfully. */
+export const LEGAL_PAGES_LAST_UPDATED = "2026-04-17";
+
+/** Human-readable date for legal page footers (stable UTC calendar date). */
+export function formatLegalDateDisplay(isoDateYmd: string): string {
+  const [y, m, d] = isoDateYmd.split("-").map(Number);
+  if (!y || !m || !d) return isoDateYmd;
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/**
+ * Page-level JSON-LD for legal documents: `WebPage` linked to site `#website` / `#person`, plus `BreadcrumbList`.
+ * Emitted as a second `<script type="application/ld+json">` alongside `siteJsonLd` (Person + WebSite).
+ * Pass the same absolute URL as `<link rel="canonical">` (including trailing slash if your host uses it).
+ */
+export function legalPageStructuredData(options: {
+  canonicalHref: string;
+  headline: string;
+  description: string;
+  dateModified: string;
+}): string {
+  const base = siteUrl().replace(/\/$/, "");
+  const url = options.canonicalHref.replace(/\/$/, "") === base ? `${base}/` : options.canonicalHref;
+
+  const websiteId = `${base}/#website`;
+  const personId = `${base}/#person`;
+  const webPageId = `${url}#webpage`;
+  const breadcrumbId = `${url}#breadcrumb`;
+
+  const graph: Record<string, unknown>[] = [
+    {
+      "@type": "WebPage",
+      "@id": webPageId,
+      url,
+      name: options.headline,
+      description: options.description,
+      inLanguage: "en-US",
+      isPartOf: { "@id": websiteId },
+      author: { "@id": personId },
+      dateModified: options.dateModified,
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": breadcrumbId,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: `${base}/`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: options.headline,
+          item: url,
+        },
+      ],
+    },
+  ];
+
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": graph,
+  });
+}
+
 export function siteJsonLd(options?: { personImage?: string }): string {
   const base = siteUrl();
   const homeUrl = `${base}/`;
@@ -96,7 +181,8 @@ export function siteJsonLd(options?: { personImage?: string }): string {
     "@id": websiteId,
     url: homeUrl,
     name: siteConfig.name,
-    description: siteConfig.bio,
+    /** Snippet-style site line; `Person` carries the longer bio to avoid repeating the same paragraph twice. */
+    description: siteConfig.metaDescription,
     publisher: { "@id": personId },
     inLanguage: "en-US",
   };
@@ -107,11 +193,56 @@ export function siteJsonLd(options?: { personImage?: string }): string {
   });
 }
 
+/**
+ * JSON-LD for a single essay (`BlogPosting`): one graph, no duplicate Article microdata in HTML.
+ * `description` should match the on-page dek (full `summary`); keep meta descriptions snippet-sized separately.
+ */
+export function thoughtPostStructuredData(options: {
+  canonicalHref: string;
+  headline: string;
+  description: string;
+  datePublished: string;
+  imageUrl?: string;
+}): string {
+  const base = siteUrl().replace(/\/$/, "");
+  const url = options.canonicalHref.replace(/\/$/, "") === base ? `${base}/` : options.canonicalHref;
+  const personId = `${base}/#person`;
+  const websiteId = `${base}/#website`;
+  const postingId = `${url}#blogposting`;
+
+  const blogPosting: Record<string, unknown> = {
+    "@type": "BlogPosting",
+    "@id": postingId,
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${url}#webpage`, url },
+    url,
+    headline: options.headline,
+    description: options.description,
+    datePublished: options.datePublished,
+    author: { "@id": personId },
+    publisher: { "@id": personId },
+    isPartOf: { "@id": websiteId },
+    inLanguage: "en-US",
+  };
+
+  if (options.imageUrl) blogPosting.image = options.imageUrl;
+
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [blogPosting],
+  });
+}
+
 export const siteConfig = {
   name: "Aditya Karki",
   title: "Aditya Karki",
   /**
-   * Homepage meta description, Open Graph / Twitter, and JSON-LD (`Person` + `WebSite`).
+   * Homepage `<meta name="description">` / OG / Twitter (snippet-length, tuned for search result display).
+   * The longer story lives in {@link siteConfig.bio} and JSON-LD.
+   */
+  metaDescription:
+    "Aditya Karki — Google software engineer, writer, and spiritual thinker. Portfolio and essays on engineering, consciousness, Buddhist & Taoist philosophy, and long-form ideas.",
+  /**
+   * Richer narrative for JSON-LD (`Person` + `WebSite` description) and on-page identity; not limited to snippet length.
    */
   bio: "Aditya Karki: Software Engineer at Google and 3x SWE Intern. I bridge the gap between complex systems and human consciousness, writing at the intersection of professional engineering, Buddhist and Taoist philosophy, and spiritual discipline.",
   jobTitle: "Software Engineer",
@@ -125,3 +256,16 @@ export const siteConfig = {
     return siteUrl();
   },
 } as const;
+
+/** `/thoughts` — matches hub genres (spirituality, philosophy, science) and the site’s themes. */
+export const thoughtsHubMetaDescription =
+  "Thoughts and essays by Aditya Karki on spirituality, philosophy, science, and software—long-form writing where engineering meets the Gita, Taoism, meditation, and modern life.";
+
+/** `/projects` — featured work, GitHub, and reading aligned with the projects page content. */
+export const projectsHubMetaDescription =
+  "Software engineering projects by Aditya Karki: featured builds, GitHub repos, technical notes and screenshots, plus current reading and focus areas.";
+
+export type ArticleOpenGraph = {
+  publishedTime: string;
+  modifiedTime?: string;
+};

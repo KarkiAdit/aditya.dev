@@ -5,7 +5,7 @@ import { render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ProjectsDashboard from "@/components/projects/ProjectsDashboard.astro";
 import professionalHeadshot from "@/assets/images/additional/professional-headshot.jpeg";
-import { formatDocumentTitle } from "@/lib/metadata";
+import { formatDocumentTitle, projectsHubMetaDescription } from "@/lib/metadata";
 import { fetchGithubDashboard } from "@/lib/github-dashboard";
 import { GITHUB_SNAPSHOT_PICK_ID } from "@/lib/featured-niche-projects";
 import { mdxArticleBodyClass } from "@/lib/mdx-article-body";
@@ -18,7 +18,7 @@ import {
 import { getFeaturedNichePublicImageMap } from "@/lib/projects-assets";
 
 const title = formatDocumentTitle("Projects");
-const description = "A projects dashboard: current reading and featured work.";
+const description = projectsHubMetaDescription;
 
 const githubLogin = import.meta.env.PUBLIC_GITHUB_LOGIN?.trim() ?? "";
 const githubDashboardPromise =

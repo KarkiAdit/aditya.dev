@@ -4,7 +4,13 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PageStackBody from "@/components/layout/PageStackBody.astro";
 import { ThoughtShareButton } from "@/components/thoughts/ThoughtShareButton";
-import { absoluteOnSite, formatDocumentTitle } from "@/lib/metadata";
+import {
+  absoluteOnSite,
+  clampMetaDescription,
+  formatDocumentTitle,
+  siteConfig,
+  thoughtPostStructuredData,
+} from "@/lib/metadata";
 import { mdxArticleBodyClass } from "@/lib/mdx-article-body";
 import {
   formatThoughtDisplayDate,
@@ -38,7 +44,14 @@ const isUnreleasedPost = thoughtIsUnreleased(post);
 const displayReleaseDate = thoughtReleasedDateOrNull(post);
 
 const title = formatDocumentTitle(post.data.title);
-const description = post.data.summary;
+const summaryTrimmed = post.data.summary.trim();
+const description = clampMetaDescription(
+  summaryTrimmed.length > 0
+    ? summaryTrimmed
+    : `${post.data.title} — ${thoughtGenreLabel(post.data.genre)} essay by ${siteConfig.name}.`,
+);
+const releasedForOpenGraph = displayReleaseDate ?? post.data.date;
+const articleOpenGraph = { publishedTime: releasedForOpenGraph.toISOString() };
 const genreLabel = thoughtGenreLabel(post.data.genre);
 const readingMinutes = thoughtReadingMinutesFromEntryId(post.id);
 const resolvedCover = thoughtResolvedCoverImage(post);
@@ -47,6 +60,19 @@ const ogImage = resolvedCover
     ? resolvedCover
     : absoluteOnSite(resolvedCover)
   : undefined;
+
+const canonicalHref = new URL(Astro.url.pathname, Astro.site ?? siteConfig.url).href;
+const schemaBodyDescription =
+  post.data.summary.trim().length > 0
+    ? post.data.summary.trim()
+    : `${post.data.title} — ${thoughtGenreLabel(post.data.genre)} essay by ${siteConfig.name}.`;
+const supplementalStructuredData = thoughtPostStructuredData({
+  canonicalHref,
+  headline: post.data.title,
+  description: schemaBodyDescription,
+  datePublished: releasedForOpenGraph.toISOString(),
+  imageUrl: ogImage,
+});
 
 const postShareUrl = absoluteOnSite(thoughtPostHref(post));
 
@@ -68,7 +94,14 @@ const thoughtPostPageShellClass =
   "nav-rail-icon-group-surface flex min-h-0 min-w-0 flex-1 flex-col";
 ---
 
-<BaseLayout title={title} description={description} pathname={Astro.url.pathname} ogImage={ogImage}>
+<BaseLayout
+  title={title}
+  description={description}
+  pathname={Astro.url.pathname}
+  ogImage={ogImage}
+  article={articleOpenGraph}
+  supplementalStructuredData={supplementalStructuredData}
+>
   <PageStackBody
     stackVariant="plain"
     plainTopPadding="compact"
@@ -79,8 +112,6 @@ const thoughtPostPageShellClass =
       class:list={[
         "thought-article-shell thought-article-medium flex w-full min-w-0 flex-col gap-8 bg-transparent px-5 py-8 sm:gap-9 sm:px-8 sm:py-10 md:gap-10 md:px-10 md:py-12",
       ]}
-      itemscope
-      itemtype="https://schema.org/Article"
     >
       <header class="flex min-w-0 flex-col gap-4 sm:gap-5">
         <p class="thought-article-kicker m-0 font-sans">{genreLabel}</p>
@@ -96,24 +127,17 @@ const thoughtPostPageShellClass =
 
         <h1
           class="m-0 text-balance font-sans text-[2.25rem] font-bold leading-[1.12] tracking-tight text-heading sm:text-[2.5rem] md:text-[2.75rem] md:leading-[1.1]"
-          itemprop="headline"
         >
           {post.data.title}
         </h1>
 
-        <p class:list={["m-0", mediumDekClass]} itemprop="description">
+        <p class:list={["m-0", mediumDekClass]}>
           {post.data.summary}
         </p>
 
         {
           resolvedCover ? (
-            <figure
-              class="m-0 w-full overflow-hidden rounded-sm"
-              itemprop="image"
-              itemscope
-              itemtype="https://schema.org/ImageObject"
-            >
-              <meta itemprop="url" content={resolvedCover} />
+            <figure class="m-0 w-full overflow-hidden rounded-sm">
               <img
                 src={resolvedCover}
                 alt={post.data.title}
@@ -137,19 +161,11 @@ const thoughtPostPageShellClass =
           </span>
           {
             displayReleaseDate ? (
-              <time
-                class="tabular-nums"
-                datetime={displayReleaseDate.toISOString()}
-                itemprop="datePublished"
-              >
+              <time class="tabular-nums" datetime={displayReleaseDate.toISOString()}>
                 {formatThoughtDisplayDate(displayReleaseDate)}
               </time>
             ) : (
-              <span
-                class="tabular-nums font-semibold text-[#242424]"
-                itemprop="datePublished"
-                aria-label="Release date not yet available"
-              >
+              <span class="tabular-nums font-semibold text-[#242424]" aria-label="Release date not yet available">
                 N/A
               </span>
             )
@@ -182,7 +198,7 @@ const thoughtPostPageShellClass =
       <hr class="m-0 h-px w-full border-0 bg-[#e6e6e6]" />
 
       <div class="min-w-0" role="region" aria-label="Article body">
-        <div class:list={mdxProseClass} itemprop="articleBody">
+        <div class:list={mdxProseClass}>
           <Content />
         </div>
       </div>
