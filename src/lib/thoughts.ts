@@ -65,7 +65,7 @@ export function thoughtReleaseIsoAndDisplay(
 
 /** Muted secondary on the light page canvas (feed summaries, hub meta row, empty state). */
 export const THOUGHT_SECONDARY_MUTED_CLASS =
-  "text-pretty text-sm font-normal leading-relaxed text-foreground-muted sm:text-base sm:leading-relaxed";
+  "text-pretty text-base font-normal leading-relaxed text-foreground-muted sm:text-lg sm:leading-relaxed";
 
 /** Featured hero — title / chips / N/A (peach-cream, high L, extra chroma vs primary-foreground). */
 export const THOUGHT_FEATURED_CREAM_CLASS = featuredHeroCreamInkClass;
@@ -81,7 +81,7 @@ export const THOUGHT_SECONDARY_ON_DARK_CLASS = cn(
 
 /** Featured hero — meta row (date) on black scrim — secondary to title. */
 export const THOUGHT_SECONDARY_META_ON_DARK_CLASS = cn(
-  "text-pretty text-sm font-medium leading-relaxed sm:text-base sm:leading-relaxed",
+  "text-pretty text-base font-medium leading-relaxed sm:text-lg sm:leading-relaxed",
   textOnDarkScrimClass,
 );
 

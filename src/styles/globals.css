@@ -129,7 +129,29 @@ body::-webkit-scrollbar {
 
   /** Thoughts hub — small caps label above featured / section blocks. */
   .thought-hub-eyebrow {
-    @apply m-0 mb-3 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-foreground-muted md:mb-4;
+    @apply m-0 mb-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-muted md:mb-4;
+  }
+
+  .thoughts-dashboard .thought-btn-primary,
+  .thoughts-dashboard .thought-btn-filter-idle {
+    @apply text-base sm:text-lg;
+  }
+
+  .thoughts-dashboard .thought-btn-secondary {
+    @apply text-base sm:text-lg;
+  }
+
+  .thoughts-dashboard .thought-pager-page--primary,
+  .thoughts-dashboard .thought-pager-page--tertiary {
+    @apply text-base sm:text-lg;
+  }
+
+  .thoughts-dashboard .thought-genre-details summary {
+    @apply text-base sm:text-lg;
+  }
+
+  .thoughts-dashboard .thought-genre-details[open] [data-thought-genre-toggle-label] {
+    @apply text-base sm:text-lg;
   }
 
   /** Article page — optional kicker (matches hub rhythm). */
