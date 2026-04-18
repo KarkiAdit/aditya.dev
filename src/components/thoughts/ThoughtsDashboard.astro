@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import DataDashboard from "@/components/additional/DataDashboard.astro";
+import ThoughtFeaturedSection from "@/components/thoughts/ThoughtFeaturedSection.astro";
+import ThoughtGenreChrome from "@/components/thoughts/ThoughtGenreChrome.astro";
+import ThoughtPostFeed from "@/components/thoughts/ThoughtPostFeed.astro";
+import { ThoughtsHubScroll } from "@/components/thoughts/ThoughtsHubScroll";
+import ThoughtsDashboardPagerScript from "@/components/thoughts/ThoughtsDashboardPagerScript.astro";
+import { THOUGHT_SECONDARY_MUTED_CLASS, THOUGHT_GENRE_ORDER, type ThoughtGenreId } from "@/lib/thoughts";
+
+interface Props {
+  featuredByGenre: Record<ThoughtGenreId, CollectionEntry<"blog"> | null>;
+  feed: CollectionEntry<"blog">[];
+  /** Matches `?g=` on first paint (client script re-syncs from the URL). */
+  initialGenre: ThoughtGenreId;
+}
+
+const { featuredByGenre, feed, initialGenre } = Astro.props;
+---
+
+<DataDashboard id="thoughts-hub-gate" rootClass="thoughts-dashboard flex min-w-0 flex-col gap-0 bg-transparent">
+  <ThoughtsHubScroll slot="scroll" client:load />
+  <ThoughtGenreChrome slot="chrome" initialGenre={initialGenre} />
+
+  <p class:list={["mt-4 hidden max-w-prose", THOUGHT_SECONDARY_MUTED_CLASS]} data-thought-empty role="status">
+    Nothing in this category yet. Try another genre or check back soon.
+  </p>
+
+  {
+    THOUGHT_GENRE_ORDER.map((g) => {
+      const featured = featuredByGenre[g];
+      if (!featured) return null;
+      return <ThoughtFeaturedSection genre={g} featured={featured} initialGenre={initialGenre} />;
+    })
+  }
+
+  <ThoughtPostFeed feed={feed} />
+</DataDashboard>
+
+<ThoughtsDashboardPagerScript />

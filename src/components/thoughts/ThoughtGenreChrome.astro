@@ -1,0 +1,79 @@
+---
+import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
+import {
+  THOUGHT_HUB_FILTER_NAV,
+  THOUGHT_HUB_GENRE_CHROME_SHELL,
+  THOUGHT_HUB_GENRE_FILTER_CARD,
+} from "@/lib/thoughts-hub-layout";
+import { THOUGHT_GENRE_ORDER, thoughtGenreLabel, type ThoughtGenreId } from "@/lib/thoughts";
+
+interface Props {
+  initialGenre: ThoughtGenreId;
+}
+
+const { initialGenre } = Astro.props;
+---
+
+<div class:list={[THOUGHT_HUB_GENRE_CHROME_SHELL]}>
+  <div class:list={[siteChromeGutters, "pointer-events-auto pb-6"]}>
+    <div class:list={[siteChromeInner, "flex w-full min-w-0 justify-end"]}>
+      <div class:list={[THOUGHT_HUB_GENRE_FILTER_CARD]}>
+        <details class="thought-genre-details md:hidden" data-thought-genre-details>
+          <summary
+            class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-xl px-0.5 py-0.5 text-sm font-semibold text-secondary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:gap-3 sm:text-base [&::-webkit-details-marker]:hidden"
+          >
+            <span class="min-w-0">
+              <span class="sr-only">Filter posts —</span>
+              <span data-thought-genre-toggle-label>{thoughtGenreLabel(initialGenre)}</span>
+            </span>
+            <svg
+              class="thought-genre-chevron size-4 shrink-0 text-secondary-foreground transition-transform duration-200"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </summary>
+          <div
+            class="mt-2 flex max-w-[min(22rem,calc(100vw-var(--sidebar-width)-2.5rem))] flex-wrap gap-2 border-t border-white/10 pt-2"
+          >
+            {
+              THOUGHT_GENRE_ORDER.map((id) => (
+                <button
+                  type="button"
+                  class:list={[id === initialGenre ? "thought-btn-primary" : "thought-btn-filter-idle"]}
+                  data-thought-filter={id}
+                  aria-pressed={id === initialGenre}
+                >
+                  {thoughtGenreLabel(id)}
+                </button>
+              ))
+            }
+          </div>
+        </details>
+        <nav
+          class:list={["hidden min-w-0 md:flex", THOUGHT_HUB_FILTER_NAV]}
+          data-thought-filter-nav
+          aria-label="Filter posts by genre"
+        >
+          {
+            THOUGHT_GENRE_ORDER.map((id) => (
+              <button
+                type="button"
+                class:list={[id === initialGenre ? "thought-btn-primary" : "thought-btn-filter-idle"]}
+                data-thought-filter={id}
+                aria-pressed={id === initialGenre}
+              >
+                {thoughtGenreLabel(id)}
+              </button>
+            ))
+          }
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

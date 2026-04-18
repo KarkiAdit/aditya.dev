@@ -1,0 +1,115 @@
+---
+import { PROJECTS_BEST_PICKS_DASHBOARD_ID } from "@/lib/homepage/homepage-stack";
+
+interface FilterEntry {
+  id: string;
+  title: string;
+}
+
+interface Props {
+  initialPickId: string;
+  filterSpec: FilterEntry[];
+}
+
+const { initialPickId, filterSpec } = Astro.props;
+---
+
+<script is:inline define:vars={{ initialPickId, filterSpec, dashboardId: PROJECTS_BEST_PICKS_DASHBOARD_ID }}>
+  (function () {
+    const DEFAULT_ID = filterSpec[0]?.id || "";
+    const TITLE_BY_ID = Object.fromEntries(filterSpec.map(function (p) {
+      return [p.id, p.title];
+    }));
+    const VALID = new Set(filterSpec.map(function (p) {
+      return p.id;
+    }));
+
+    function readPickFromUrl() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var raw = params.get("pick");
+        if (raw && VALID.has(raw)) return raw;
+      } catch {
+        /* ignore */
+      }
+      return VALID.has(initialPickId) ? initialPickId : DEFAULT_ID;
+    }
+
+    function syncPickUrl(id) {
+      try {
+        if (!window.history || !window.history.replaceState) return;
+        var params = new URLSearchParams(window.location.search);
+        if (id && id !== DEFAULT_ID) params.set("pick", id);
+        else params.delete("pick");
+        var q = params.toString();
+        var path = window.location.pathname || "/projects";
+        window.history.replaceState(null, "", q ? path + "?" + q : path);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    function updateFilterButtons(activeId) {
+      document.querySelectorAll("[data-best-pick-filter]").forEach(function (btn) {
+        var attr = btn.getAttribute("data-best-pick-filter") || DEFAULT_ID;
+        var sel = attr === activeId;
+        btn.setAttribute("aria-pressed", sel ? "true" : "false");
+        btn.className = sel ? "thought-btn-primary" : "thought-btn-filter-idle";
+      });
+      var toggleLabel = document.querySelector("[data-best-pick-toggle-label]");
+      if (toggleLabel && TITLE_BY_ID[activeId]) toggleLabel.textContent = TITLE_BY_ID[activeId];
+    }
+
+    function applyPick(id) {
+      var pick = VALID.has(id) ? id : DEFAULT_ID;
+      document.querySelectorAll("[data-best-pick-panel]").forEach(function (el) {
+        var pid = el.getAttribute("data-best-pick-panel");
+        el.classList.toggle("hidden", pid !== pick);
+      });
+      updateFilterButtons(pick);
+      syncPickUrl(pick);
+      requestAnimationFrame(function () {
+        window.dispatchEvent(new Event("resize"));
+      });
+    }
+
+    document.querySelectorAll("[data-best-pick-filter]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var v = btn.getAttribute("data-best-pick-filter");
+        if (!v) return;
+        applyPick(v);
+        var details = document.querySelector("[data-best-pick-details]");
+        if (details) details.open = false;
+      });
+    });
+
+    applyPick(readPickFromUrl());
+
+    var dashboardRoot = document.getElementById(dashboardId);
+    var filterChrome = dashboardRoot ? dashboardRoot.querySelector(".thought-genre-chrome") : null;
+    var filterSpacer = dashboardRoot ? dashboardRoot.querySelector("[data-dashboard-filter-spacer]") : null;
+    var filterSpacerTicking = false;
+    function syncProjectsFilterSpacer() {
+      if (!filterChrome || !filterSpacer) return;
+      filterSpacer.style.height = filterChrome.offsetHeight + "px";
+    }
+    function onProjectsFilterSpacerResize() {
+      if (filterSpacerTicking) return;
+      filterSpacerTicking = true;
+      requestAnimationFrame(function () {
+        syncProjectsFilterSpacer();
+        filterSpacerTicking = false;
+      });
+    }
+    if (filterChrome && filterSpacer) {
+      window.addEventListener("resize", onProjectsFilterSpacerResize, { passive: true });
+      syncProjectsFilterSpacer();
+      requestAnimationFrame(syncProjectsFilterSpacer);
+      window.addEventListener("load", syncProjectsFilterSpacer, { once: true });
+    }
+    var pickDetailsEl = document.querySelector("[data-best-pick-details]");
+    if (pickDetailsEl) {
+      pickDetailsEl.addEventListener("toggle", onProjectsFilterSpacerResize);
+    }
+  })();
+</script>

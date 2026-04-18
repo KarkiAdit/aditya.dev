@@ -1,0 +1,162 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import { ThoughtShareButton } from "@/components/thoughts/ThoughtShareButton";
+import { absoluteOnSite } from "@/lib/metadata";
+import { pageStackPlainCompactMatchingMarginClass } from "@/lib/site-page-layout";
+import {
+  THOUGHT_HUB_FEATURED_META_READ,
+  THOUGHT_HUB_FEATURED_META_READ_DISABLED,
+  THOUGHT_HUB_FEATURED_TITLE,
+  THOUGHT_HUB_PILL_ON_MEDIA,
+} from "@/lib/thoughts-hub-layout";
+import {
+  THOUGHT_FEATURED_CREAM_CLASS,
+  THOUGHT_FEATURED_CREAM_FAINT_CLASS,
+  THOUGHT_SECONDARY_META_ON_DARK_CLASS,
+  THOUGHT_SECONDARY_ON_DARK_CLASS,
+  thoughtGenreLabel,
+  thoughtIsUnreleased,
+  thoughtPostHref,
+  thoughtReleaseIsoAndDisplay,
+  thoughtResolvedCoverImage,
+  type ThoughtGenreId,
+} from "@/lib/thoughts";
+
+interface Props {
+  genre: ThoughtGenreId;
+  featured: CollectionEntry<"blog">;
+  initialGenre: ThoughtGenreId;
+}
+
+const { genre, featured, initialGenre } = Astro.props;
+const featuredCover = thoughtResolvedCoverImage(featured);
+const release = thoughtReleaseIsoAndDisplay(featured);
+---
+
+<div
+  class:list={[
+    pageStackPlainCompactMatchingMarginClass,
+    "flex min-w-0 flex-col bg-transparent",
+    genre !== initialGenre && "hidden",
+  ]}
+  role="region"
+  aria-labelledby={`thought-featured-heading-${genre}`}
+  data-thought-featured
+  data-thought-genre={genre}
+  data-thought-stack-intro
+>
+  <h2 id={`thought-featured-heading-${genre}`} class="thought-hub-eyebrow">Featured</h2>
+  <article class="relative min-w-0 overflow-hidden rounded-2xl">
+    <div class="group/feat relative flex min-h-[max(17rem,65vh)] min-w-0 flex-col justify-end">
+      <figure class="absolute inset-0 m-0">
+        {
+          featuredCover ? (
+            <img
+              src={featuredCover}
+              alt=""
+              class="h-full w-full object-cover transition-[transform,filter] duration-700 ease-out group-hover/feat:scale-[1.03] group-hover/feat:brightness-[1.04] group-hover/feat:saturate-[1.05]"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : null
+        }
+      </figure>
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/82 via-black/40 to-black/25"
+        aria-hidden="true"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-transparent opacity-90 sm:opacity-100"
+        aria-hidden="true"
+      />
+      <div
+        class="relative z-10 flex min-h-[max(17rem,65vh)] min-w-0 flex-col justify-end gap-3 p-4 sm:gap-4 sm:p-6 md:gap-5 md:p-8 lg:p-10"
+      >
+        {
+          thoughtIsUnreleased(featured) ? (
+            <div class="block max-w-3xl min-w-0 cursor-default">
+              <header class="flex flex-col gap-3 sm:gap-4">
+                <div class="flex flex-wrap items-center gap-2" aria-label="Topics">
+                  <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{thoughtGenreLabel(featured.data.genre)}</span>
+                  {featured.data.tags?.slice(0, 1).map((tag) => (
+                    <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{tag}</span>
+                  ))}
+                </div>
+                <div class="flex flex-col gap-2 sm:gap-3">
+                  <h3 class:list={[THOUGHT_HUB_FEATURED_TITLE, THOUGHT_FEATURED_CREAM_CLASS]}>
+                    {featured.data.title}
+                  </h3>
+                  <p class:list={[THOUGHT_SECONDARY_ON_DARK_CLASS]}>{featured.data.summary}</p>
+                </div>
+              </header>
+            </div>
+          ) : (
+            <a
+              href={thoughtPostHref(featured)}
+              class="block max-w-3xl min-w-0 outline-none transition-shadow duration-500 ease-out focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring/40"
+            >
+              <header class="flex flex-col gap-3 sm:gap-4">
+                <div class="flex flex-wrap items-center gap-2" aria-label="Topics">
+                  <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{thoughtGenreLabel(featured.data.genre)}</span>
+                  {featured.data.tags?.slice(0, 1).map((tag) => (
+                    <span class:list={[THOUGHT_HUB_PILL_ON_MEDIA]}>{tag}</span>
+                  ))}
+                </div>
+                <div class="flex flex-col gap-2 sm:gap-3">
+                  <h3 class:list={[THOUGHT_HUB_FEATURED_TITLE, THOUGHT_FEATURED_CREAM_CLASS]}>
+                    {featured.data.title}
+                  </h3>
+                  <p class:list={[THOUGHT_SECONDARY_ON_DARK_CLASS]}>{featured.data.summary}</p>
+                </div>
+              </header>
+            </a>
+          )
+        }
+        <footer
+          class:list={[
+            "flex max-w-3xl flex-wrap items-center gap-x-2 gap-y-1 pt-1 [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10",
+            THOUGHT_SECONDARY_META_ON_DARK_CLASS,
+          ]}
+        >
+          {
+            release ? (
+              <time datetime={release.iso}>{release.text}</time>
+            ) : (
+              <span
+                class:list={["font-semibold tabular-nums tracking-tight", THOUGHT_FEATURED_CREAM_CLASS]}
+                aria-label="Release date not yet available"
+              >
+                N/A
+              </span>
+            )
+          }
+          <span class:list={[THOUGHT_FEATURED_CREAM_FAINT_CLASS]} aria-hidden="true">
+            ·
+          </span>
+          {
+            thoughtIsUnreleased(featured) ? (
+              <span class:list={[THOUGHT_HUB_FEATURED_META_READ_DISABLED]} aria-disabled="true">
+                Read
+              </span>
+            ) : (
+              <a href={thoughtPostHref(featured)} class:list={[THOUGHT_HUB_FEATURED_META_READ]}>
+                Read
+              </a>
+            )
+          }
+          <ThoughtShareButton
+            client:visible
+            url={absoluteOnSite(thoughtPostHref(featured))}
+            title={featured.data.title}
+            text={featured.data.summary}
+            variant="secondary"
+            iconOnly
+            disabled={thoughtIsUnreleased(featured)}
+            className="-ml-0.5 !size-8 !min-w-8 !rounded-full !p-0"
+          />
+        </footer>
+      </div>
+    </div>
+  </article>
+</div>

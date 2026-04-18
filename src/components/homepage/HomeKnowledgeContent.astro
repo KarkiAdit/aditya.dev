@@ -1,0 +1,96 @@
+---
+import type { CurrentFocusBookCard } from "@/lib/current-focus-books";
+import { SophisticationReadMoreOverlay } from "@/components/homepage/SophisticationReadMoreOverlay";
+import { featuredNicheDescriptionTypography, polaroidOverlayCaptionElementClassName } from "@/lib/link-styles";
+import {
+  polaroidCardArticleRootClassName,
+  polaroidCardCoverImageHoverClassName,
+  polaroidCardCoverImageSizes,
+  polaroidCardFrameShellClassName,
+  polaroidCardGridClassName,
+  polaroidCardImageBottomGradientClassName,
+  polaroidCardImageDarkScrimClassName,
+  polaroidCardImageOverlaySlotClassName,
+  polaroidCardImageWellClassName,
+  polaroidCardPinClassName,
+} from "@/lib/homepage/polaroid-card";
+import { pageStackSectionIntroToBodySpacingClass } from "@/lib/site-page-layout";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  currentFocusBooks: readonly CurrentFocusBookCard[];
+}
+
+const { currentFocusBooks } = Astro.props;
+---
+
+<div class="relative min-w-0 bg-transparent p-0" id="knowledge" role="region" aria-labelledby="current-focus-heading">
+  <article class="relative min-w-0 bg-transparent p-0">
+    <header class={cn("flex flex-col gap-3", pageStackSectionIntroToBodySpacingClass)}>
+      <div>
+        <h2
+          id="current-focus-heading"
+          class="heading-gradient mt-2 text-balance text-3xl font-extrabold tracking-tighter sm:text-4xl md:text-5xl"
+        >
+          About me
+        </h2>
+        <p
+          class={cn(
+            featuredNicheDescriptionTypography,
+            "mt-6 text-balance font-extrabold tracking-tight text-foreground/85",
+            "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
+          )}
+        >
+          I am endlessly fascinated by the intersection of complex system design and the human stories behind
+          world-changing innovation.{" "}
+          <b>These are my favorite books.</b>
+        </p>
+      </div>
+    </header>
+
+    <div class={polaroidCardGridClassName}>
+      {
+        currentFocusBooks.map((book: CurrentFocusBookCard) => (
+          <div class={polaroidCardArticleRootClassName}>
+            <div class={polaroidCardFrameShellClassName}>
+              <div class={polaroidCardPinClassName} aria-hidden />
+
+              <div class={polaroidCardImageWellClassName}>
+                {book.cover ? (
+                  <img
+                    src={book.cover.src}
+                    width={book.cover.width}
+                    height={book.cover.height}
+                    alt=""
+                    class={polaroidCardCoverImageHoverClassName}
+                    loading="lazy"
+                    decoding="async"
+                    sizes={polaroidCardCoverImageSizes}
+                  />
+                ) : (
+                  <div class="flex aspect-[4/5] min-h-[min(52dvh,420px)] w-full items-center justify-center px-3 sm:min-h-[460px] md:min-h-[500px]">
+                    <span class="text-center text-sm font-semibold uppercase tracking-widest text-foreground-muted/75 sm:text-base">
+                      Cover
+                    </span>
+                  </div>
+                )}
+
+                <div class={polaroidCardImageDarkScrimClassName} aria-hidden />
+                <div class={polaroidCardImageBottomGradientClassName} aria-hidden />
+
+                <div class={polaroidCardImageOverlaySlotClassName}>
+                  <p class={polaroidOverlayCaptionElementClassName}>
+                    {book.title}
+                  </p>
+                </div>
+
+                <SophisticationReadMoreOverlay notionHref={book.href} label="View Book" pillSize="compact" />
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </article>
+</div>
+

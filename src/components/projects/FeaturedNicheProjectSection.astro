@@ -1,0 +1,496 @@
+---
+import GithubMark from "@/components/projects/GithubMark.astro";
+import { Tao24FeaturedCodeShowcase } from "@/components/projects/Tao24FeaturedCodeShowcase";
+import type { FeaturedNicheImageAsset, FeaturedNicheProject } from "@/lib/featured-niche-projects";
+import { HOMEPAGE_STACK_INTRO_CARD_ATTR } from "@/lib/homepage/homepage-stack";
+import {
+  featuredNicheCategoryChipClassName,
+  featuredNicheHeroImageFrameNoPanelClassName,
+  featuredNicheProjectDocChipClassName,
+  featuredNicheProjectDocChipLinkClassName,
+  featuredNicheProjectDocSectionLabelClassName,
+  featuredNicheRasterImgHoverClassName,
+  featuredNicheScreenshotCaptionedFigureClassName,
+  featuredNicheScreenshotFigureClassName,
+  featuredNicheSetupCodePreClassName,
+  featuredNicheSetupCodeToggleHintClassName,
+  featuredNicheSetupCodeToggleOuterClassName,
+  featuredNicheSetupCodeToggleSummaryClassName,
+  featuredNicheSetupCodeToggleWellClassName,
+  featuredNicheTechStackChipClassName,
+  projectsPagePrimaryButtonClass,
+  projectsPageSecondaryButtonClass,
+  projectsPageStackCardClassName,
+  researchPaperSecondaryButtonClassName,
+} from "@/lib/projects-page";
+import { featuredNicheBestPicksLeadTypography } from "@/lib/link-styles";
+import {
+  experienceStackSectionTitleClassName,
+  pageStackSectionIntroToBodySpacingClass,
+  pageStackSnapshotIntroLeadToDashboardClass,
+} from "@/lib/site-page-layout";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  project: FeaturedNicheProject;
+  /** Basename → optimized image + display dimensions (intrinsic ratio at max width). */
+  nicheScreenshotSrc: Record<string, FeaturedNicheImageAsset>;
+  showFeaturedLabel?: boolean;
+  /** Optional: allow overriding the research link for env-based slots. */
+  researchHrefOverride?: string;
+}
+
+const {
+  project,
+  nicheScreenshotSrc,
+  showFeaturedLabel = false,
+  researchHrefOverride = "",
+} = Astro.props;
+
+const researchHrefFromData = project.researchPaper?.href?.trim() ?? "";
+const researchHref = (researchHrefFromData || researchHrefOverride).trim();
+const researchLabel = project.researchPaper?.label ?? "Research paper";
+const showResearchPaper = project.researchPaper != null;
+---
+
+<div class="flex w-full min-w-0 flex-col gap-0 bg-transparent" role="region" aria-label={project.title}>
+  {showFeaturedLabel ? (
+    <header
+      class:list={[
+        "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+        pageStackSectionIntroToBodySpacingClass,
+      ]}
+    >
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-widest text-foreground-muted">
+          Best picks
+        </p>
+      </div>
+    </header>
+  ) : null}
+
+  <div class="flex w-full min-w-0 flex-col gap-0 pt-1">
+    <p
+      class:list={[
+        cn(
+          featuredNicheBestPicksLeadTypography,
+          "mt-6 text-balance font-extrabold tracking-tight text-foreground/85",
+          "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
+          pageStackSnapshotIntroLeadToDashboardClass,
+        ),
+      ]}
+    >
+      {project.description}
+    </p>
+  </div>
+
+  <article {...{ [HOMEPAGE_STACK_INTRO_CARD_ATTR]: "" }} class:list={[cn(projectsPageStackCardClassName, "p-7 sm:p-8 lg:p-9")]}>
+    <div
+      class:list={[
+        "relative z-10 flex w-full min-w-0 flex-1 flex-col gap-6",
+        "items-center text-center sm:items-stretch sm:text-left",
+      ]}
+    >
+      <div
+        class:list={[
+          "flex w-full flex-col items-center gap-4",
+          "sm:flex-row sm:items-start sm:justify-between sm:gap-4",
+        ]}
+      >
+        <div class="min-w-0 space-y-2">
+          <span class:list={[featuredNicheCategoryChipClassName]}>{project.categoryChip}</span>
+          <h1 class:list={[cn(experienceStackSectionTitleClassName, "mt-0")]}>
+            {project.title}
+          </h1>
+        </div>
+        <div
+          class:list={[
+            "flex w-full flex-wrap items-center justify-center gap-3",
+            "sm:w-auto sm:justify-end",
+          ]}
+        >
+          {showResearchPaper ? (
+            researchHref.length > 0 ? (
+              <a
+                href={researchHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                class:list={[researchPaperSecondaryButtonClassName, "shrink-0"]}
+              >
+                {researchLabel}
+              </a>
+            ) : (
+              <span
+                class:list={[
+                  researchPaperSecondaryButtonClassName,
+                  "shrink-0 cursor-default opacity-50",
+                ]}
+                aria-disabled="true"
+              >
+                {researchLabel}
+              </span>
+            )
+          ) : null}
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class:list={[projectsPagePrimaryButtonClass, "shrink-0 gap-2"]}
+          >
+            <GithubMark />
+            Open repository
+          </a>
+        </div>
+      </div>
+
+      <div class="flex w-full flex-wrap justify-center gap-2 sm:justify-start">
+        {project.techStack.map((tech) => (
+          <span class:list={[featuredNicheTechStackChipClassName]}>{tech}</span>
+        ))}
+      </div>
+
+      {project.heroImageSlug && project.setupCode ? (
+        (() => {
+          const hero = nicheScreenshotSrc[project.heroImageSlug];
+          return (
+            <div class="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 sm:items-stretch">
+              <div class="w-full min-w-0">
+                <div class:list={[cn(featuredNicheScreenshotFigureClassName, "w-full max-w-[320px] sm:max-w-none")]}>
+                  {hero ? (
+                    <div class="relative isolate">
+                      <div
+                        class:list={[
+                          cn(
+                            projectsPageSecondaryButtonClass,
+                            "pointer-events-none absolute left-3 top-3 z-10 !h-auto min-h-0 !rounded-full !px-3 !py-1 !text-[0.65rem] font-semibold tracking-tight sm:!text-xs",
+                          ),
+                        ]}
+                      >
+                        Chrome Extension
+                      </div>
+                      <div class="pointer-events-none absolute inset-0 bg-primary/22" />
+                      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,oklch(0.92_0.10_60_/_0.20),transparent_58%)]" />
+                      <img
+                        src={hero.src}
+                        width={hero.width}
+                        height={hero.height}
+                        alt={`${project.title} — preview`}
+                        class:list={[
+                          cn("block w-full max-w-full object-contain", featuredNicheRasterImgHoverClassName),
+                        ]}
+                        sizes="(max-width: 640px) min(92vw,320px), (max-width: 1024px) 45vw, 450px"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  ) : (
+                    <div class="flex min-h-[12rem] w-full items-center justify-center p-6 text-center">
+                      <p class="text-sm font-semibold text-foreground-muted">
+                        Add{" "}
+                        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                          {project.heroImageSlug}.png
+                        </code>{" "}
+                        to public/projects/
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div class="flex w-full min-h-0 flex-col justify-center text-left">
+                {project.projectDocs && project.projectDocs.length > 0 ? (
+                  <div class="w-full min-w-0 text-left">
+                    <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
+                    <div class:list={["flex w-full flex-wrap justify-center gap-2 sm:justify-start"]}>
+                      {project.projectDocs.map((doc) => (
+                        <a
+                          href={doc.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class:list={[featuredNicheProjectDocChipClassName, featuredNicheProjectDocChipLinkClassName]}
+                        >
+                          {doc.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                <div class:list={[featuredNicheSetupCodeToggleOuterClassName, "mt-4"]}>
+                  <details class:list={[featuredNicheSetupCodeToggleWellClassName]}>
+                    <summary class:list={[featuredNicheSetupCodeToggleSummaryClassName]}>
+                      <span>{project.setupCode.sectionTitle}</span>
+                      <span class:list={[featuredNicheSetupCodeToggleHintClassName]}>Toggle</span>
+                    </summary>
+                    <div class="mt-2">
+                      <pre class:list={[cn(featuredNicheSetupCodePreClassName, "whitespace-pre")]}><code>{project.setupCode.code}</code></pre>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          );
+        })()
+      ) : project.heroImageSlug && project.projectDocs && project.projectDocs.length > 0 ? (
+        (() => {
+          const hero = nicheScreenshotSrc[project.heroImageSlug];
+          return (
+            <div class="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 sm:items-stretch">
+              <div class="w-full min-w-0">
+                <div class:list={[featuredNicheHeroImageFrameNoPanelClassName, "mx-auto w-full max-w-[320px] sm:mx-0 sm:max-w-none"]}>
+                  {hero ? (
+                    <div class="relative isolate">
+                      <div
+                        class:list={[
+                          cn(
+                            projectsPageSecondaryButtonClass,
+                            "pointer-events-none absolute left-3 top-3 z-10 !h-auto min-h-0 !rounded-full !px-3 !py-1 !text-[0.65rem] font-semibold tracking-tight sm:!text-xs",
+                          ),
+                        ]}
+                      >
+                        Chrome Extension
+                      </div>
+                      <div class="pointer-events-none absolute inset-0 bg-primary/22" />
+                      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,oklch(0.92_0.10_60_/_0.20),transparent_58%)]" />
+                      <img
+                        src={hero.src}
+                        width={hero.width}
+                        height={hero.height}
+                        alt={`${project.title} — preview`}
+                        class:list={[
+                          cn("block w-full max-w-none object-contain", featuredNicheRasterImgHoverClassName),
+                        ]}
+                        sizes="(max-width: 640px) min(92vw,320px), (max-width: 1024px) 45vw, 50vw"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  ) : (
+                    <div class="flex min-h-[12rem] w-full items-center justify-center p-6 text-center">
+                      <p class="text-sm font-semibold text-foreground-muted">
+                        Add{" "}
+                        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                          {project.heroImageSlug}.png
+                        </code>{" "}
+                        to public/projects/
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div class="flex w-full min-w-0 flex-col justify-center gap-4 text-left">
+                <div>
+                  <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
+                  <div class="mt-2 flex w-full flex-wrap justify-center gap-2 sm:justify-start">
+                    {project.projectDocs.map((doc) => (
+                      <a
+                        href={doc.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class:list={[featuredNicheProjectDocChipClassName, featuredNicheProjectDocChipLinkClassName]}
+                      >
+                        {doc.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()
+      ) : project.heroImageSlug ? (
+        (() => {
+          const hero = nicheScreenshotSrc[project.heroImageSlug];
+          return (
+            <div class="w-full min-w-0">
+              <div class:list={[cn(featuredNicheScreenshotFigureClassName, "w-full"), "mx-auto max-w-[320px] sm:max-w-[450px]"]}>
+                {hero ? (
+                  <div class="relative isolate">
+                    <div
+                      class:list={[
+                        cn(
+                          projectsPageSecondaryButtonClass,
+                          "pointer-events-none absolute left-3 top-3 z-10 !h-auto min-h-0 !rounded-full !px-3 !py-1 !text-[0.65rem] font-semibold tracking-tight sm:!text-xs",
+                        ),
+                      ]}
+                    >
+                      Chrome Extension
+                    </div>
+                    <div class="pointer-events-none absolute inset-0 bg-primary/22" />
+                    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,oklch(0.92_0.10_60_/_0.20),transparent_58%)]" />
+                    <img
+                      src={hero.src}
+                      width={hero.width}
+                      height={hero.height}
+                      alt={`${project.title} — preview`}
+                      class:list={[
+                        cn("block w-full max-w-[320px] object-contain sm:max-w-[450px]", featuredNicheRasterImgHoverClassName),
+                      ]}
+                      sizes="(max-width: 640px) min(92vw,320px), 450px"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : (
+                  <div class="flex min-h-[12rem] w-full items-center justify-center p-6 text-center">
+                    <p class="text-sm font-semibold text-foreground-muted">
+                      Add <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{project.heroImageSlug}.png</code>{" "}
+                      to public/projects/
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()
+      ) : project.setupCode ? (
+        <div class="w-full min-w-0 text-left">
+          {project.projectDocs && project.projectDocs.length > 0 ? (
+            <div class="w-full min-w-0 text-left">
+              <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
+              <div class:list={["flex w-full flex-wrap justify-center gap-2 sm:justify-start"]}>
+                {project.projectDocs.map((doc) => (
+                  <a
+                    href={doc.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={[featuredNicheProjectDocChipClassName, featuredNicheProjectDocChipLinkClassName]}
+                  >
+                    {doc.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <div class:list={[featuredNicheSetupCodeToggleOuterClassName, "mt-4"]}>
+            <details class:list={[featuredNicheSetupCodeToggleWellClassName]}>
+              <summary class:list={[featuredNicheSetupCodeToggleSummaryClassName]}>
+                <span>{project.setupCode.sectionTitle}</span>
+                <span class:list={[featuredNicheSetupCodeToggleHintClassName]}>Toggle</span>
+              </summary>
+              <div class="mt-2">
+                <pre class:list={[cn(featuredNicheSetupCodePreClassName, "whitespace-pre")]}><code>{project.setupCode.code}</code></pre>
+              </div>
+            </details>
+          </div>
+        </div>
+      ) : null}
+
+      {project.id === "tao24" && project.codeShowcase ? (
+        <div class="w-full max-w-full min-w-0 text-left">
+          <Tao24FeaturedCodeShowcase client:visible showcase={project.codeShowcase} />
+        </div>
+      ) : null}
+
+      {project.screenshots.length > 0 ? (
+        <div class:list={["flex w-full min-w-0 justify-center sm:justify-start"]}>
+          <div
+            class:list={[
+              "inline-grid w-max max-w-full shrink-0 content-start gap-[25px] sm:w-auto",
+              "min-w-0 justify-items-center justify-self-center sm:justify-items-start sm:justify-self-start",
+              "[grid-template-columns:max-content]",
+              "sm:[grid-template-columns:repeat(2,max-content)]",
+              "lg:[grid-template-columns:repeat(3,max-content)]",
+            ]}
+          >
+            {project.screenshots.map((shot, shotIndex) => {
+                const asset = nicheScreenshotSrc[shot.slug];
+                const loneSecondRowOnTwoCol =
+                  project.screenshots.length > 1 &&
+                  project.screenshots.length % 2 === 1 &&
+                  shotIndex === project.screenshots.length - 1;
+                return (
+                  <figure
+                    class:list={[
+                      cn(
+                        featuredNicheScreenshotCaptionedFigureClassName,
+                        "mx-auto sm:mx-0",
+                        shotIndex > 0 && "max-sm:hidden",
+                        shotIndex > 1 && "max-lg:hidden",
+                        loneSecondRowOnTwoCol && "sm:col-span-2 lg:col-span-1",
+                      ),
+                    ]}
+                  >
+                    <figcaption
+                      class:list={[
+                        "shrink-0 border-b border-border/25 px-3 py-2.5 text-center",
+                        "text-xs font-bold leading-snug text-foreground sm:text-sm",
+                      ]}
+                    >
+                      {shot.label}
+                    </figcaption>
+                    <div
+                      class:list={[
+                        "relative isolate mx-auto flex min-h-0 w-full max-w-[320px] flex-1 flex-col overflow-hidden sm:mx-0 sm:max-w-[350px]",
+                        "bg-[linear-gradient(165deg,oklch(0.2_0.04_48)_0%,oklch(0.12_0.03_52)_45%,oklch(0.08_0.02_50)_100%)]",
+                      ]}
+                    >
+                      {asset ? (
+                        <>
+                          <div class="pointer-events-none absolute inset-0 bg-primary/22" />
+                          <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,oklch(0.92_0.10_60_/_0.20),transparent_58%)]" />
+                          <img
+                            src={asset.src}
+                            width={asset.width}
+                            height={asset.height}
+                            alt={`${project.title}: ${shot.label}`}
+                            class:list={[
+                              "mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-top sm:mx-0",
+                              "max-w-[320px] sm:max-w-[350px]",
+                              featuredNicheRasterImgHoverClassName,
+                            ]}
+                            sizes="(max-width: 640px) min(92vw,320px), (max-width: 1024px) 42vw, 30vw"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </>
+                      ) : (
+                        <div class="flex min-h-0 min-w-[12rem] max-h-full w-full max-w-[min(320px,92vw)] flex-1 flex-col items-center justify-center gap-2 p-6 text-center sm:max-w-[min(350px,92vw)]">
+                          <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-widest text-white/50">
+                            Placeholder
+                          </span>
+                          <p class="text-[0.7rem] font-medium leading-snug text-white/65">
+                            Add{" "}
+                            <code class="rounded bg-black/30 px-1 py-0.5 font-mono text-[0.65rem] text-white/80">
+                              {shot.slug}.png
+                            </code>
+                            <br />
+                            to public/projects/
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </figure>
+                );
+              })}
+          </div>
+        </div>
+      ) : null}
+
+      {!project.setupCode && !project.heroImageSlug && project.projectDocs && project.projectDocs.length > 0 ? (
+        <div class="w-full min-w-0 text-left">
+          <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
+          <div class:list={["flex w-full flex-wrap justify-center gap-2 sm:justify-start"]}>
+            {project.projectDocs.map((doc) => (
+              <a
+                href={doc.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class:list={[featuredNicheProjectDocChipClassName, featuredNicheProjectDocChipLinkClassName]}
+              >
+                {doc.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  </article>
+
+  {
+    Astro.slots.has("extended") ? (
+      <div class="mt-10 w-full min-w-0 border-t border-border/25 pt-8">
+        <slot name="extended" />
+      </div>
+    ) : null
+  }
+</div>
+

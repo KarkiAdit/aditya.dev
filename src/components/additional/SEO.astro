@@ -1,0 +1,32 @@
+---
+import { robotsMetaContent, siteConfig, siteJsonLd } from "@/lib/metadata";
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  image?: string;
+}
+
+const { title, description, canonical, image } = Astro.props;
+const structuredData = siteJsonLd({ personImage: image });
+---
+
+<link rel="canonical" href={canonical} />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={siteConfig.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{image ? <meta property="og:image" content={image} /> : null}
+<meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{image ? <meta name="twitter:image" content={image} /> : null}
+<meta name="robots" content={robotsMetaContent()} />
+<meta name="application-name" content={siteConfig.name} />
+<meta name="author" content={siteConfig.author} />
+<script type="application/ld+json" set:html={structuredData} />

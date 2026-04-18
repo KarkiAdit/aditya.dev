@@ -1,0 +1,168 @@
+---
+import DataDashboard from "@/components/additional/DataDashboard.astro";
+import ExperienceSectionFallback from "@/components/homepage/ExperienceSectionFallback.astro";
+import { HomepageStackScroll } from "@/components/homepage/HomepageStackScroll";
+import { LiveSnapshotGithubDashboard } from "@/components/homepage/ExperienceSection";
+import FeaturedNicheProjectSection from "@/components/projects/FeaturedNicheProjectSection.astro";
+import ProjectsBestPicksChrome from "@/components/projects/ProjectsBestPicksChrome.astro";
+import ProjectsBestPicksDashboardScript from "@/components/projects/ProjectsBestPicksDashboardScript.astro";
+import {
+  HOMEPAGE_STACK_ROLE,
+  homepageStackLayout,
+  PROJECTS_BEST_PICKS_DASHBOARD_ID,
+  PROJECTS_STACK_GATE_ID,
+} from "@/lib/homepage/homepage-stack";
+import { GITHUB_SNAPSHOT_PICK_ID, type FeaturedNicheImageAsset, type FeaturedNicheProject } from "@/lib/featured-niche-projects";
+import { DEMO_GITHUB_DASHBOARD_DATA, type GithubDashboardResult } from "@/lib/github-dashboard";
+import { featuredNicheBestPicksLeadTypography } from "@/lib/link-styles";
+import {
+  pageStackKnowledgeSlabContentTopPaddingClass,
+  pageStackRoundTopClass,
+  pageStackSnapshotIntroLeadToDashboardClass,
+} from "@/lib/site-page-layout";
+import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
+import { cn } from "@/lib/utils";
+
+interface ProjectPanel {
+  project: FeaturedNicheProject;
+  /** When true, render MDX below the card (frontmatter-only files skip the extra block). */
+  hasMdxBody: boolean;
+  /** Rendered MDX from `render(entry)` — same pattern as `/thoughts/[slug]`. */
+  Content: (props: Record<string, unknown>) => unknown;
+}
+
+interface Props {
+  projectPanels: ProjectPanel[];
+  /** Classes for MDX body under each project card (shared with blog). */
+  mdxBodyClass: readonly string[];
+  nicheScreenshotSrc: Record<string, FeaturedNicheImageAsset>;
+  surfShelterResearchFromEnv: string;
+  initialPickId: string;
+  githubDashboardResult: GithubDashboardResult;
+  githubDashboardAvatarSrc: string;
+}
+
+const {
+  projectPanels,
+  mdxBodyClass,
+  nicheScreenshotSrc,
+  surfShelterResearchFromEnv,
+  initialPickId,
+  githubDashboardResult,
+  githubDashboardAvatarSrc,
+} = Astro.props;
+
+const dashboardProjects = projectPanels.map((p) => p.project);
+const filterSpec = [
+  ...dashboardProjects.map((p) => ({ id: p.id, title: p.title })),
+  { id: GITHUB_SNAPSHOT_PICK_ID, title: "live-snapshot" },
+];
+
+const gh = githubDashboardResult.ok ? githubDashboardResult.data : DEMO_GITHUB_DASHBOARD_DATA;
+const statTotalCommits = gh.repos.reduce((sum, r) => sum + r.commitCount, 0);
+const statTotalRepositories = gh.user.publicRepos;
+const statFollowers = gh.user.followers;
+const fmt = (n: number) => n.toLocaleString("en-US");
+const repoWord = statTotalRepositories === 1 ? "repository" : "repositories";
+
+const featuredSurfaceClass = cn(
+  "homepage-stack-panel-plain sticky top-0 z-[14] isolate w-full min-w-0 pt-0",
+  pageStackRoundTopClass,
+);
+const featuredInnerClass = cn(
+  siteChromeInner,
+  "flex min-w-0 flex-col gap-0",
+  pageStackKnowledgeSlabContentTopPaddingClass,
+);
+
+const projectsMainColumnClass = "flex w-full min-w-0 flex-col gap-0 pb-0";
+---
+
+<div class="relative isolate flex w-full flex-col gap-0 pb-0">
+  <div id={PROJECTS_STACK_GATE_ID} class="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-transparent">
+    <h1 class="sr-only">Projects</h1>
+    <HomepageStackScroll client:load gateId={PROJECTS_STACK_GATE_ID} />
+    <div class={projectsMainColumnClass}>
+      <div class={homepageStackLayout.experienceSlab}>
+        <div
+          class:list={[featuredSurfaceClass]}
+          data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.surface}
+        >
+          <div class={siteChromeGutters}>
+            <div class={featuredInnerClass}>
+              <DataDashboard
+                id={PROJECTS_BEST_PICKS_DASHBOARD_ID}
+                rootClass="flex w-full min-w-0 flex-col gap-0 bg-transparent"
+              >
+                <ProjectsBestPicksChrome slot="chrome" filterSpec={filterSpec} initialPickId={initialPickId} />
+
+                {
+                  projectPanels.map(({ project, hasMdxBody, Content }) => (
+                    <div
+                      class:list={cn(project.id !== initialPickId && "hidden")}
+                      data-best-pick-panel={project.id}
+                    >
+                      <FeaturedNicheProjectSection
+                        project={project}
+                        nicheScreenshotSrc={nicheScreenshotSrc}
+                        showFeaturedLabel={false}
+                        researchHrefOverride={
+                          project.id === "surf-shelter" ? surfShelterResearchFromEnv : ""
+                        }
+                      >
+                        {hasMdxBody ? (
+                          <div slot="extended" class:list={[...mdxBodyClass]}>
+                            <Content />
+                          </div>
+                        ) : null}
+                      </FeaturedNicheProjectSection>
+                    </div>
+                  ))
+                }
+
+                <div
+                  class:list={cn(
+                    "mb-6 sm:mb-8 md:mb-10",
+                    initialPickId !== GITHUB_SNAPSHOT_PICK_ID && "hidden",
+                  )}
+                  data-best-pick-panel={GITHUB_SNAPSHOT_PICK_ID}
+                >
+                  <div class="flex w-full min-w-0 flex-col gap-0">
+                    <p
+                      class:list={cn(
+                        featuredNicheBestPicksLeadTypography,
+                        "mt-6 text-balance font-extrabold tracking-tight text-foreground/85",
+                        "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
+                        pageStackSnapshotIntroLeadToDashboardClass,
+                      )}
+                      id="projects-github-api-lead"
+                    >
+                      Pulled directly using the GitHub API — I have{" "}
+                      <span class="text-heading font-black tabular-nums">{fmt(statTotalRepositories)}</span>{" "}
+                      active public {repoWord},{" "}
+                      <span class="text-heading font-black tabular-nums">{fmt(statTotalCommits)}</span> commits across
+                      the repositories charted below, and{" "}
+                      <span class="text-heading font-black tabular-nums">{fmt(statFollowers)}</span> followers count.
+                    </p>
+                    <LiveSnapshotGithubDashboard
+                      class="w-full"
+                      client:only="react"
+                      result={githubDashboardResult}
+                      avatarSrc={githubDashboardAvatarSrc}
+                      gapAfterHeading={false}
+                      trimBottomSpacing
+                    >
+                      <ExperienceSectionFallback slot="fallback" />
+                    </LiveSnapshotGithubDashboard>
+                  </div>
+                </div>
+              </DataDashboard>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ProjectsBestPicksDashboardScript initialPickId={initialPickId} filterSpec={filterSpec} />

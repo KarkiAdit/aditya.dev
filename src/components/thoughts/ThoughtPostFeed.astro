@@ -1,0 +1,173 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import { ThoughtShareButton } from "@/components/thoughts/ThoughtShareButton";
+import { absoluteOnSite } from "@/lib/metadata";
+import {
+  THOUGHT_HUB_FEED_GENRE_CHIP,
+  THOUGHT_HUB_FEED_META_READ,
+  THOUGHT_HUB_FEED_META_READ_DISABLED,
+  THOUGHT_HUB_FEED_ROW,
+  THOUGHT_HUB_FEED_THUMB,
+  THOUGHT_HUB_FEED_TITLE,
+  THOUGHT_HUB_PAGER_ARROW,
+  THOUGHT_HUB_PAGER_NAV,
+} from "@/lib/thoughts-hub-layout";
+import {
+  THOUGHT_SECONDARY_MUTED_CLASS,
+  thoughtGenreLabel,
+  thoughtIsUnreleased,
+  thoughtPostHref,
+  thoughtReleaseIsoAndDisplay,
+  thoughtResolvedCoverImage,
+} from "@/lib/thoughts";
+
+interface Props {
+  feed: CollectionEntry<"blog">[];
+}
+
+const { feed } = Astro.props;
+---
+
+<div
+  class="mt-6 flex min-w-0 flex-col bg-transparent pt-5 md:mt-8 md:pt-6"
+  role="region"
+  aria-label="Blog posts"
+>
+  <div class="flex min-w-0 flex-col divide-y divide-border/25">
+    {
+      feed.map((post) => {
+        const feedCover = thoughtResolvedCoverImage(post);
+        const release = thoughtReleaseIsoAndDisplay(post);
+        return (
+          <article
+            class:list={[THOUGHT_HUB_FEED_ROW]}
+            data-thought-item
+            data-thought-genre={post.data.genre}
+            data-thought-stack-intro
+          >
+            <div class="flex min-w-0 flex-row items-start gap-3 sm:gap-4">
+              <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5 pr-1 sm:gap-2 sm:pr-2">
+                {
+                  thoughtIsUnreleased(post) ? (
+                    <div class="block min-w-0 cursor-default">
+                      <h3 class:list={[THOUGHT_HUB_FEED_TITLE]}>{post.data.title}</h3>
+                      <p class:list={["line-clamp-3 md:line-clamp-2", THOUGHT_SECONDARY_MUTED_CLASS]}>
+                        {post.data.summary}
+                      </p>
+                    </div>
+                  ) : (
+                    <a
+                      href={thoughtPostHref(post)}
+                      class="block min-w-0 outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent hover:[&_h3]:text-primary"
+                    >
+                      <h3 class:list={[THOUGHT_HUB_FEED_TITLE, "transition-colors"]}>{post.data.title}</h3>
+                      <p class:list={["line-clamp-3 md:line-clamp-2", THOUGHT_SECONDARY_MUTED_CLASS]}>
+                        {post.data.summary}
+                      </p>
+                    </a>
+                  )
+                }
+                <div
+                  class:list={[
+                    "flex flex-wrap items-center gap-x-2 gap-y-1 pt-0.5 [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10",
+                    THOUGHT_SECONDARY_MUTED_CLASS,
+                  ]}
+                >
+                  <span class:list={[THOUGHT_HUB_FEED_GENRE_CHIP]}>{thoughtGenreLabel(post.data.genre)}</span>
+                  <span class="text-foreground-muted/50" aria-hidden="true">
+                    ·
+                  </span>
+                  {
+                    release ? (
+                      <time datetime={release.iso}>{release.text}</time>
+                    ) : (
+                      <span
+                        class="font-semibold tabular-nums text-heading"
+                        aria-label="Release date not yet available"
+                      >
+                        N/A
+                      </span>
+                    )
+                  }
+                  <span class="text-foreground-muted/50" aria-hidden="true">
+                    ·
+                  </span>
+                  {
+                    thoughtIsUnreleased(post) ? (
+                      <span class:list={[THOUGHT_HUB_FEED_META_READ_DISABLED]} aria-disabled="true">
+                        Read
+                      </span>
+                    ) : (
+                      <a href={thoughtPostHref(post)} class:list={[THOUGHT_HUB_FEED_META_READ]}>
+                        Read
+                      </a>
+                    )
+                  }
+                  <ThoughtShareButton
+                    client:visible
+                    url={absoluteOnSite(thoughtPostHref(post))}
+                    title={post.data.title}
+                    text={post.data.summary}
+                    variant="onLight"
+                    iconOnly
+                    disabled={thoughtIsUnreleased(post)}
+                    className="-ml-0.5 text-foreground-muted hover:text-primary"
+                  />
+                </div>
+              </div>
+              {feedCover ? (
+                <div class="flex w-[6.25rem] shrink-0 flex-col sm:w-[7.75rem]">
+                  {
+                    thoughtIsUnreleased(post) ? (
+                      <div class="block cursor-default" aria-hidden="true">
+                        <figure class:list={[THOUGHT_HUB_FEED_THUMB, "m-0 overflow-hidden"]}>
+                          <img
+                            src={feedCover}
+                            alt=""
+                            class="h-full w-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </figure>
+                      </div>
+                    ) : (
+                      <a
+                        href={thoughtPostHref(post)}
+                        class="group/thumb block outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                        aria-label={`Open ${post.data.title}`}
+                      >
+                        <figure class:list={[THOUGHT_HUB_FEED_THUMB, "m-0 overflow-hidden"]} aria-hidden="true">
+                          <img
+                            src={feedCover}
+                            alt=""
+                            class="h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover/thumb:scale-[1.04] group-hover/thumb:brightness-[1.04] group-hover/thumb:saturate-[1.05]"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </figure>
+                      </a>
+                    )
+                  }
+                </div>
+              ) : null}
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
+  <nav class:list={[THOUGHT_HUB_PAGER_NAV]} data-thought-pagination aria-label="Posts pages">
+    <button type="button" class:list={[THOUGHT_HUB_PAGER_ARROW]} data-thought-page-prev aria-label="Previous page">
+      ‹
+    </button>
+    <div
+      class="flex min-w-0 flex-wrap items-center justify-center gap-1.5 sm:gap-2"
+      data-thought-page-list
+    >
+    </div>
+    <button type="button" class:list={[THOUGHT_HUB_PAGER_ARROW]} data-thought-page-next aria-label="Next page">
+      ›
+    </button>
+  </nav>
+</div>

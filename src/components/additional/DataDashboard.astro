@@ -1,0 +1,24 @@
+---
+/**
+ * Shared hub shell: optional scroll island, fixed filter chrome, spacer for fixed chrome height,
+ * then main body. Used by `/thoughts` (gate root) and `/projects` (nested under stack panel).
+ */
+interface Props {
+  id: string;
+  rootClass?: string;
+}
+
+const { id, rootClass = "flex min-w-0 flex-col gap-0 bg-transparent" } = Astro.props;
+---
+
+<div id={id} class:list={[rootClass]}>
+  <slot name="scroll" />
+  <slot name="chrome" />
+  <div
+    class="min-h-[4.25rem] w-full shrink-0 sm:min-h-[3.75rem]"
+    data-dashboard-filter-spacer
+    aria-hidden="true"
+  >
+  </div>
+  <slot />
+</div>

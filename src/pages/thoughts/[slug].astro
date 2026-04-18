@@ -1,0 +1,191 @@
+---
+import { getCollection, render } from "astro:content";
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageStackBody from "@/components/layout/PageStackBody.astro";
+import { ThoughtShareButton } from "@/components/thoughts/ThoughtShareButton";
+import { absoluteOnSite, formatDocumentTitle } from "@/lib/metadata";
+import { mdxArticleBodyClass } from "@/lib/mdx-article-body";
+import {
+  formatThoughtDisplayDate,
+  thoughtGenreLabel,
+  thoughtIsUnreleased,
+  thoughtPostHref,
+  thoughtReadingMinutesFromEntryId,
+  thoughtReleasedDateOrNull,
+  thoughtResolvedCoverImage,
+  thoughtSlugFromEntryId,
+} from "@/lib/thoughts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: thoughtSlugFromEntryId(post.id) },
+  }));
+}
+
+const slug = Astro.params.slug;
+const posts = await getCollection("blog");
+const post = posts.find((p) => thoughtSlugFromEntryId(p.id) === slug);
+
+if (!post) {
+  return Astro.redirect("/thoughts");
+}
+
+const { Content } = await render(post);
+
+const isUnreleasedPost = thoughtIsUnreleased(post);
+const displayReleaseDate = thoughtReleasedDateOrNull(post);
+
+const title = formatDocumentTitle(post.data.title);
+const description = post.data.summary;
+const genreLabel = thoughtGenreLabel(post.data.genre);
+const readingMinutes = thoughtReadingMinutesFromEntryId(post.id);
+const resolvedCover = thoughtResolvedCoverImage(post);
+const ogImage = resolvedCover
+  ? resolvedCover.startsWith("http")
+    ? resolvedCover
+    : absoluteOnSite(resolvedCover)
+  : undefined;
+
+const postShareUrl = absoluteOnSite(thoughtPostHref(post));
+
+/** Medium-style tag chips — outline, small sans. */
+const mediumPillClass =
+  "inline-flex items-center rounded-full border border-border bg-transparent px-2.5 py-1 font-sans text-xs font-medium text-foreground-muted";
+
+/** Subtitle / dek — sans, muted grey, between title and body (Medium scale). */
+const mediumDekClass =
+  "max-w-none font-sans text-xl font-normal leading-snug text-foreground-muted md:text-2xl md:leading-snug";
+
+/** Meta row — small grey sans (“11 min read · Mar 2, 2026”). */
+const mediumMetaClass = "font-sans text-sm font-normal text-foreground-muted";
+
+const mdxProseClass = mdxArticleBodyClass;
+
+/** Full-column frosted cream (`nav-rail-icon-group-surface`); article stays transparent on top. */
+const thoughtPostPageShellClass =
+  "nav-rail-icon-group-surface flex min-h-0 min-w-0 flex-1 flex-col";
+---
+
+<BaseLayout title={title} description={description} pathname={Astro.url.pathname} ogImage={ogImage}>
+  <PageStackBody
+    stackVariant="plain"
+    plainTopPadding="compact"
+    wrapInnerColumn={false}
+    outerColumnClass={thoughtPostPageShellClass}
+  >
+    <article
+      class:list={[
+        "thought-article-shell thought-article-medium flex w-full min-w-0 flex-col gap-8 bg-transparent px-5 py-8 sm:gap-9 sm:px-8 sm:py-10 md:gap-10 md:px-10 md:py-12",
+      ]}
+      itemscope
+      itemtype="https://schema.org/Article"
+    >
+      <header class="flex min-w-0 flex-col gap-4 sm:gap-5">
+        <p class="thought-article-kicker m-0 font-sans">{genreLabel}</p>
+        {
+          post.data.tags && post.data.tags.length > 0 && (
+            <div class="flex flex-wrap items-center gap-2" aria-label="Tags">
+              {post.data.tags.map((tag) => (
+                <span class:list={[mediumPillClass]}>{tag}</span>
+              ))}
+            </div>
+          )
+        }
+
+        <h1
+          class="m-0 text-balance font-sans text-[2.25rem] font-bold leading-[1.12] tracking-tight text-heading sm:text-[2.5rem] md:text-[2.75rem] md:leading-[1.1]"
+          itemprop="headline"
+        >
+          {post.data.title}
+        </h1>
+
+        <p class:list={["m-0", mediumDekClass]} itemprop="description">
+          {post.data.summary}
+        </p>
+
+        {
+          resolvedCover ? (
+            <figure
+              class="m-0 w-full overflow-hidden rounded-sm"
+              itemprop="image"
+              itemscope
+              itemtype="https://schema.org/ImageObject"
+            >
+              <meta itemprop="url" content={resolvedCover} />
+              <img
+                src={resolvedCover}
+                alt={post.data.title}
+                class="max-h-[min(70vh,28rem)] w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+            </figure>
+          ) : null
+        }
+
+        <div
+          class:list={[
+            "flex flex-wrap items-center gap-x-2 gap-y-2 border-b border-[#e6e6e6] pb-6 sm:pb-7",
+            mediumMetaClass,
+          ]}
+        >
+          <span class="tabular-nums">{readingMinutes} min read</span>
+          <span class="text-[#6b6b6b]/50" aria-hidden="true">
+            ·
+          </span>
+          {
+            displayReleaseDate ? (
+              <time
+                class="tabular-nums"
+                datetime={displayReleaseDate.toISOString()}
+                itemprop="datePublished"
+              >
+                {formatThoughtDisplayDate(displayReleaseDate)}
+              </time>
+            ) : (
+              <span
+                class="tabular-nums font-semibold text-[#242424]"
+                itemprop="datePublished"
+                aria-label="Release date not yet available"
+              >
+                N/A
+              </span>
+            )
+          }
+          <span class="text-[#6b6b6b]/50" aria-hidden="true">
+            ·
+          </span>
+          <a
+            href="/thoughts"
+            class="font-sans font-medium text-[#6b6b6b] underline-offset-4 transition-colors hover:text-[#242424] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/25"
+          >
+            All posts
+          </a>
+          <span class="text-[#6b6b6b]/50 max-sm:hidden" aria-hidden="true">
+            ·
+          </span>
+          <ThoughtShareButton
+            client:visible
+            url={postShareUrl}
+            title={post.data.title}
+            text={post.data.summary}
+            variant="onLight"
+            iconOnly
+            disabled={isUnreleasedPost}
+            className="text-[#6b6b6b] hover:bg-[#f0f0f0] hover:text-[#242424] focus-visible:ring-[#242424]/25"
+          />
+        </div>
+      </header>
+
+      <hr class="m-0 h-px w-full border-0 bg-[#e6e6e6]" />
+
+      <div class="min-w-0" role="region" aria-label="Article body">
+        <div class:list={mdxProseClass} itemprop="articleBody">
+          <Content />
+        </div>
+      </div>
+    </article>
+  </PageStackBody>
+</BaseLayout>

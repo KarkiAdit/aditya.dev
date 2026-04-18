@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content";
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageStackBody from "@/components/layout/PageStackBody.astro";
+import ThoughtsDashboard from "@/components/thoughts/ThoughtsDashboard.astro";
+import { formatDocumentTitle } from "@/lib/metadata";
+import {
+  compareThoughtPostsByDate,
+  featuredFirstPostByGenre,
+  THOUGHT_GENRE_ORDER,
+  THOUGHT_SECONDARY_MUTED_CLASS,
+  thoughtFeedExcludingGenreFeatured,
+  thoughtGenreFromQueryParam,
+} from "@/lib/thoughts";
+
+const title = formatDocumentTitle("My Thoughts");
+const description = "Writing and essays.";
+
+const posts = await getCollection("blog");
+const sorted = [...posts].sort(compareThoughtPostsByDate);
+const featuredByGenre = featuredFirstPostByGenre(sorted);
+const feed = thoughtFeedExcludingGenreFeatured(sorted, featuredByGenre);
+const gParam = Astro.url.searchParams.get("g");
+const initialThoughtGenre = thoughtGenreFromQueryParam(gParam) ?? THOUGHT_GENRE_ORDER[0];
+---
+
+<BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
+  <div class="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-transparent">
+    <PageStackBody stackVariant="plain" plainTopPadding="compact" wrapInnerColumn>
+      {
+        posts.length === 0 ? (
+          <div class="rounded-2xl bg-transparent p-8 md:p-10" role="region" aria-label="No posts yet">
+            <h1 class="text-balance text-2xl font-extrabold tracking-tight text-heading sm:text-3xl">
+              My Thoughts
+            </h1>
+            <p class:list={["mt-4", THOUGHT_SECONDARY_MUTED_CLASS]}>
+              New writing will appear here soon. Thanks for stopping by.
+            </p>
+          </div>
+        ) : (
+          <>
+            <h1 class="sr-only">My Thoughts</h1>
+            <ThoughtsDashboard
+              featuredByGenre={featuredByGenre}
+              feed={feed}
+              initialGenre={initialThoughtGenre}
+            />
+          </>
+        )
+      }
+    </PageStackBody>
+  </div>
+</BaseLayout>
