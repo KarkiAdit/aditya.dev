@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { HOME_MAIN_GATE_ID } from "@/lib/home-entrance";
+import { HOME_MAIN_GATE_ID } from "@/lib/homepage/home-entrance";
 import {
   attachStackIntroScrollTrigger,
   forEachNonHeroPanel,
@@ -13,7 +13,7 @@ import {
   playStackIntrosIfAlreadyEntered,
   queryStackIntroCards,
   queryStackIntroPanels,
-} from "@/lib/homepage-stack-scroll";
+} from "@/lib/homepage/homepage-stack-scroll";
 
 type HomepageStackScrollProps = {
   /** Scope panel queries + GSAP context to this element (default: homepage main gate). */

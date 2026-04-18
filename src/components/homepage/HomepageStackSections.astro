@@ -2,7 +2,7 @@
 import {
   HOMEPAGE_STACK_ROLE,
   homepageStackLayout,
-} from "@/lib/homepage-stack";
+} from "@/lib/homepage/homepage-stack";
 ---
 
 <div class={homepageStackLayout.column}>
@@ -14,20 +14,28 @@ import {
       <slot name="hero" />
     </div>
   </div>
-  <div class={homepageStackLayout.experienceSlab}>
+  <div class={homepageStackLayout.aboutSlab}>
     <div
       class={homepageStackLayout.surfacePanel}
       data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.surface}
     >
-      <slot name="experience" />
+      <slot name="about" />
     </div>
   </div>
-  <div class={homepageStackLayout.moreSlab}>
+  <div class={homepageStackLayout.roadmapSlab}>
     <div
       class={homepageStackLayout.surfaceDeepPanel}
       data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.surface}
     >
-      <slot name="more" />
+      <slot name="roadmap" />
+    </div>
+  </div>
+  <div class={homepageStackLayout.memoryLaneSlab}>
+    <div
+      class={homepageStackLayout.surfaceDeepPanel}
+      data-homepage-stack-panel={HOMEPAGE_STACK_ROLE.surface}
+    >
+      <slot name="memory" />
     </div>
   </div>
 </div>

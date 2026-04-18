@@ -7,8 +7,12 @@ import type {
   FeaturedNicheDesignRow,
   FeaturedNicheFileNode,
 } from "@/lib/tao24-featured-code-showcase";
-import { heroIntroMutedClauseInk } from "@/lib/link-styles";
 import { githubDashboardRepoCardPanelClassName } from "@/lib/github-dashboard-card";
+import { heroIntroMutedClauseInk } from "@/lib/link-styles";
+import {
+  featuredNicheBadgeLabelTypographyClassName,
+  featuredNicheCategoryChipClassName,
+} from "@/lib/projects-page";
 import { cn } from "@/lib/utils";
 
 type ShowcaseView = "none" | "files" | "design";
@@ -16,20 +20,30 @@ type ShowcaseView = "none" | "files" | "design";
 /** Same ink family as project blurbs, one step smaller — no lg/xl ramp inside the showcase. */
 const showcaseCompactBodyClass = cn(
   heroIntroMutedClauseInk,
-  "text-[0.6875rem] leading-snug sm:text-xs sm:leading-relaxed",
+  "text-xs leading-snug sm:text-sm sm:leading-relaxed",
 );
 
 const showcaseSectionLabelClass = cn(
-  "mb-3 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-foreground-muted sm:text-[0.65rem]",
+  "mb-3 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-foreground-muted sm:text-xs",
 );
 
 const treeBodyClass = cn(showcaseCompactBodyClass, "text-pretty font-mono");
 
-/** Match `/projects` stack card intros (`text-sm leading-relaxed text-foreground-muted` + prominent copy). */
-const tabButtonBaseClass = cn(
-  heroIntroMutedClauseInk,
-  "text-sm font-semibold leading-relaxed",
-  "rounded-xl px-3 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none",
+/** Inactive tab: same footprint as category badge, no cream fill (matches chip chrome only on hover). */
+const tabButtonIdleClass = cn(
+  "inline-flex select-none items-center rounded-sm px-3 py-1.5 sm:px-3.5 sm:py-[0.42rem]",
+  featuredNicheBadgeLabelTypographyClassName,
+  "text-foreground-muted",
+  "border border-transparent",
+  "cursor-pointer transition-[color,background-color,border-color,box-shadow] duration-200",
+  "hover:border-primary/14 hover:bg-[oklch(0.987_0.022_58_/_0.55)] hover:text-heading",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+);
+
+const tabButtonSelectedClass = cn(
+  featuredNicheCategoryChipClassName,
+  "cursor-pointer normal-case",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
 );
 
 function FileTreeBranch({
@@ -80,11 +94,7 @@ function FileTreeBranch({
               )}
               <div className="min-w-0 flex-1">
                 <span
-                  className={cn(
-                    treeBodyClass,
-                    "leading-snug",
-                    isDirectory ? "font-semibold text-foreground" : "text-foreground-muted",
-                  )}
+                  className={cn(featuredNicheBadgeLabelTypographyClassName, "text-pretty leading-snug")}
                 >
                   {node.name}
                 </span>
@@ -180,62 +190,45 @@ export function Tao24FeaturedCodeShowcase({ showcase }: { showcase: FeaturedNich
   }, []);
 
   return (
-    <div className="w-full min-w-0 space-y-4">
-      <div className={cn(githubDashboardRepoCardPanelClassName, "p-1")}>
-        <div
-          className="flex flex-wrap gap-1 rounded-xl bg-muted/20 p-1"
-          role="tablist"
-          aria-label="tao24 architecture views"
+    <div className="flex w-full min-w-0 flex-col items-start space-y-4">
+      <div
+        className="flex w-fit max-w-full flex-wrap gap-2"
+        role="tablist"
+        aria-label="tao24 architecture views"
+      >
+        <button
+          id="tao24-tab-none"
+          type="button"
+          role="tab"
+          aria-selected={tab === "none"}
+          aria-controls="tao24-showcase-none"
+          className={tab === "none" ? tabButtonSelectedClass : tabButtonIdleClass}
+          onClick={() => setTab("none")}
         >
-          <button
-            id="tao24-tab-none"
-            type="button"
-            role="tab"
-            aria-selected={tab === "none"}
-            aria-controls="tao24-showcase-none"
-            className={cn(
-              tabButtonBaseClass,
-              tab === "none"
-                ? "bg-secondary text-secondary-foreground shadow-sm"
-                : "text-foreground-muted hover:bg-muted/40 hover:text-foreground",
-            )}
-            onClick={() => setTab("none")}
-          >
-            {showcase.noneTabLabel}
-          </button>
-          <button
-            id="tao24-tab-files"
-            type="button"
-            role="tab"
-            aria-selected={tab === "files"}
-            aria-controls="tao24-showcase-files"
-            className={cn(
-              tabButtonBaseClass,
-              tab === "files"
-                ? "bg-secondary text-secondary-foreground shadow-sm"
-                : "text-foreground-muted hover:bg-muted/40 hover:text-foreground",
-            )}
-            onClick={() => setTab("files")}
-          >
-            {showcase.fileTabLabel}
-          </button>
-          <button
-            id="tao24-tab-design"
-            type="button"
-            role="tab"
-            aria-selected={tab === "design"}
-            aria-controls="tao24-showcase-design"
-            className={cn(
-              tabButtonBaseClass,
-              tab === "design"
-                ? "bg-secondary text-secondary-foreground shadow-sm"
-                : "text-foreground-muted hover:bg-muted/40 hover:text-foreground",
-            )}
-            onClick={() => setTab("design")}
-          >
-            {showcase.designTabLabel}
-          </button>
-        </div>
+          {showcase.noneTabLabel}
+        </button>
+        <button
+          id="tao24-tab-files"
+          type="button"
+          role="tab"
+          aria-selected={tab === "files"}
+          aria-controls="tao24-showcase-files"
+          className={tab === "files" ? tabButtonSelectedClass : tabButtonIdleClass}
+          onClick={() => setTab("files")}
+        >
+          {showcase.fileTabLabel}
+        </button>
+        <button
+          id="tao24-tab-design"
+          type="button"
+          role="tab"
+          aria-selected={tab === "design"}
+          aria-controls="tao24-showcase-design"
+          className={tab === "design" ? tabButtonSelectedClass : tabButtonIdleClass}
+          onClick={() => setTab("design")}
+        >
+          {showcase.designTabLabel}
+        </button>
       </div>
 
       <div
@@ -249,7 +242,7 @@ export function Tao24FeaturedCodeShowcase({ showcase }: { showcase: FeaturedNich
       </div>
 
       <div
-        className={cn(githubDashboardRepoCardPanelClassName, "p-4 sm:p-5")}
+        className={cn(githubDashboardRepoCardPanelClassName, "w-full min-w-0 p-4 sm:p-5")}
         role="tabpanel"
         id="tao24-showcase-files"
         aria-labelledby="tao24-tab-files"
@@ -268,7 +261,7 @@ export function Tao24FeaturedCodeShowcase({ showcase }: { showcase: FeaturedNich
       </div>
 
       <div
-        className={cn(githubDashboardRepoCardPanelClassName, "p-2 sm:p-3")}
+        className={cn(githubDashboardRepoCardPanelClassName, "w-full min-w-0 p-2 sm:p-3")}
         role="tabpanel"
         id="tao24-showcase-design"
         aria-labelledby="tao24-tab-design"

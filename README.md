@@ -40,7 +40,7 @@ Optional social link overrides: `PUBLIC_SOCIAL_X`, `PUBLIC_SOCIAL_LINKEDIN`, `PU
 | `src/content.config.ts` | Content collections → `content/blog`, `content/projects`          |
 | `public/`               | Static files (e.g. hero **video**); optimized stills in `src/assets/` |
 
-SEO meta: `src/components/SEO.astro` (used from `BaseLayout.astro`). Pass `ogImage` from a page when you have an absolute preview URL (`src/pages/index.astro`).
+SEO meta: `src/components/additional/SEO.astro` (used from `BaseLayout.astro`). Pass `ogImage` from a page when you have an absolute preview URL (`src/pages/index.astro`).
 
 ## Prerequisites
 

@@ -2,13 +2,14 @@ import { getImage } from "astro:assets";
 import type { ImageMetadata } from "astro";
 
 import { CURRENT_FOCUS_BOOKS, type CurrentFocusBookCard } from "@/lib/current-focus-books";
-import type { FeaturedNicheImageAsset } from "@/lib/featured-niche-projects";
+
+export { getFeaturedNichePublicImageMap } from "@/lib/projects-public-images";
 
 function viteGlobRasterStem(importPath: string): string {
   return importPath.replace(/^.*\//, "").replace(/\.(png|jpe?g)$/i, "");
 }
 
-/** Optimized book covers for `ProjectsKnowledgeSection` (matches `CURRENT_FOCUS_BOOKS` ids to files in `current-focus-books/`). */
+/** Optimized book covers for the home knowledge section (matches `CURRENT_FOCUS_BOOKS` ids to files in `current-focus-books/`). */
 export async function loadCurrentFocusBookCards(): Promise<readonly CurrentFocusBookCard[]> {
   const bookCoverGlob = import.meta.glob<{ default: ImageMetadata }>(
     "../assets/images/current-focus-books/*.{png,jpg,jpeg}",
@@ -30,28 +31,5 @@ export async function loadCurrentFocusBookCards(): Promise<readonly CurrentFocus
       const height = Math.max(1, Math.round((width * meta.height) / meta.width));
       return { ...book, cover: { src: optimized.src, width, height } };
     }),
-  );
-}
-
-/** Basename → webp + dimensions for everything in `src/assets/images/featured-niche/`. */
-export async function loadFeaturedNicheScreenshotMap(): Promise<
-  Record<string, FeaturedNicheImageAsset>
-> {
-  const nicheImageGlob = import.meta.glob<{ default: ImageMetadata }>(
-    "../assets/images/featured-niche/*.{png,jpg,jpeg}",
-    { eager: true },
-  );
-
-  return Object.fromEntries(
-    await Promise.all(
-      Object.entries(nicheImageGlob).map(async ([path, mod]) => {
-        const base = viteGlobRasterStem(path);
-        const optimized = await getImage({ src: mod.default, width: 960, format: "webp" });
-        const width = 960;
-        const height = Math.max(1, Math.round((width * mod.default.height) / mod.default.width));
-        const asset: FeaturedNicheImageAsset = { src: optimized.src, width, height };
-        return [base, asset] as const;
-      }),
-    ),
   );
 }

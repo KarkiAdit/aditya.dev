@@ -1,3 +1,4 @@
+import { featuredNicheTechStackChipClassName } from "@/lib/projects-page";
 import { cn } from "@/lib/utils";
 
 const REPO_LANGUAGE_HEX: Readonly<Record<string, string>> = {
@@ -8,10 +9,12 @@ const REPO_LANGUAGE_HEX: Readonly<Record<string, string>> = {
   Go: "#00ADD8",
   Java: "#b07219",
   "C++": "#f34b7d",
-  C: "#555555",
+  /** Dark rust-orange (not neutral gray) for chip tints. */
+  C: "#6C3A12",
   Ruby: "#701516",
   PHP: "#4F5D95",
-  Swift: "#F05138",
+  /** Dark burnt orange — chip tints / fallbacks. */
+  Swift: "#A94E0E",
   Kotlin: "#A97BFF",
   HTML: "#e34c26",
   CSS: "#563d7c",
@@ -21,8 +24,8 @@ const REPO_LANGUAGE_HEX: Readonly<Record<string, string>> = {
   Shell: "#89e051",
   Dockerfile: "#384d54",
   MDX: "#fcb32c",
-  /** Featured / stack chips (same visual language as `GitHubDashboardElement` repo tiles). */
-  SwiftUI: "#F05138",
+  /** Featured / stack chips (same visual language as GitHub repo tiles on `/projects`). */
+  SwiftUI: "#C06014",
   Firestore: "#FF9100",
   Xcode: "#147EFB",
   "Gemini API": "#7C6CF9",
@@ -41,16 +44,44 @@ export function getRepoLanguageColor(name: string): string {
   return REPO_LANGUAGE_HEX[name] ?? "oklch(0.55 0.04 50)";
 }
 
+/**
+ * Language bar columns — every fill is **`var(--primary)`** blended in OKLCH with `white`,
+ * `var(--secondary)` (warm wash), or `var(--heading)` (same orange family, slightly richer) so
+ * neighbors stay distinct while the chart stays on-brand.
+ */
+const GITHUB_DASHBOARD_LANGUAGE_BAR_SEGMENT_CLASSES = [
+  "bg-[color-mix(in_oklch,var(--primary)_26%,white)]",
+  "bg-[color-mix(in_oklch,var(--primary)_40%,var(--secondary))]",
+  "bg-[color-mix(in_oklch,var(--primary)_52%,white)]",
+  "bg-[color-mix(in_oklch,var(--primary)_34%,var(--secondary))]",
+  "bg-primary",
+  "bg-[color-mix(in_oklch,var(--primary)_72%,var(--heading))]",
+  "bg-[color-mix(in_oklch,var(--primary)_46%,var(--secondary))]",
+  "bg-[color-mix(in_oklch,var(--primary)_58%,white)]",
+  "bg-[color-mix(in_oklch,var(--primary)_82%,var(--heading))]",
+  "bg-[color-mix(in_oklch,var(--primary)_64%,var(--secondary))]",
+] as const;
+
+export function getGithubDashboardLanguageBarSegmentClass(segmentIndex: number): string {
+  return GITHUB_DASHBOARD_LANGUAGE_BAR_SEGMENT_CLASSES[
+    segmentIndex % GITHUB_DASHBOARD_LANGUAGE_BAR_SEGMENT_CLASSES.length
+  ]!;
+}
+
 /** Pastel chip fill: keeps hue from `getRepoLanguageColor` without heavy saturation. */
 export function getRepoLanguageChipBackgroundColor(name: string): string {
   const base = getRepoLanguageColor(name);
   return `color-mix(in oklch, ${base} 34%, white)`;
 }
 
-/** Rounded language / stack pill: light surface, readable label (not saturated GitHub-dark fills). */
+/**
+ * Repo **language** + **topic** pills — same shell as featured project stack badges
+ * (`featuredNicheTechStackChipClassName`). `cursor-inherit` so chips inside repo `<a>` tiles keep the
+ * link pointer.
+ */
 export const githubDashboardLanguageChipClassName = cn(
-  "inline-flex rounded-full px-2 py-0.5 text-[0.65rem] font-medium text-heading ring-1 ring-black/[0.08]",
-  "shadow-[0_1px_2px_rgba(0,0,0,0.05)]",
+  featuredNicheTechStackChipClassName,
+  "cursor-inherit min-w-0 max-w-[14rem] shrink truncate",
 );
 
 export function formatRepoByteLabel(n: number): string {

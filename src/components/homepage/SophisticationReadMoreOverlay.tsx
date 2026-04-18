@@ -2,13 +2,15 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const overlayClassName = cn(
-  "absolute inset-0 z-[3] flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 outline-none transition-colors duration-200",
+  "absolute inset-0 z-[6] flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 outline-none transition-colors duration-200",
   "group-hover:bg-black/55 group-active:bg-black/65",
   "focus-visible:bg-black/50 focus-visible:ring-2 focus-visible:ring-ring",
 );
 
 export type SophisticationReadMoreOverlayProps = {
   notionHref: string;
+  /** Button label text. */
+  label?: string;
   /** `compact` = smaller pill for narrow cards (e.g. memory lane). */
   pillSize?: "comfortable" | "compact";
   /** Merged onto the interactive overlay root. */
@@ -25,12 +27,16 @@ function readMorePillClassName(pillSize: SophisticationReadMoreOverlayProps["pil
   );
 }
 
-function ReadMoreOnNotionLabel({ pillSize }: Pick<SophisticationReadMoreOverlayProps, "pillSize">) {
-  return <span className={readMorePillClassName(pillSize)}>Read More on Notion</span>;
+function ReadMoreOnNotionLabel({
+  pillSize,
+  label,
+}: Pick<SophisticationReadMoreOverlayProps, "pillSize" | "label">) {
+  return <span className={readMorePillClassName(pillSize)}>{label ?? "Read More on Notion"}</span>;
 }
 
 export function SophisticationReadMoreOverlay({
   notionHref,
+  label,
   pillSize = "comfortable",
   className,
 }: SophisticationReadMoreOverlayProps) {
@@ -45,16 +51,20 @@ export function SophisticationReadMoreOverlay({
         target="_blank"
         rel="noopener noreferrer"
         className={rootClass}
-        aria-label="Read More on Notion — opens in a new tab"
+        aria-label={`${label ?? "Read More on Notion"} — opens in a new tab`}
       >
-        <ReadMoreOnNotionLabel pillSize={pillSize} />
+        <ReadMoreOnNotionLabel pillSize={pillSize} label={label} />
       </a>
     );
   }
 
   return (
-    <button type="button" className={rootClass} aria-label="Read More on Notion — link not set yet">
-      <ReadMoreOnNotionLabel pillSize={pillSize} />
+    <button
+      type="button"
+      className={rootClass}
+      aria-label={`${label ?? "Read More on Notion"} — link not set yet`}
+    >
+      <ReadMoreOnNotionLabel pillSize={pillSize} label={label} />
     </button>
   );
 }

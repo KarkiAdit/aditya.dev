@@ -1,9 +1,13 @@
 ---
+import { HOMEPAGE_STACK_ROLE } from "@/lib/homepage/homepage-stack";
 import { siteChromeGutters } from "@/lib/site-chrome";
-import { HOMEPAGE_STACK_ROLE } from "@/lib/homepage-stack";
 import {
   pageStackColumnBottomPaddingClass,
   pageStackContentInner,
+  pageStackPanelMatchBodyBelowHeroClass,
+  pageStackPanelPlainDeepBelowHeroClass,
+  pageStackPlainColumnClass,
+  pageStackPlainColumnCompactTopClass,
   pageStackSurfaceBelowHeroClass,
   pageStackSurfaceDeepBelowHeroClass,
   pageStackSurfaceStandaloneClass,
@@ -14,16 +18,21 @@ interface Props {
   /**
    * `belowHero` — rounded top + padding under `StackHeroBanner` (default).
    * `standalone` — same frosted surface for pages without a hero slab (e.g. thoughts placeholder).
+   * `plain` — same column as standalone but no frosted panel (page background only).
    */
-  stackVariant?: "belowHero" | "standalone";
+  stackVariant?: "belowHero" | "standalone" | "plain";
+  /**
+   * When `stackVariant="plain"`, `compact` uses less top padding (e.g. under the site nav).
+   */
+  plainTopPadding?: "default" | "compact";
   /**
    * When true, wraps the default slot in `pageStackContentInner` (max width + section vertical gaps).
    * Set false when a child already applies `pageStackContentInner` (e.g. `/projects` inner column).
    */
   wrapInnerColumn?: boolean;
   /**
-   * When true, this frosted panel gets `data-homepage-stack-panel="surface"` for the same GSAP
-   * stack intro as homepage experience / more slabs (`HomepageStackScroll`).
+   * When true, this stack panel gets `data-homepage-stack-panel="surface"` for the same GSAP
+   * stack intro as homepage experience / more slabs (`HomepageStackScroll`). Use `matchBody` for no frosted fill.
    */
   stackScrollSurface?: boolean;
   /**
@@ -31,24 +40,48 @@ interface Props {
    * surface (`primary`, default) vs deeper slab (`deep`) like Experience vs More About Me.
    */
   stackSurfaceLayer?: "primary" | "deep";
+  /**
+   * With `stackScrollSurface` + `belowHero`: first slab uses `homepage-stack-panel-match-body`;
+   * deeper slabs use `homepage-stack-panel-plain` (e.g. `/projects` second block).
+   */
+  matchBody?: boolean;
+  /**
+   * Merged onto the outer column (with gutters + surface rhythm). Use for route-specific full-column
+   * paint (e.g. `/thoughts/[slug]` frosted shell).
+   */
+  outerColumnClass?: string;
 }
 
 const {
   stackVariant = "belowHero",
+  plainTopPadding = "default",
   wrapInnerColumn = false,
   stackScrollSurface = false,
   stackSurfaceLayer = "primary",
+  matchBody = false,
+  outerColumnClass,
 } = Astro.props;
 
 const useDeepSurface =
   stackScrollSurface && stackVariant === "belowHero" && stackSurfaceLayer === "deep";
 
+const useMatchBodyPanel =
+  Boolean(matchBody) && stackScrollSurface && stackVariant === "belowHero";
+
 const surfaceClass =
   stackVariant === "standalone"
     ? pageStackSurfaceStandaloneClass
-    : useDeepSurface
-      ? pageStackSurfaceDeepBelowHeroClass
-      : pageStackSurfaceBelowHeroClass;
+    : stackVariant === "plain"
+      ? plainTopPadding === "compact"
+        ? pageStackPlainColumnCompactTopClass
+        : pageStackPlainColumnClass
+      : useMatchBodyPanel
+        ? useDeepSurface
+          ? pageStackPanelPlainDeepBelowHeroClass
+          : pageStackPanelMatchBodyBelowHeroClass
+        : useDeepSurface
+          ? pageStackSurfaceDeepBelowHeroClass
+          : pageStackSurfaceBelowHeroClass;
 
 const stackStickyClass =
   stackScrollSurface && stackVariant === "belowHero"
@@ -61,7 +94,7 @@ const stackStickyClass =
 <div
   class:list={[
     siteChromeGutters,
-    cn(surfaceClass, stackStickyClass),
+    cn(surfaceClass, stackStickyClass, outerColumnClass),
     pageStackColumnBottomPaddingClass,
   ]}
   {...(stackScrollSurface

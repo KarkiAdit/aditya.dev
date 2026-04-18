@@ -23,7 +23,7 @@ export function Footer({ className, flushTop = false }: { className?: string; fl
           )}
         >
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-8">
-            <p className="max-w-md text-pretty text-sm font-prominent-copy leading-relaxed text-foreground-muted">
+            <p className="hidden max-w-md text-pretty text-sm font-prominent-copy leading-relaxed text-foreground-muted md:block">
               <span className="font-byline-name text-primary">{siteConfig.author}</span>
               {` is a ${siteConfig.rolesLine}.`}
             </p>

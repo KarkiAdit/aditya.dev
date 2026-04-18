@@ -18,10 +18,10 @@ export type CurrentFocusBookCard = CurrentFocusBook & {
 
 export const CURRENT_FOCUS_BOOKS: readonly CurrentFocusBook[] = [
   {
-    id: "ai-engineering-book-cover",
-    title: "AI Engineering: Building Applications with Foundation Models",
-    author: "Chip Huyen",
-    href: "https://a.co/d/02q9smH4",
+    id: "untethered-soul-book-cover",
+    title: "The Untethered Soul",
+    author: "Michael A. Singer",
+    href: "https://a.co/d/0H2tGx4L",
   },
   {
     id: "steve-jobs-book-cover",

@@ -2,20 +2,17 @@
 import { getImage } from "astro:assets";
 
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import StackHeroBanner from "@/components/StackHeroBanner.astro";
+import StackHeroBanner from "@/components/homepage/StackHeroBanner.astro";
+import HomeKnowledgeSection from "@/components/homepage/HomeKnowledgeSection.astro";
 import { MoreAboutMeSection } from "@/components/homepage/MoreAboutMeSection";
 import MoreAboutMeSectionFallback from "@/components/homepage/MoreAboutMeSectionFallback.astro";
 import { HomeEntranceSplash } from "@/components/homepage/HomeEntranceSplash";
 import HomeEntranceSplashFallback from "@/components/homepage/HomeEntranceSplashFallback.astro";
-import ExperienceSectionFallback from "@/components/homepage/ExperienceSectionFallback.astro";
-import { ExperienceSection } from "@/components/homepage/ExperienceSection";
+import { ExperienceRoadmapSection } from "@/components/homepage/ExperienceSection";
 import HomepageStackSections from "@/components/homepage/HomepageStackSections.astro";
 import { HomepageStackScroll } from "@/components/homepage/HomepageStackScroll";
-import { Navbar } from "@/components/layout/Navbar";
-import { fetchGithubDashboard } from "@/lib/github-dashboard";
 import homeHero from "@/assets/images/additional/home-hero-image-desktop.png";
 import homeHeroSmallScreens from "@/assets/images/additional/home-hero-image-mobile.png";
-import professionalHeadshot from "@/assets/images/additional/professional-headshot.jpeg";
 import memoryLaneHometown from "@/assets/images/memory-lane/memory-lane-hometown.jpeg";
 import memoryLaneReading from "@/assets/images/memory-lane/memory-lane-reading.jpeg";
 import memoryLaneRunning from "@/assets/images/memory-lane/memory-lane-running.jpeg";
@@ -23,22 +20,15 @@ import memoryLaneExercise from "@/assets/images/memory-lane/memory-lane-exercise
 import memoryLaneMeditation from "@/assets/images/memory-lane/memory-lane-meditation.png";
 import memoryLaneNyc from "@/assets/images/memory-lane/memory-lane-nyc.jpeg";
 import memoryLaneSanFrancisco from "@/assets/images/memory-lane/memory-lane-sanfransisco.jpeg";
-import { getHeroStackBannerSources } from "@/lib/hero-stack-banner";
+import { HOME_ENTRANCE_COOKIE } from "@/lib/homepage/home-entrance";
+import { getHeroStackBannerSources } from "@/lib/homepage/hero-stack-banner";
 import { absoluteOnSite, siteConfig } from "@/lib/metadata";
-
-const githubLogin = import.meta.env.PUBLIC_GITHUB_LOGIN?.trim() ?? "";
-const githubDashboardPromise =
-  githubLogin.length > 0
-    ? fetchGithubDashboard(githubLogin, import.meta.env.GITHUB_TOKEN)
-    : Promise.resolve({
-        ok: false as const,
-        error: "Set PUBLIC_GITHUB_LOGIN in your environment to load your GitHub profile on the homepage.",
-      });
+import { memoryLaneNoteBodies, memoryLaneNotionHrefs } from "@/lib/homepage/memory-lane-content";
+import { loadCurrentFocusBookCards } from "@/lib/projects-assets";
 
 const [
   homeHeroBanner,
-  githubDashboardAvatar,
-  githubDashboardResult,
+  currentFocusBookCards,
   mlHometown,
   mlReading,
   mlRunning,
@@ -48,8 +38,7 @@ const [
   mlSanFrancisco,
 ] = await Promise.all([
   getHeroStackBannerSources(homeHero, homeHeroSmallScreens),
-  getImage({ src: professionalHeadshot, width: 960, format: "webp" }),
-  githubDashboardPromise,
+  loadCurrentFocusBookCards(),
   getImage({ src: memoryLaneHometown, width: 960, format: "webp" }),
   getImage({ src: memoryLaneReading, width: 960, format: "webp" }),
   getImage({ src: memoryLaneRunning, width: 960, format: "webp" }),
@@ -59,6 +48,7 @@ const [
   getImage({ src: memoryLaneSanFrancisco, width: 960, format: "webp" }),
 ]);
 
+/** Order and length must match `MEMORY_LANE_SLOT_COUNT` in `@/lib/homepage/memory-lane-content`. */
 const memoryLaneNoteImages = [
   mlHometown.src,
   mlReading.src,
@@ -67,19 +57,7 @@ const memoryLaneNoteImages = [
   mlMeditation.src,
   mlNyc.src,
   mlSanFrancisco.src,
-] as const;
-
-const memoryLaneNotionHrefs = ["", "", "", "", "", "", ""] as const;
-
-const memoryLaneNoteBodies = [
-  "I learned my first geography on a bicycle with bad brakes—every slope a small theory of consequence. These days I travel farther on keyboards, but something in me still lint-checks bold ideas against the weather of that place; it keeps the swagger honest.",
-  "A good book is a quiet debate you paid admission for. I scribble in the margins like I'm reviewing a stubborn pull request from the past: firm, fond, occasionally refusing to merge until I've slept on it.",
-  "The mind wants to spawn threads; the route keeps the meeting to one humble loop. Not every knot unties with intellect—sometimes it simply loses its lease around mile four, when the ego drops reception.",
-  "The barbell has no patience for your subplot—only whether you counted the rep honestly. There's a blunt comedy in that: gravity doesn't file issues; it just declines the merge when your form gets cute.",
-  "Sitting still used to feel like a syntax error in my schedule. Then I noticed how much noise default mode ships with. The breath isn't mystical branding—it's the smallest loop that still compiles when the rest of the system is spamming warnings.",
-  "New York teaches urgency with the patience of a recurring fire drill. You learn to walk fast without becoming cruel, to want out loud without confusing volume with north—and to treat every skyline as a hypothesis, not a verdict.",
-  "San Francisco slipped in like fog wearing a city badge—soft at the edges, rude on the inclines. You start layering for weather the way you layer for uncertainty, and every steep block becomes a gentle veto on the fantasy of a flat life.",
-] as const;
+] as const satisfies readonly [string, string, string, string, string, string, string];
 
 const ogImage = absoluteOnSite(homeHeroBanner.srcDesktop);
 
@@ -93,35 +71,40 @@ const description = siteConfig.bio;
   pathname={Astro.url.pathname}
   canonicalPath="/"
   ogImage={ogImage}
+  overlayNavbar
 >
-  <div
-    class="relative isolate flex w-full flex-col gap-0 pb-0"
-  >
+  <script is:inline define:vars={{ homeEntranceCookie: HOME_ENTRANCE_COOKIE }}>
+    (function () {
+      try {
+        var path = location.pathname.replace(/\/$/, "") || "/";
+        if (path !== "/") return;
+        var needle = homeEntranceCookie + "=";
+        if (!document.cookie.split(";").some(function (part) { return part.trim().startsWith(needle); })) {
+          document.documentElement.setAttribute("data-home-entrance", "");
+        }
+      } catch {
+        /* ignore */
+      }
+    })();
+  </script>
+  <div class="relative flex w-full flex-col gap-0 pb-0">
     <HomeEntranceSplash client:only="react">
       <HomeEntranceSplashFallback slot="fallback" />
     </HomeEntranceSplash>
-    <div id="home-main-gate" class="flex w-full min-w-0 flex-col">
+    <div id="home-main-gate" class="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-transparent">
       <HomepageStackScroll client:load />
-      <Navbar variant="overlay" />
       <HomepageStackSections>
         <StackHeroBanner
           slot="hero"
+          matchBody
           imageSrc={homeHeroBanner.srcDesktop}
           imageSrcSmall={homeHeroBanner.srcSmall}
           imageAlt={`${siteConfig.name} — ${siteConfig.rolesLine}`}
           sectionAriaLabel="Hero section"
         />
-        <ExperienceSection
-          slot="experience"
-          client:only="react"
-          result={githubDashboardResult}
-          avatarSrc={githubDashboardAvatar.src}
-        >
-          <ExperienceSectionFallback slot="fallback" />
-        </ExperienceSection>
+        <HomeKnowledgeSection slot="about" currentFocusBooks={currentFocusBookCards} />
         <MoreAboutMeSection
-          slot="more"
-          className="pt-0"
+          slot="memory"
           client:visible
           noteImageSrcs={memoryLaneNoteImages}
           notionHrefs={memoryLaneNotionHrefs}
@@ -129,6 +112,7 @@ const description = siteConfig.bio;
         >
           <MoreAboutMeSectionFallback slot="fallback" />
         </MoreAboutMeSection>
+        <ExperienceRoadmapSection slot="roadmap" client:only="react" />
       </HomepageStackSections>
     </div>
   </div>

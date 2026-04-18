@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,8 @@ import {
   lockDocumentScroll,
   releaseHomeEntranceGate,
   setHomeEntranceDismissedUntilEndOfLocalDay,
-} from "@/lib/home-entrance";
+} from "@/lib/homepage/home-entrance";
+import { homeEntranceSplashSpringTransition } from "@/lib/homepage/homepage-motion";
 import { primaryCtaInteractiveClassName } from "@/lib/link-styles";
 import { cn } from "@/lib/utils";
 
@@ -123,7 +125,7 @@ export function HomeEntranceSplash({ mainGateId = HOME_MAIN_GATE_ID }: HomeEntra
     setEntranceComplete(true);
   }, [mainGateId]);
 
-  return (
+  const splashTree = (
     <AnimatePresence onExitComplete={handleExitComplete}>
       {splashOpen ? (
         <motion.div
@@ -143,7 +145,7 @@ export function HomeEntranceSplash({ mainGateId = HOME_MAIN_GATE_ID }: HomeEntra
             className="flex w-full max-w-3xl flex-col items-center gap-8 text-center md:max-w-4xl md:gap-10"
             initial={reduceMotion ? false : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 240, damping: 30, mass: 0.9 }}
+            transition={homeEntranceSplashSpringTransition}
           >
             <p
               id="home-entrance-thesis"
@@ -180,4 +182,8 @@ export function HomeEntranceSplash({ mainGateId = HOME_MAIN_GATE_ID }: HomeEntra
       ) : null}
     </AnimatePresence>
   );
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(splashTree, document.body);
 }

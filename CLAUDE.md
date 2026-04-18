@@ -18,13 +18,15 @@
 ## Project Structure
 - `/src/pages/` — File-based routing (e.g., `index.astro`, `thoughts/[slug].astro`).
 - `/src/layouts/` — Base layouts using `<slot />`.
-- `/src/components/` — Static `.astro` components.
-- `/src/components/react/` — Interactive React/shadcn islands.
-- `/src/components/homepage/` — `HeroSection`, `ExperienceSection`, `MoreAboutMeSection`, `HomepageStackSections.astro`, `HomepageStackScroll.tsx`, entrance splash, overlays.
-- `/src/lib/` — Shared utilities (`cn`, `metadata`, `navigation`, `site-chrome`, `homepage-stack` layout hooks for the index stack).
+- `/src/components/` — Feature folders (`homepage/`, `thoughts/`, `projects/`, `layout/`, `icons/`, `ui/`) plus shared pieces.
+- `/src/components/additional/` — Cross-cutting `.astro`: `SEO`, `DataDashboard` (hub shell for thoughts/projects), `PlaceholderPageSection` (legal stubs).
+- `/src/components/homepage/` — Index stack (`HomepageStackSections`, `HomepageStackScroll`, `StackHeroBanner`), `ExperienceSection`, `MoreAboutMeSection`, entrance splash, knowledge/polaroid blocks, overlays.
+- `/src/lib/` — Shared utilities (`cn`, `metadata`, `navigation`, `site-chrome`, `site-page-layout`, GitHub helpers, etc.).
+- `/src/lib/homepage/` — Homepage-only modules: stack layout hooks (`homepage-stack`, `homepage-stack-scroll`), entrance gate (`home-entrance`), hero banner assets (`hero-stack-banner`), polaroid surfaces (`polaroid-card`), motion presets (`homepage-motion`).
 - `/src/styles/` — Global CSS (`theme.css`, `globals.css`).
-- `/content/blog/` — MDX blog posts (Spiritual + General).
-- `/content/projects/` — MDX project metadata.
+- `/content/blog/` — MDX blog posts; hero images under `/public/blog/` (see `coverImage` paths).
+- `/content/projects/` — MDX project metadata; rasters under `/public/projects/` (see `projects-public-images.ts`).
+- `/public/icons/` — Favicons and apple touch icon (linked from `BaseLayout.astro`).
 - `/src/content.config.ts` — Zod schemas linking to `/content/`.
 
 ## Content Layer

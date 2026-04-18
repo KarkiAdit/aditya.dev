@@ -1,9 +1,19 @@
 :root {
+  /** Legacy: in-page scroll margins / sticky offsets once tuned for a top bar; kept for gradual migration. */
   --navbar-height: 5.75rem;
+
+  /** Fixed left rail — default width at `lg` and up (matches Tailwind `lg` = 1024px). */
+  --sidebar-width: 6.5rem;
+
+  /** Same layered wash as `body` — reuse on fixed chrome so it aligns with `background-attachment: fixed`. */
+  --site-body-background-image:
+    radial-gradient(ellipse 70% 60% at 10% 15%, oklch(0.85 0.1 50 / 0.42) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.82 0.12 35 / 0.34) 0%, transparent 45%);
 
   --background: oklch(0.96 0.02 55);
   --foreground: oklch(0.36 0.022 50);
-  --foreground-muted: oklch(0.52 0.03 50);
+  /* Secondary / supporting text — same ink as Chrome extension & Google UI body-secondary (#5F6368). */
+  --foreground-muted: oklch(0.458 0.012 257);
   --heading: oklch(0.56 0.17 42);
 
   --card: oklch(0.99 0.01 60 / 0.55);
@@ -13,12 +23,36 @@
   --primary: oklch(0.5 0.15 40);
   --primary-foreground: oklch(0.98 0.01 60);
 
+  /**
+   * Nav rail — idle Lucide strokes: light orange; current route: same hue, lower L (darker orange).
+   */
+  --nav-rail-icon-muted: oklch(0.8 0.082 54);
+  --nav-rail-icon: oklch(0.72 0.1 53);
+  --nav-rail-icon-hover: oklch(0.64 0.12 52);
+  --nav-rail-active-icon: oklch(0.56 0.15 53);
+  --nav-rail-active-icon-hover: oklch(0.48 0.16 52);
+  --nav-rail-active-accent: oklch(0.52 0.13 52);
+  --nav-rail-active-tile-bg: oklch(0.92 0.07 52 / 0.96);
+
+  /** Glass rail tile borders — single oklch each (warm ~48–50 hue, fits peach glass + active fill). */
+  --nav-rail-tile-border: oklch(0.7 0.058 49 / 0.42);
+  --nav-rail-tile-border-hover: oklch(0.58 0.08 48 / 0.52);
+  --nav-rail-tile-border-active: oklch(0.5 0.1 48 / 0.58);
+  --nav-rail-tile-border-active-hover: oklch(0.44 0.11 47 / 0.65);
+
   --secondary: oklch(0.9 0.018 58);
   --secondary-foreground: oklch(0.38 0.024 48);
 
   --border: oklch(0.3 0.02 50 / 0.1);
   --ring: oklch(0.5 0.16 40 / 0.4);
   --radius: 0.75rem;
+}
+
+/** Below Tailwind `lg` (1024px): narrower rail so smaller tiles fit; main column goes edge-to-edge under the overlay rail. */
+@media (max-width: 1023px) {
+  :root {
+    --sidebar-width: 5.25rem;
+  }
 }
 
 @theme inline {
@@ -33,6 +67,11 @@
   --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-nav-rail-icon-muted: var(--nav-rail-icon-muted);
+  --color-nav-rail-icon: var(--nav-rail-icon);
+  --color-nav-rail-icon-hover: var(--nav-rail-icon-hover);
+  --color-nav-rail-active-icon: var(--nav-rail-active-icon);
+  --color-nav-rail-active-icon-hover: var(--nav-rail-active-icon-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted-foreground: var(--foreground-muted);

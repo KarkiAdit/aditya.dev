@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ChevronRight, Cloud, ExternalLink, GitCommit, Globe2, MapPinned, Search, Star } from "lucide-react";
+import { ChevronRight, Cloud, ExternalLink, Globe2, MapPinned } from "lucide-react";
 import {
   CAREER_CREAM_BG,
   CAREER_CREAM_BG_MUTED,
@@ -20,20 +20,29 @@ import {
 import {
   DEMO_GITHUB_DASHBOARD_DATA,
   type GithubDashboardData,
-  type GithubDashboardRepo,
   type GithubDashboardResult,
 } from "@/lib/github-dashboard";
-import { githubDashboardRepoCardClassName } from "@/lib/github-dashboard-card";
+import { githubDashboardRepoCardPanelClassName } from "@/lib/github-dashboard-card";
 import {
   formatRepoByteLabel,
-  getRepoLanguageChipBackgroundColor,
-  getRepoLanguageColor,
-  githubDashboardLanguageChipClassName,
+  getGithubDashboardLanguageBarSegmentClass,
 } from "@/lib/github-repo-language-colors";
+import { homepageOverlaySpringTransition } from "@/lib/homepage/homepage-motion";
 import {
+  githubDashboardLegendTypography,
   heroIntroLeadMutedClauseCompactTypography,
-  heroIntroLeadMutedClauseProfileTypography,
+  featuredIntroParagraphTypography,
+  featuredSectionLeadTypography,
 } from "@/lib/link-styles";
+import {
+  experienceStackSectionTitleClassName,
+  githubDashboardSectionHeadingClassName,
+  pageStackSectionInnerTopPaddingClass,
+  pageStackSectionIntroToBodySpacingClass,
+  pageStackSnapshotHeadingTailPaddingClass,
+  pageStackSnapshotHeadingToLanguagesGapClass,
+  pageStackSnapshotIntroLeadToDashboardClass,
+} from "@/lib/site-page-layout";
 import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +51,73 @@ export type ExperienceSectionProps = {
   avatarSrc: string;
   className?: string;
 };
+
+export type ExperienceRoadmapSectionProps = {
+  className?: string;
+};
+
+export type LiveSnapshotSectionProps = {
+  result: GithubDashboardResult;
+  avatarSrc: string;
+  className?: string;
+  layout?: "page" | "embedded";
+  heading?: string;
+  /** Optional dek below the heading (e.g. projects page). */
+  introLead?: string;
+  /** If set and contained in `introLead`, that substring is wrapped in `<b>`. */
+  introBoldSubstring?: string;
+  /**
+   * When false, only the heading + optional intro render (e.g. `/projects` inserts Best picks
+   * before `LiveSnapshotGithubDashboard`).
+   */
+  showGithubDashboard?: boolean;
+};
+
+export type LiveSnapshotGithubDashboardProps = {
+  result: GithubDashboardResult;
+  avatarSrc: string;
+  className?: string;
+  /**
+   * When true, adds top margin so the language row clears a preceding `h2` (use false when an intro
+   * paragraph already provides separation).
+   */
+  gapAfterHeading?: boolean;
+  /** When true, drops extra bottom padding on the chart shell (e.g. `/projects` live-snapshot tab). */
+  trimBottomSpacing?: boolean;
+};
+
+function JourneyBegunIntroLead({ className }: { className?: string }) {
+  return (
+    <p className={cn(featuredSectionLeadTypography, "mt-4", className)}>
+      The journey has just begun. I am a <b>3x Google intern</b>, now stepping into a full-time role.
+    </p>
+  );
+}
+
+function LiveSnapshotIntroLeadParagraph({
+  text,
+  boldSubstring,
+  className,
+}: {
+  text: string;
+  boldSubstring?: string;
+  className: string;
+}) {
+  const phrase = boldSubstring?.trim();
+  if (!phrase || !text.includes(phrase)) {
+    return <p className={className}>{text}</p>;
+  }
+  const idx = text.indexOf(phrase);
+  const before = text.slice(0, idx);
+  const after = text.slice(idx + phrase.length);
+  return (
+    <p className={className}>
+      {before}
+      <b>{phrase}</b>
+      {after}
+    </p>
+  );
+}
 
 function CareerRoadCarSvg({ className, suffix }: { className?: string; suffix: string }) {
   const id = `career-car-${suffix}`;
@@ -350,7 +426,7 @@ function CareerRoadmapInteractiveSceneElement() {
   return (
     <div
       id="career-roadmap-interactive-scene"
-      className="relative mt-12 sm:mt-16 pb-4 sm:pb-8 md:pb-12 lg:pb-14"
+      className="relative mt-0 pb-4 sm:pb-8 md:pb-12 lg:pb-14"
       aria-label="Interactive career roadmap"
     >
       <div className="relative z-10 flex flex-col gap-4">
@@ -412,7 +488,7 @@ function CareerRoadmapInteractiveSceneElement() {
                   }}
                   initial={reduceMotion ? false : { opacity: 0.92, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  transition={homepageOverlaySpringTransition}
                 >
                   <CareerRegulatorySign
                     stop={stops[Math.min(stopIdx, n - 1)]!}
@@ -476,79 +552,93 @@ function CareerRoadmapInteractiveSceneElement() {
   );
 }
 
-function GitHubProfileElement({ data, avatarSrc }: { data: GithubDashboardData; avatarSrc: string }) {
+/** GitHub mark (this lucide version has no `Github` icon) — `currentColor` for link hover. */
+function GitHubProfileMark({ className }: { className?: string }) {
   return (
-    <div className="flex flex-col items-center gap-6 text-center lg:sticky lg:top-[calc(var(--navbar-height)+1.5rem)]">
-      <div className="aspect-square w-[min(100%,18rem)] overflow-hidden rounded-full ring-2 ring-border/25 ring-offset-2 ring-offset-transparent sm:w-[min(100%,20rem)] md:w-[min(100%,22rem)] lg:w-full lg:max-w-[22rem]">
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+    </svg>
+  );
+}
+
+/** Compact profile chip — same creamy card surface as GitHub repo tiles (`githubDashboardRepoCardPanel`). */
+function GitHubProfileChartOverlay({ data, avatarSrc }: { data: GithubDashboardData; avatarSrc: string }) {
+  const displayName = data.user.name ?? data.user.login;
+  return (
+    <div
+      className={cn(
+        githubDashboardRepoCardPanelClassName,
+        "inline-flex w-fit max-w-[min(100%,30rem)] min-h-0 flex-row items-center gap-3.5 px-3.5 py-3 sm:gap-4 sm:px-4 sm:py-3.5 md:gap-4 md:px-5 md:py-4",
+        "transition-[box-shadow,background-color,border-color,ring-color]",
+        "hover:border-secondary/50 hover:bg-card/98 hover:ring-secondary/28 hover:shadow-md",
+      )}
+    >
+      <div className="size-16 shrink-0 overflow-hidden rounded-full border border-secondary/40 bg-secondary/35 sm:size-20">
         <img
           src={avatarSrc}
           alt=""
           className="size-full object-cover object-[center_18%]"
-          width={352}
-          height={352}
+          width={256}
+          height={256}
           loading="lazy"
           decoding="async"
         />
       </div>
-      <div className="flex max-w-sm flex-col items-center gap-4">
-        <p className={cn("text-balance", heroIntroLeadMutedClauseProfileTypography)}>
-          {data.user.name ?? data.user.login}
-        </p>
-        <a
-          href={data.user.profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+      <a
+        href={data.user.profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${displayName} on GitHub (opens in new tab)`}
+        className={cn(
+          "group/profile-link inline-flex min-w-0 max-w-[14rem] flex-1 items-center gap-2 sm:max-w-[16rem] md:max-w-[18rem]",
+          "text-foreground/90 transition-colors hover:text-heading",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        )}
+      >
+        <span
           className={cn(
-            "inline-flex h-10 w-full max-w-xs items-center justify-center gap-2 px-5 text-sm font-semibold",
-            careerCreamControlSurface,
+            "min-w-0 truncate text-left",
+            githubDashboardLegendTypography,
+            "text-base sm:text-lg md:text-xl",
           )}
-          style={careerCreamControlStyle as CSSProperties}
         >
-          GitHub profile
-          <ExternalLink className="size-4 shrink-0 opacity-80" aria-hidden />
-        </a>
-      </div>
+          {displayName}
+        </span>
+        <GitHubProfileMark className="size-[1.125rem] shrink-0 opacity-85 transition-opacity group-hover/profile-link:opacity-100 sm:size-5" />
+      </a>
     </div>
   );
 }
 
-function GitHubDashboardElement({ data }: { data: GithubDashboardData }) {
-  const [languageFilter, setLanguageFilter] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
+function formatGithubLanguageShareAxisTick(value: number): string {
+  if (value <= 0) return "0%";
+  if (value >= 10) return `${Math.round(value)}%`;
+  return `${value.toFixed(1)}%`;
+}
 
+function GithubLanguageBarAxisDisplayName({ name }: { name: string }) {
+  if (name === "TypeScript") {
+    return (
+      <>
+        <span className="sm:hidden">TypeSc</span>
+        <span className="hidden sm:inline">{name}</span>
+      </>
+    );
+  }
+  return <>{name}</>;
+}
+
+function GitHubLanguagesBar({
+  data,
+  trimBottomSpacing = false,
+}: {
+  data: GithubDashboardData;
+  trimBottomSpacing?: boolean;
+}) {
   const totalBytes = useMemo(
     () => data.languageUsage.reduce((s, u) => s + u.bytes, 0),
     [data.languageUsage],
   );
-
-  const filteredRepos = useMemo(() => {
-    let list: GithubDashboardRepo[] = [...data.repos];
-
-    if (languageFilter) {
-      list = list.filter((r) => {
-        const langs = data.repoLanguages[String(r.id)];
-        return langs !== undefined && langs[languageFilter] !== undefined && langs[languageFilter] > 0;
-      });
-    }
-
-    const q = query.trim().toLowerCase();
-    if (q) {
-      list = list.filter(
-        (r) =>
-          r.name.toLowerCase().includes(q) ||
-          (r.description?.toLowerCase().includes(q) ?? false) ||
-          r.topics.some((t) => t.toLowerCase().includes(q)),
-      );
-    }
-
-    list.sort((a, b) => {
-      const dc = b.commitCount - a.commitCount;
-      if (dc !== 0) return dc;
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-    });
-
-    return list;
-  }, [data.repos, data.repoLanguages, languageFilter, query]);
 
   const barSegments = useMemo(() => {
     if (totalBytes <= 0) return [];
@@ -559,108 +649,120 @@ function GitHubDashboardElement({ data }: { data: GithubDashboardData }) {
     }));
   }, [data.languageUsage, totalBytes]);
 
+  /** Plot scale is 0–100% of total bytes; each bar height matches that language's actual share. */
+  const yAxisMaxPct = 100;
+  const yMidShare = 50;
+
+  if (barSegments.length === 0) return null;
+
+  const columnTemplate = `repeat(${barSegments.length}, minmax(0, 1fr))`;
+
   return (
-    <div className="flex min-w-0 flex-col gap-6">
+    <div
+      className={cn(
+        "w-full min-w-0 overflow-hidden rounded-2xl border border-primary/20 bg-card/70 px-3 text-foreground shadow-sm ring-1 ring-inset ring-secondary/35 backdrop-blur-xl sm:px-5",
+        trimBottomSpacing
+          ? "pt-4 pb-0 sm:pt-5 sm:pb-0"
+          : "py-4 sm:py-5",
+      )}
+      role="group"
+      aria-label={`Languages in selected repositories. Each bar height is that language's share of total bytes (0 to 100 percent).`}
+    >
+      <div className="grid w-full min-w-0 grid-cols-[minmax(3rem,3.75rem)_1fr] grid-rows-[auto_auto] gap-x-2 gap-y-0 sm:gap-x-3">
         <div
-          role="group"
-          aria-label="Languages in selected repositories. Click a segment to filter the list below."
+          className="row-start-1 flex min-h-[45vh] flex-col justify-between self-stretch pt-1 pr-1.5 text-right text-xs font-medium tabular-nums leading-none text-heading sm:pr-2 sm:text-sm md:text-base"
+          aria-hidden="true"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-foreground-muted">Languages</p>
-          <div className="mt-4 flex h-4 w-full overflow-hidden rounded-full ring-1 ring-border/30">
-            {barSegments.map((u) => (
-              <button
+          <span>{formatGithubLanguageShareAxisTick(yAxisMaxPct)}</span>
+          <span>{formatGithubLanguageShareAxisTick(yMidShare)}</span>
+          <span>0%</span>
+        </div>
+        <div className="row-start-1 flex min-h-[45vh] min-w-0 flex-col border-b-2 border-l-2 border-heading/45 pl-2 sm:pl-2.5">
+          <div
+            className="grid min-h-[45vh] w-full flex-1 gap-1.5 sm:gap-2 md:gap-3"
+            style={{ gridTemplateColumns: columnTemplate }}
+          >
+            {barSegments.map((u, i) => (
+              <div
                 key={u.name}
-                type="button"
-                className={cn(
-                  "min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  "transition-[opacity,filter] duration-200",
-                  languageFilter && languageFilter !== u.name ? "opacity-35" : "opacity-100 hover:brightness-110",
-                )}
-                style={{ width: `${u.pct}%`, backgroundColor: getRepoLanguageColor(u.name) }}
-                title={`${u.name} — ${formatRepoByteLabel(u.bytes)} bytes`}
-                aria-pressed={languageFilter === u.name}
-                onClick={() => setLanguageFilter((cur) => (cur === u.name ? null : u.name))}
-              />
+                className="group/langbar flex h-full min-h-0 min-w-0 flex-col justify-end self-stretch rounded-none"
+                title={`${u.name} — ${formatRepoByteLabel(u.bytes)} bytes (${u.pct.toFixed(1)}%)`}
+              >
+                <div className="mx-auto flex h-full min-h-0 w-full max-w-[3.75rem] flex-col justify-end sm:max-w-[4.25rem]">
+                  <div
+                    className={cn(
+                      "w-full shrink-0 rounded-none shadow-sm ring-1 ring-inset ring-primary/15 transition-[filter,transform] duration-200",
+                      "group-hover/langbar:brightness-105",
+                      getGithubDashboardLanguageBarSegmentClass(i),
+                    )}
+                    style={{ height: `${u.pct}%` }}
+                  />
+                </div>
+              </div>
             ))}
           </div>
-          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[0.65rem] text-foreground-muted sm:text-xs">
+        </div>
+
+        <div className="row-start-2 col-start-1" aria-hidden="true" />
+
+        <div className="row-start-2 min-w-0 pt-2">
+          <div className="grid w-full gap-1.5 sm:gap-2" style={{ gridTemplateColumns: columnTemplate }}>
             {barSegments.map((u) => (
-              <li key={u.name} className="inline-flex items-center gap-1.5">
-                <span className="size-2 shrink-0 rounded-sm" style={{ backgroundColor: getRepoLanguageColor(u.name) }} />
-                <span className="text-foreground/90">{u.name}</span>
-                <span className="tabular-nums">{((u.bytes / totalBytes) * 100).toFixed(1)}%</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="relative min-w-0">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground-muted"
-            aria-hidden
-          />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search repositories…"
-            className="h-10 w-full rounded-full border border-border/40 bg-background/60 py-2 pl-10 pr-4 text-sm outline-none ring-offset-transparent placeholder:text-foreground-muted focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Search repositories"
-          />
-        </div>
-
-        <ul className="grid min-w-0 list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredRepos.map((repo) => (
-            <li key={repo.id}>
-              <a
-                href={repo.htmlUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={githubDashboardRepoCardClassName}
+              <div
+                key={`${u.name}-label`}
+                className="flex min-w-0 flex-col items-center gap-1 px-0.5 text-center"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <span className={cn("min-w-0 truncate", heroIntroLeadMutedClauseCompactTypography)}>{repo.name}</span>
-                  <span className="flex shrink-0 flex-col items-end gap-1 text-xs text-foreground-muted">
-                    {repo.commitCount > 0 ? (
-                      <span className="inline-flex items-center gap-0.5 tabular-nums">
-                        <GitCommit className="size-3.5" aria-hidden />
-                        {repo.commitCount}
-                      </span>
-                    ) : null}
-                    <span className="inline-flex items-center gap-0.5 tabular-nums">
-                      <Star className="size-3.5" aria-hidden />
-                      {repo.stars}
-                    </span>
-                  </span>
-                </div>
-                {repo.description ? (
-                  <p className="mt-2 line-clamp-2 text-xs leading-snug text-foreground/80">{repo.description}</p>
-                ) : (
-                  <p className="mt-2 text-xs italic text-foreground-muted">No description</p>
-                )}
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {repo.language ? (
-                    <span
-                      className={githubDashboardLanguageChipClassName}
-                      style={{ backgroundColor: getRepoLanguageChipBackgroundColor(repo.language) }}
-                    >
-                      {repo.language}
-                    </span>
-                  ) : null}
-                  {repo.topics.slice(0, 3).map((t) => (
-                    <span key={t} className="rounded-full bg-muted/50 px-2 py-0.5 text-[0.65rem] text-foreground-muted">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
+                <span className="line-clamp-2 w-full max-w-[6rem] text-sm font-semibold leading-snug tracking-tight text-heading sm:max-w-none sm:text-base md:text-lg">
+                  <GithubLanguageBarAxisDisplayName name={u.name} />
+                </span>
+                <span className="text-sm tabular-nums text-foreground/85 sm:text-base md:text-[1.05rem]">
+                  {u.pct.toFixed(1)}%
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 pb-2 text-center text-sm font-semibold tracking-wide text-foreground/70 sm:pb-2.5 sm:text-base md:pb-3 md:text-lg">
+            languages used
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        {filteredRepos.length === 0 ? (
-          <p className="text-center text-sm text-foreground-muted">No repositories match the current filters.</p>
-        ) : null}
+function GitHubProfileAndRepositoriesBlock({
+  data,
+  avatarSrc,
+  gapAfterHeading = true,
+  trimBottomSpacing = false,
+}: {
+  data: GithubDashboardData;
+  avatarSrc: string;
+  gapAfterHeading?: boolean;
+  trimBottomSpacing?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex w-full min-w-0 flex-col gap-8 sm:gap-10",
+        gapAfterHeading ? pageStackSnapshotHeadingToLanguagesGapClass : undefined,
+      )}
+    >
+      <div className="relative min-w-0 w-full">
+        <div className="pointer-events-none absolute right-[10%] top-[10%] z-20">
+          <div className="pointer-events-auto">
+            <GitHubProfileChartOverlay data={data} avatarSrc={avatarSrc} />
+          </div>
+        </div>
+        <div
+          className={cn(
+            "min-w-0 px-2 pt-2 sm:px-3 md:px-4",
+            trimBottomSpacing ? "pb-0" : "pb-2 sm:pb-3",
+          )}
+        >
+          <GitHubLanguagesBar data={data} trimBottomSpacing={trimBottomSpacing} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -670,21 +772,24 @@ export function ExperienceSection({ result, avatarSrc, className }: ExperienceSe
   const displayData: GithubDashboardData = isDemo ? DEMO_GITHUB_DASHBOARD_DATA : result.data;
 
   return (
-    <section
-      className={cn("w-full scroll-mt-[var(--navbar-height)]", className)}
+    <div
+      role="region"
+      className={cn("w-full scroll-mt-8 bg-transparent", className)}
       aria-labelledby="works-heading"
     >
       <div className={cn(siteChromeGutters)}>
-        <div className={cn(siteChromeInner, "py-0")}>
-          <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className={cn(siteChromeInner, "py-0", pageStackSectionInnerTopPaddingClass)}>
+          <div
+            className={cn(
+              "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+              pageStackSectionIntroToBodySpacingClass,
+            )}
+          >
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-foreground-muted">Experience</p>
-              <h2
-                id="works-heading"
-                className="heading-gradient mt-2 text-balance text-3xl font-extrabold tracking-tighter sm:text-4xl md:text-5xl"
-              >
-                And here&apos;s my works
+              <h2 id="works-heading" className={experienceStackSectionTitleClassName}>
+                Experience
               </h2>
+              <JourneyBegunIntroLead />
             </div>
             {isDemo ? (
               <span className="shrink-0 rounded-full border border-border/40 bg-muted/40 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-wide text-foreground-muted">
@@ -693,14 +798,130 @@ export function ExperienceSection({ result, avatarSrc, className }: ExperienceSe
             ) : null}
           </div>
 
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start lg:gap-16">
-            <GitHubProfileElement data={displayData} avatarSrc={avatarSrc} />
-            <GitHubDashboardElement data={displayData} />
-          </div>
+          <CareerRoadmapInteractiveSceneElement />
+          <h2 className={githubDashboardSectionHeadingClassName}>
+            A live snapshot of my latest work.
+          </h2>
 
+          <GitHubProfileAndRepositoriesBlock data={displayData} avatarSrc={avatarSrc} gapAfterHeading />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ExperienceRoadmapSection({ className }: ExperienceRoadmapSectionProps) {
+  return (
+    <div
+      role="region"
+      className={cn("w-full scroll-mt-8 bg-transparent", className)}
+      aria-label="Experience roadmap"
+    >
+      <div className={cn(siteChromeGutters)}>
+        <div className={cn(siteChromeInner, "py-0", pageStackSectionInnerTopPaddingClass)}>
+          <div
+            className={cn(
+              "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+              pageStackSectionIntroToBodySpacingClass,
+            )}
+          >
+            <div>
+              <h2 className={experienceStackSectionTitleClassName}>Experience</h2>
+              <JourneyBegunIntroLead />
+            </div>
+          </div>
           <CareerRoadmapInteractiveSceneElement />
         </div>
       </div>
-    </section>
+    </div>
+  );
+}
+
+export function LiveSnapshotGithubDashboard({
+  result,
+  avatarSrc,
+  className,
+  gapAfterHeading = true,
+  trimBottomSpacing = false,
+}: LiveSnapshotGithubDashboardProps) {
+  const isDemo = !result.ok;
+  const displayData: GithubDashboardData = isDemo ? DEMO_GITHUB_DASHBOARD_DATA : result.data;
+
+  return (
+    <div
+      role="region"
+      aria-label="GitHub profile and repositories"
+      className={cn("w-full scroll-mt-8 bg-transparent", className)}
+    >
+      <GitHubProfileAndRepositoriesBlock
+        data={displayData}
+        avatarSrc={avatarSrc}
+        gapAfterHeading={gapAfterHeading}
+        trimBottomSpacing={trimBottomSpacing}
+      />
+    </div>
+  );
+}
+
+export function LiveSnapshotSection({
+  result,
+  avatarSrc,
+  className,
+  layout = "page",
+  heading = "A live snapshot of my latest work.",
+  introLead,
+  introBoldSubstring,
+  showGithubDashboard = true,
+}: LiveSnapshotSectionProps) {
+  const hasIntroLead = Boolean(introLead?.trim());
+
+  const inner = (
+    <>
+      <h2
+        className={cn(
+          githubDashboardSectionHeadingClassName,
+          !showGithubDashboard && !hasIntroLead ? pageStackSnapshotHeadingTailPaddingClass : undefined,
+        )}
+      >
+        {heading}
+      </h2>
+      {hasIntroLead && introLead ? (
+        <LiveSnapshotIntroLeadParagraph
+          text={introLead}
+          boldSubstring={introBoldSubstring}
+          className={cn(
+            featuredIntroParagraphTypography,
+            "mt-4 text-pretty",
+            showGithubDashboard ? pageStackSnapshotIntroLeadToDashboardClass : "mb-0",
+          )}
+        />
+      ) : null}
+
+      {showGithubDashboard ? (
+        <LiveSnapshotGithubDashboard
+          result={result}
+          avatarSrc={avatarSrc}
+          gapAfterHeading={!hasIntroLead}
+        />
+      ) : null}
+    </>
+  );
+
+  return (
+    <div
+      role="region"
+      className={cn("w-full scroll-mt-8 bg-transparent", className)}
+      aria-label={heading.trim() || "Live snapshot"}
+    >
+      {layout === "embedded" ? (
+        inner
+      ) : (
+        <div className={cn(siteChromeGutters)}>
+          <div className={cn(siteChromeInner, "py-0", pageStackSectionInnerTopPaddingClass)}>
+            {inner}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 /**
  * Curated file tree + design tokens for the tao24 featured card (`/projects`).
- * Consumed by `Tao24FeaturedCodeShowcase` and `FEATURED_NICHE_PROJECTS`.
+ * Consumed by `Tao24FeaturedCodeShowcase` and `content/projects/tao24.mdx` (`codeShowcaseKey: "tao24"`).
  */
 export type FeaturedNicheFileNode = {
   readonly name: string;

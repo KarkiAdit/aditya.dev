@@ -23,9 +23,7 @@ body::-webkit-scrollbar {
   body {
     background-color: var(--background);
     color: var(--foreground);
-    background-image:
-      radial-gradient(ellipse 70% 60% at 10% 15%, oklch(0.85 0.1 50 / 0.42) 0%, transparent 50%),
-      radial-gradient(ellipse 60% 50% at 85% 75%, oklch(0.82 0.12 35 / 0.34) 0%, transparent 45%);
+    background-image: var(--site-body-background-image);
     background-attachment: fixed;
     background-size: cover;
   }
@@ -48,7 +46,260 @@ body::-webkit-scrollbar {
   }
 }
 
+/**
+ * Thoughts hub — Chrome / Material-style tiers: primary (filled), secondary (tonal + border), tertiary (text).
+ */
+@layer components {
+  .thought-btn-primary {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-full border-0 bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:px-4 sm:text-base;
+  }
+
+  .thought-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border-0 bg-secondary/45 px-3.5 py-1.5 text-sm font-semibold text-secondary-foreground shadow-none transition-colors hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:px-4 sm:text-base;
+  }
+
+  /** Genre filter — idle: no fill; secondary-tier label only (selected uses `.thought-btn-primary`). */
+  .thought-btn-filter-idle {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-full border-0 bg-transparent px-3.5 py-1.5 text-sm font-semibold text-secondary-foreground shadow-none transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:px-4 sm:text-base;
+  }
+
+  .thought-genre-details[open] .thought-genre-chevron {
+    transform: rotate(180deg);
+  }
+
+  /**
+   * Mobile `<details>` filter: summary shows the active choice; when open, hide the same option
+   * as a second pill below. Keep primary (red) treatment on the summary label only.
+   */
+  .thought-genre-details[open] [data-thought-filter][aria-pressed="true"],
+  .thought-genre-details[open] [data-best-pick-filter][aria-pressed="true"] {
+    @apply hidden;
+  }
+
+  .thought-genre-details[open] [data-thought-genre-toggle-label],
+  .thought-genre-details[open] [data-best-pick-toggle-label] {
+    @apply inline-flex items-center justify-center rounded-full border-0 bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:px-4 sm:text-base;
+  }
+
+  .thought-btn-tertiary {
+    @apply inline-flex items-center justify-center rounded-md border-0 bg-transparent px-2 py-1 text-sm font-semibold text-primary shadow-none transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-base;
+  }
+
+  .thought-pager-page--primary {
+    @apply inline-flex min-w-[2.25rem] items-center justify-center rounded-full border-0 bg-primary px-2.5 py-1 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:min-w-10 sm:px-3 sm:py-1.5 sm:text-base;
+  }
+
+  .thought-pager-page--tertiary {
+    @apply inline-flex min-w-[2.25rem] items-center justify-center rounded-full border-0 bg-transparent px-2.5 py-1 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:min-w-10 sm:px-3 sm:py-1.5 sm:text-base;
+  }
+
+  .thought-hero-cta {
+    @apply inline-flex items-center justify-center rounded-full border-0 bg-primary px-4 py-2 text-sm font-bold tracking-tight text-primary-foreground shadow-md transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:px-5 sm:py-2.5 sm:text-base;
+  }
+
+  /**
+   * Article post (`/thoughts/[slug]`) — full width inside gutters; frosted column is the `PageStackBody` shell.
+   */
+  .thought-article-shell {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /**
+   * Medium-style reading typography (`/thoughts/[slug]`). Full-column frosted paint is
+   * `nav-rail-icon-group-surface` on `PageStackBody` (`outerColumnClass`); this block is typography + ink only.
+   */
+  .thought-article-medium {
+    --medium-ink: #242424;
+    --medium-muted: #6b6b6b;
+    --medium-link: #1a8917;
+    --medium-rule: #e6e6e6;
+    color: var(--medium-ink);
+  }
+
+  .thought-article-medium .thought-article-kicker {
+    color: var(--medium-muted);
+  }
+
+  .thought-mdx-medium {
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-optical-sizing: auto;
+  }
+
+  /** Thoughts hub — small caps label above featured / section blocks. */
+  .thought-hub-eyebrow {
+    @apply m-0 mb-3 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-foreground-muted md:mb-4;
+  }
+
+  /** Article page — optional kicker (matches hub rhythm). */
+  .thought-article-kicker {
+    @apply text-[0.68rem] font-bold uppercase tracking-[0.14em] text-foreground-muted;
+  }
+
+  /**
+   * Nav rail — glassmorphic “app icon” tiles: layered gradient, specular ::before, depth shadows, strong blur.
+   */
+  .nav-rail-glass-tile {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 0.9375rem;
+    border: 1px solid var(--nav-rail-tile-border);
+    background: linear-gradient(
+      158deg,
+      oklch(0.96 0.055 40 / 0.88) 0%,
+      oklch(0.92 0.08 40 / 0.62) 42%,
+      oklch(0.88 0.09 40 / 0.52) 100%
+    );
+    backdrop-filter: blur(22px) saturate(1.45);
+    -webkit-backdrop-filter: blur(22px) saturate(1.45);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0.03 55 / 0.48),
+      inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 22%, transparent),
+      0 2px 6px color-mix(in oklch, var(--primary) 12%, transparent),
+      0 10px 34px -8px color-mix(in oklch, var(--primary) 18%, transparent);
+    transition:
+      transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 200ms ease-out,
+      border-color 200ms ease-out,
+      background 200ms ease-out;
+  }
+
+  .nav-rail-glass-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(
+      180deg,
+      oklch(1 0.03 55 / 0.38) 0%,
+      transparent 42%,
+      color-mix(in oklch, var(--primary) 14%, transparent) 100%
+    );
+  }
+
+  .nav-rail-glass-tile > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-rail-glass-tile:hover:not(.nav-rail-glass-tile--active) {
+    border-color: var(--nav-rail-tile-border-hover);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0.03 55 / 0.52),
+      inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 18%, transparent),
+      0 4px 14px color-mix(in oklch, var(--primary) 14%, transparent),
+      0 14px 42px -10px color-mix(in oklch, var(--primary) 20%, transparent);
+  }
+
+  .nav-rail-glass-tile--active {
+    border: 2px solid var(--nav-rail-tile-border-active);
+    background: linear-gradient(
+      152deg,
+      oklch(0.94 0.09 52 / 0.95) 0%,
+      oklch(0.88 0.1 50 / 0.78) 44%,
+      color-mix(in oklch, var(--nav-rail-active-accent) 40%, oklch(0.96 0.03 55 / 0.85)) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0.03 55 / 0.48),
+      inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 22%, transparent),
+      0 2px 6px color-mix(in oklch, var(--primary) 12%, transparent),
+      0 10px 34px -8px color-mix(in oklch, var(--primary) 18%, transparent);
+  }
+
+  /** No glass specular on selected — icon carries orange; bg stays orangish. */
+  .nav-rail-glass-tile--active::before {
+    display: none;
+  }
+
+  /** Selected route: darker orange ink on Lucide root (`stroke` + `color` for `currentColor`). */
+  .nav-rail-glass-tile--active svg.lucide {
+    color: var(--nav-rail-active-icon);
+    stroke: var(--nav-rail-active-icon);
+  }
+
+  .nav-rail-glass-tile--active:hover svg.lucide {
+    color: var(--nav-rail-active-icon-hover);
+    stroke: var(--nav-rail-active-icon-hover);
+  }
+
+  .nav-rail-glass-tile--active:hover {
+    border-color: var(--nav-rail-tile-border-active-hover);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0.03 55 / 0.52),
+      inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 18%, transparent),
+      0 4px 14px color-mix(in oklch, var(--primary) 14%, transparent),
+      0 14px 42px -10px color-mix(in oklch, var(--primary) 20%, transparent);
+  }
+
+  .nav-rail-glass-tile:focus-visible {
+    outline: none;
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0.03 55 / 0.48),
+      inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 22%, transparent),
+      0 2px 6px color-mix(in oklch, var(--primary) 12%, transparent),
+      0 10px 34px -8px color-mix(in oklch, var(--primary) 18%, transparent),
+      0 0 0 2px color-mix(in oklch, var(--primary) 42%, transparent),
+      0 0 0 4px color-mix(in oklch, var(--background) 92%, transparent);
+  }
+
+  .nav-rail-glass-tile--active:focus-visible {
+    outline: none;
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0.03 55 / 0.48),
+      inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 22%, transparent),
+      0 2px 6px color-mix(in oklch, var(--primary) 12%, transparent),
+      0 10px 34px -8px color-mix(in oklch, var(--primary) 18%, transparent),
+      0 0 0 2px color-mix(in oklch, var(--primary) 42%, transparent),
+      0 0 0 4px color-mix(in oklch, var(--background) 92%, transparent);
+  }
+
+  /** Smaller tiles on iPad / phone — matches Tailwind `max-lg` breakpoint. */
+  @media (max-width: 1023px) {
+    .nav-rail-glass-tile {
+      border-radius: 0.75rem;
+    }
+  }
+}
+
 @layer utilities {
+  /** Fixed headers / strips: same paint stack as `body` (fixed attachment keeps radials aligned while scrolling). */
+  .site-body-background {
+    background-color: var(--background);
+    background-image: var(--site-body-background-image);
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+  /**
+   * Nav rail icon group — frosted “stack card” only (tight around tiles). Full-height rail
+   * column stays transparent in JSX; `pointer-events-none` on this wrapper keeps padding/gaps
+   * click-through while `.nav-rail-glass-tile` links use `pointer-events-auto`.
+   */
+  .nav-rail-icon-group-surface {
+    background-color: var(--background);
+    background-image:
+      linear-gradient(
+        165deg,
+        color-mix(in oklch, oklch(0.994 0.022 78 / 0.82) 58%, var(--card)) 0%,
+        color-mix(in oklch, oklch(0.988 0.032 72 / 0.9) 42%, var(--card)) 48%,
+        color-mix(in oklch, oklch(0.978 0.028 64 / 0.84) 45%, var(--card)) 100%
+      ),
+      var(--site-body-background-image);
+    background-attachment: scroll, fixed;
+    background-size: auto, cover;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      0 2px 10px -3px oklch(0.34 0.028 48 / 0.11),
+      0 1px 2px oklch(0.3 0.022 50 / 0.05),
+      inset 0 1px 0 oklch(1 0.018 62 / 0.55),
+      inset 0 -1px 0 oklch(0.84 0.045 48 / 0.14);
+  }
+
   .font-byline-name {
     @apply font-extrabold;
   }
@@ -61,6 +312,15 @@ body::-webkit-scrollbar {
   html[data-home-entrance] {
     overflow: hidden;
     height: 100%;
+  }
+
+  /**
+   * Hide the fixed nav rail while the entrance overlay is up. The splash may render inside a
+   * stacking-isolated subtree; portaling + this rule keep the rail from painting above the modal.
+   */
+  html[data-home-entrance] aside[aria-label="Site"] {
+    visibility: hidden;
+    pointer-events: none;
   }
 
   html[data-home-entrance] body {
@@ -194,6 +454,38 @@ body::-webkit-scrollbar {
     box-shadow:
       inset 0 0 0 1px oklch(1 0.01 60 / 0.1),
       0 -10px 36px -14px oklch(0.38 0.04 48 / 0.1);
+  }
+
+  /**
+   * First slab only, directly under the hero — top-left ellipse 100%×100% of the slab (full axes),
+   * `--card` tint; no panel fill so `body` shows through elsewhere.
+   */
+  .homepage-stack-panel-match-body {
+    background-color: transparent;
+    background-image: radial-gradient(
+      ellipse 100% 100% at 0 0,
+      color-mix(in oklch, var(--card) 75%, transparent) 0%,
+      color-mix(in oklch, var(--card) 38%, transparent) 28%,
+      color-mix(in oklch, var(--card) 12%, transparent) 48%,
+      transparent 72%
+    );
+    background-attachment: scroll;
+    background-repeat: no-repeat;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  /** Further stack slabs — no second canvas or frame; `body` shows through. */
+  .homepage-stack-panel-plain {
+    background-color: transparent;
+    background-image: none;
+    background-attachment: scroll;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
   }
 
   /* Career road mini-scene (homepage) — motion respects prefers-reduced-motion */
