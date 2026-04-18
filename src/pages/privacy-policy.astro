@@ -2,12 +2,26 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PageStackBody from "@/components/layout/PageStackBody.astro";
 import { HOME_ENTRANCE_COOKIE } from "@/lib/homepage/home-entrance";
-import { formatDocumentTitle, siteConfig } from "@/lib/metadata";
+import {
+  LEGAL_PAGES_LAST_UPDATED,
+  formatDocumentTitle,
+  formatLegalDateDisplay,
+  legalPageStructuredData,
+  siteConfig,
+} from "@/lib/metadata";
 import { mdxArticleBodyClass } from "@/lib/mdx-article-body";
 
 const title = formatDocumentTitle("Privacy Policy");
 const description =
-  "How this personal site handles cookies, external links, and the small amount of data involved in browsing.";
+  "Privacy Policy for adityakarki.me (Aditya Karki): cookies, homepage entrance preference, GitHub on Projects, external links, hosting logs, and how this static site handles browsing.";
+const canonicalHref = new URL(Astro.url.pathname, Astro.site ?? siteConfig.url).href;
+const supplementalStructuredData = legalPageStructuredData({
+  canonicalHref,
+  headline: "Privacy Policy",
+  description,
+  dateModified: LEGAL_PAGES_LAST_UPDATED,
+});
+const lastUpdatedLabel = formatLegalDateDisplay(LEGAL_PAGES_LAST_UPDATED);
 
 const thoughtPostPageShellClass =
   "nav-rail-icon-group-surface flex min-h-0 min-w-0 flex-1 flex-col";
@@ -20,7 +34,12 @@ const mediumMetaClass = "font-sans text-sm font-normal text-foreground-muted";
 const mdxProseClass = mdxArticleBodyClass;
 ---
 
-<BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
+<BaseLayout
+  title={title}
+  description={description}
+  pathname={Astro.url.pathname}
+  supplementalStructuredData={supplementalStructuredData}
+>
   <PageStackBody
     stackVariant="plain"
     plainTopPadding="compact"
@@ -67,6 +86,14 @@ const mdxProseClass = mdxArticleBodyClass;
           >
             Terms
           </a>
+          <span class="text-[#6b6b6b]/50 max-sm:hidden" aria-hidden="true">
+            ·
+          </span>
+          <span class="max-sm:mt-1 max-sm:w-full sm:inline">
+            <time class="text-[#6b6b6b]" datetime={LEGAL_PAGES_LAST_UPDATED}>
+              Last updated {lastUpdatedLabel}
+            </time>
+          </span>
         </div>
       </header>
 
