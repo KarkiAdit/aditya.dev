@@ -1,47 +1,80 @@
+
+
 # adityakarki.me
 
-Personal portfolio: Astro 6, React for shadcn, Tailwind v4, and MDX in **`content/`**.
+**Personal portfolio & writing — engineering, projects, and long-form thoughts.**
+
+- [Site map](#site-map)
+- [Stack](#stack)
+- [Local development](#local-development)
+- [Repository layout](#repository-layout)
+- [Design system](#design-system)
+
+## Site map
+
+
+|              |                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Home**     | Stack hero, entrance splash, books / about, memory-lane polaroids, experience roadmap (stack scroll + motion on large screens). |
+| **Projects** | Best-picks dashboard from MDX, project “niche” cards, tech chips, docs & setup, optional GitHub live snapshot.                  |
+| **Thoughts** | Genre filter, featured hero per genre, MDX posts in `content/blog/`.                                                            |
+| **Legal**    | Privacy & terms — domain text follows `PUBLIC_SITE_URL` / `siteUrl()`.                                                          |
+
+
+Social links live in the **footer** (env-configured), not a separate contact page.
 
 ## Stack
 
-- [Astro 6](https://astro.build) (static `dist/` output)
-- [React 19](https://react.dev) + [shadcn/ui](https://ui.shadcn.com) (Radix Luma)
-- [Tailwind CSS v4](https://tailwindcss.com) via `@tailwindcss/vite`
-- [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) + `@astrojs/mdx`
 
-## Scripts
+| Layer       | Details                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------ |
+| **App**     | Astro **6** · static output · MDX via `@astrojs/mdx`                                       |
+| **UI**      | React **19** islands · shadcn-style primitives (`src/components/ui/`)                      |
+| **CSS**     | Tailwind **v4** · `@tailwindcss/vite` · tokens in `src/styles/theme.css` (`@theme inline`) |
+| **Motion**  | Framer Motion · GSAP (homepage stack & career scene)                                       |
+| **Content** | `astro:content` · `content.config.ts` · `content/blog` · `content/projects`                |
+| **Ship**    | Cloudflare Pages → `dist/` · set `**PUBLIC_SITE_URL`** for canonical URLs & sitemap        |
 
-| Command           | Description                 |
-| ----------------- | --------------------------- |
-| `npm run dev`     | Astro dev server            |
-| `npm run build`   | Production build → `dist/` |
-| `npm run preview` | Preview the production build |
-| `npm run lint`    | ESLint                      |
 
-## Cloudflare Pages
+## Local development
 
-1. Connect this repository in the Cloudflare dashboard.
-2. **Build command:** `npm run build`
-3. **Build output directory:** `dist`
-4. **Root directory:** `/` (repository root)
-5. **Environment variables (production):** set `PUBLIC_SITE_URL` to your live site URL (e.g. `https://adityakarki.me`) for canonical URLs and the sitemap.
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build
+npm run preview  # production build locally; add -- --host to share on LAN
+```
 
-Preview deployments use **`CF_PAGES_URL`** automatically when `PUBLIC_SITE_URL` is not set (`src/lib/metadata.ts`).
+Configure a `**.env**` for local builds (see `**src/env.d.ts**`): `PUBLIC_SITE_URL`, `PUBLIC_GITHUB_LOGIN`, optional `GITHUB_TOKEN`, social URLs, etc. Mirror the same vars in **Cloudflare → Environment variables** for production.
 
-Optional social link overrides: `PUBLIC_SOCIAL_X`, `PUBLIC_SOCIAL_LINKEDIN`, `PUBLIC_SOCIAL_MEDIUM`.
+## Repository layout
 
-## Layout
+```
+content/blog/          # Thoughts (MDX)
+content/projects/      # Project panels (MDX)
+public/                # Static assets, images
+src/
+  components/          # homepage · thoughts · projects · layout · ui
+  layouts/
+  lib/                 # metadata, navigation, GitHub fetch, stack helpers
+  pages/               # routes (index, projects, thoughts, [slug], legal)
+  styles/              # globals.css, theme.css
+astro.config.mjs
+content.config.ts
+```
 
-| Path                    | Role                                                                 |
-| ----------------------- | -------------------------------------------------------------------- |
-| `src/pages/`            | Routes                                                               |
-| `src/layouts/`        | Shell + shared layout                                                |
-| `src/components/`     | UI                                                                   |
-| `src/content.config.ts` | Content collections → `content/blog`, `content/projects`          |
-| `public/`               | Static files (e.g. hero **video**); optimized stills in `src/assets/` |
+Content is **only** wired through Astro’s content layer (no Next.js / Velite / monorepo packages).
 
-SEO meta: `src/components/additional/SEO.astro` (used from `BaseLayout.astro`). Pass `ogImage` from a page when you have an absolute preview URL (`src/pages/index.astro`).
+## Design system
 
-## Prerequisites
 
-- Node.js 20+
+| Token        | Implementation                                                                                                                                                         |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | **Manrope** — UI & headings. **Source Serif 4** — editorial serif (e.g. MDX blockquotes).                                                                              |
+| **Color**    | **OKLCH** in `theme.css`: warm cream **background**, orange **heading** / **primary**, muted neutral body, glass **card** surfaces, dedicated **nav rail** icon steps. |
+| **Tailwind** | Semantic colors mapped with `--color-`* from CSS variables.                                                                                                            |
+| **Layout**   | Glass **left rail** (`--sidebar-width`); main column inset on `lg+`, full width under the rail on small screens.                                                       |
+| **Depth**    | Homepage **frosted stack** panels + **fixed radial** body wash (`globals.css`) for a single cohesive “canvas”.                                                         |
+| **Spacing**  | Shared rhythm in `src/lib/site-page-layout.ts` and related layout tokens.                                                                                              |
+
+
