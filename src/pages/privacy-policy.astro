@@ -1,13 +1,121 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import PlaceholderPageSection from "@/components/additional/PlaceholderPageSection.astro";
-import { formatDocumentTitle } from "@/lib/metadata";
-import { PLACEHOLDER_PAGE_META_DESCRIPTION } from "@/lib/placeholder-page";
+import PageStackBody from "@/components/layout/PageStackBody.astro";
+import { HOME_ENTRANCE_COOKIE } from "@/lib/homepage/home-entrance";
+import { formatDocumentTitle, siteConfig } from "@/lib/metadata";
+import { mdxArticleBodyClass } from "@/lib/mdx-article-body";
 
 const title = formatDocumentTitle("Privacy Policy");
-const description = PLACEHOLDER_PAGE_META_DESCRIPTION;
+const description =
+  "How this personal site handles cookies, external links, and the small amount of data involved in browsing.";
+
+const thoughtPostPageShellClass =
+  "nav-rail-icon-group-surface flex min-h-0 min-w-0 flex-1 flex-col";
+
+const mediumDekClass =
+  "max-w-none font-sans text-xl font-normal leading-snug text-foreground-muted md:text-2xl md:leading-snug";
+
+const mediumMetaClass = "font-sans text-sm font-normal text-foreground-muted";
+
+const mdxProseClass = mdxArticleBodyClass;
 ---
 
 <BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
-  <PlaceholderPageSection heading="Privacy Policy" />
+  <PageStackBody
+    stackVariant="plain"
+    plainTopPadding="compact"
+    wrapInnerColumn={false}
+    outerColumnClass={thoughtPostPageShellClass}
+  >
+    <article
+      class:list={[
+        "thought-article-shell thought-article-medium flex w-full min-w-0 flex-col gap-8 bg-transparent px-5 py-8 sm:gap-9 sm:px-8 sm:py-10 md:gap-10 md:px-10 md:py-12",
+      ]}
+    >
+      <header class="flex min-w-0 flex-col gap-4 sm:gap-5">
+        <p class="thought-article-kicker m-0 font-sans">Legal</p>
+
+        <h1
+          class="m-0 text-balance font-sans text-[2.25rem] font-bold leading-[1.12] tracking-tight text-heading sm:text-[2.5rem] md:text-[2.75rem] md:leading-[1.1]"
+        >
+          Privacy Policy
+        </h1>
+
+        <p class:list={["m-0", mediumDekClass]}>
+          {siteConfig.name} is a personal portfolio and writing site. This page describes what happens on
+          <strong class="font-semibold text-foreground">{siteConfig.url.replace(/^https?:\/\//, "")}</strong> in plain language.
+        </p>
+
+        <div
+          class:list={[
+            "flex flex-wrap items-center gap-x-2 gap-y-2 border-b border-[#e6e6e6] pb-6 sm:pb-7",
+            mediumMetaClass,
+          ]}
+        >
+          <a
+            href="/"
+            class="font-sans font-medium text-[#6b6b6b] underline-offset-4 transition-colors hover:text-[#242424] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/25"
+          >
+            Home
+          </a>
+          <span class="text-[#6b6b6b]/50" aria-hidden="true">
+            ·
+          </span>
+          <a
+            href="/terms"
+            class="font-sans font-medium text-[#6b6b6b] underline-offset-4 transition-colors hover:text-[#242424] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/25"
+          >
+            Terms
+          </a>
+        </div>
+      </header>
+
+      <hr class="m-0 h-px w-full border-0 bg-[#e6e6e6]" />
+
+      <div class="min-w-0" role="region" aria-label="Privacy policy body">
+        <div
+          class:list={[
+            ...mdxProseClass,
+            "[&>h2:first-of-type]:!mt-0 sm:[&>h2:first-of-type]:!mt-0 md:[&>h2:first-of-type]:!mt-0",
+          ]}
+        >
+          <h2>What this site is</h2>
+          <p>
+            The site is mostly <strong class="font-semibold text-foreground">static pages</strong> (home, projects, essays).
+            There are no accounts, comments, or sign-in forms hosted here. Reading posts or browsing projects does not create a
+            profile on this server.
+          </p>
+
+          <h2>Cookies</h2>
+          <p>
+            The homepage may set a single <strong class="font-semibold text-foreground">first-visit preference cookie</strong> (
+            <code>{HOME_ENTRANCE_COOKIE}</code>) when you dismiss the entrance overlay. It remembers that choice for the rest of
+            the day in your browser, uses <code>SameSite=Lax</code>, and is scoped to this site. You can remove it anytime via
+            your browser settings.
+          </p>
+
+          <h2>External links and embeds</h2>
+          <p>
+            Some cards link out to <strong class="font-semibold text-foreground">Notion</strong> or other sites you choose to open;
+            those services have their own privacy policies. The <strong class="font-semibold text-foreground">Projects</strong> page
+            shows public information from <strong class="font-semibold text-foreground">GitHub</strong> (for example repository
+            names and language stats) when configured; that data is fetched over HTTPS and is already public on GitHub.
+          </p>
+
+          <h2>Hosting and logs</h2>
+          <p>
+            Like any website, the host or CDN in front of this site may keep <strong class="font-semibold text-foreground"
+              >standard access logs</strong> (for example IP address, rough location, browser type, and pages requested) for
+            security and operations. This site does not use those logs to build a marketing profile here.
+          </p>
+
+          <h2>Updates</h2>
+          <p>
+            This policy may change as the site evolves. The “Legal” link in the footer will always point to the current version.
+            For questions, use the social links in the footer.
+          </p>
+        </div>
+      </div>
+    </article>
+  </PageStackBody>
 </BaseLayout>

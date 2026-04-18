@@ -11,7 +11,7 @@ export function siteUrl(): string {
   if (typeof cfPages === "string" && cfPages.trim().length > 0) {
     return cfPages.replace(/\/$/, "");
   }
-  return "https://adityakarki.com.np";
+  return "https://adityakarki.me";
 }
 
 /**

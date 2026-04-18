@@ -7,7 +7,7 @@ import { defineConfig } from "astro/config";
 const site =
   typeof process.env.PUBLIC_SITE_URL === "string" && process.env.PUBLIC_SITE_URL.trim().length > 0
     ? process.env.PUBLIC_SITE_URL.replace(/\/$/, "")
-    : "https://adityakarki.com.np";
+    : "https://adityakarki.me";
 
 export default defineConfig({
   site,

@@ -24,7 +24,7 @@ Personal portfolio: Astro 6, React for shadcn, Tailwind v4, and MDX in **`conten
 2. **Build command:** `npm run build`
 3. **Build output directory:** `dist`
 4. **Root directory:** `/` (repository root)
-5. **Environment variables (production):** set `PUBLIC_SITE_URL` to your live site URL (e.g. `https://adityakarki.com.np`) for canonical URLs and the sitemap.
+5. **Environment variables (production):** set `PUBLIC_SITE_URL` to your live site URL (e.g. `https://adityakarki.me`) for canonical URLs and the sitemap.
 
 Preview deployments use **`CF_PAGES_URL`** automatically when `PUBLIC_SITE_URL` is not set (`src/lib/metadata.ts`).
 
