@@ -18,7 +18,7 @@ import { featuredNicheBestPicksLeadTypography } from "@/lib/link-styles";
 import {
   pageStackKnowledgeSlabContentTopPaddingClass,
   pageStackRoundTopClass,
-  pageStackSnapshotIntroLeadToDashboardClass,
+  pageStackSnapshotIntroLeadToProjectCardGapClass,
 } from "@/lib/site-page-layout";
 import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
@@ -79,7 +79,7 @@ const projectsMainColumnClass = "flex w-full min-w-0 flex-col gap-0 pb-0";
 ---
 
 <div class="relative isolate flex w-full flex-col gap-0 pb-0">
-  <div id={PROJECTS_STACK_GATE_ID} class="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-transparent">
+  <div id={PROJECTS_STACK_GATE_ID} class="flex min-h-0 w-full min-w-0 flex-col bg-transparent">
     <h1 class="sr-only">Projects</h1>
     <HomepageStackScroll client:load gateId={PROJECTS_STACK_GATE_ID} />
     <div class={projectsMainColumnClass}>
@@ -122,18 +122,22 @@ const projectsMainColumnClass = "flex w-full min-w-0 flex-col gap-0 pb-0";
 
                 <div
                   class:list={cn(
-                    "mb-6 sm:mb-8 md:mb-10",
+                    "mb-3 sm:mb-4 md:mb-5 pb-7 sm:pb-8 lg:pb-9",
                     initialPickId !== GITHUB_SNAPSHOT_PICK_ID && "hidden",
                   )}
                   data-best-pick-panel={GITHUB_SNAPSHOT_PICK_ID}
                 >
-                  <div class="flex w-full min-w-0 flex-col gap-0">
+                  <div
+                    class:list={cn(
+                      "flex w-full min-w-0 flex-col items-stretch",
+                      pageStackSnapshotIntroLeadToProjectCardGapClass,
+                    )}
+                  >
                     <p
                       class:list={cn(
                         featuredNicheBestPicksLeadTypography,
-                        "mt-6 text-balance font-extrabold tracking-tight text-foreground/85",
+                        "mt-3 text-left font-extrabold tracking-tight text-foreground/85",
                         "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
-                        pageStackSnapshotIntroLeadToDashboardClass,
                       )}
                       id="projects-github-api-lead"
                     >
@@ -150,7 +154,7 @@ const projectsMainColumnClass = "flex w-full min-w-0 flex-col gap-0 pb-0";
                       result={githubDashboardResult}
                       avatarSrc={githubDashboardAvatarSrc}
                       gapAfterHeading={false}
-                      trimBottomSpacing
+                      leftAlignLanguagesTypography
                     >
                       <ExperienceSectionFallback slot="fallback" />
                     </LiveSnapshotGithubDashboard>

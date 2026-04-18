@@ -84,6 +84,7 @@ export type LiveSnapshotGithubDashboardProps = {
   gapAfterHeading?: boolean;
   /** When true, drops extra bottom padding on the chart shell (e.g. `/projects` live-snapshot tab). */
   trimBottomSpacing?: boolean;
+  leftAlignLanguagesTypography?: boolean;
 };
 
 function JourneyBegunIntroLead({ className }: { className?: string }) {
@@ -631,9 +632,11 @@ function GithubLanguageBarAxisDisplayName({ name }: { name: string }) {
 function GitHubLanguagesBar({
   data,
   trimBottomSpacing = false,
+  leftAlignLanguagesTypography = false,
 }: {
   data: GithubDashboardData;
   trimBottomSpacing?: boolean;
+  leftAlignLanguagesTypography?: boolean;
 }) {
   const totalBytes = useMemo(
     () => data.languageUsage.reduce((s, u) => s + u.bytes, 0),
@@ -660,7 +663,7 @@ function GitHubLanguagesBar({
   return (
     <div
       className={cn(
-        "w-full min-w-0 overflow-hidden rounded-2xl border border-primary/20 bg-card/70 px-3 text-foreground shadow-sm ring-1 ring-inset ring-secondary/35 backdrop-blur-xl sm:px-5",
+        "w-full min-w-0 overflow-hidden rounded-2xl border border-primary/20 bg-card/70 text-foreground shadow-sm ring-1 ring-inset ring-secondary/35 backdrop-blur-xl",
         trimBottomSpacing
           ? "pt-4 pb-0 sm:pt-5 sm:pb-0"
           : "py-4 sm:py-5",
@@ -710,7 +713,12 @@ function GitHubLanguagesBar({
             {barSegments.map((u) => (
               <div
                 key={`${u.name}-label`}
-                className="flex min-w-0 flex-col items-center gap-1 px-0.5 text-center"
+                className={cn(
+                  "flex min-w-0 flex-col gap-1 px-0.5",
+                  leftAlignLanguagesTypography
+                    ? "items-start text-left"
+                    : "items-center text-center",
+                )}
               >
                 <span className="line-clamp-2 w-full max-w-[6rem] text-sm font-semibold leading-snug tracking-tight text-heading sm:max-w-none sm:text-base md:text-lg">
                   <GithubLanguageBarAxisDisplayName name={u.name} />
@@ -721,7 +729,12 @@ function GitHubLanguagesBar({
               </div>
             ))}
           </div>
-          <p className="mt-3 pb-2 text-center text-sm font-semibold tracking-wide text-foreground/70 sm:pb-2.5 sm:text-base md:pb-3 md:text-lg">
+          <p
+            className={cn(
+              "mt-3 pb-2 text-sm font-semibold tracking-wide text-foreground/70 sm:pb-2.5 sm:text-base md:pb-3 md:text-lg",
+              leftAlignLanguagesTypography ? "text-left" : "text-center",
+            )}
+          >
             languages used
           </p>
         </div>
@@ -735,11 +748,13 @@ function GitHubProfileAndRepositoriesBlock({
   avatarSrc,
   gapAfterHeading = true,
   trimBottomSpacing = false,
+  leftAlignLanguagesTypography = false,
 }: {
   data: GithubDashboardData;
   avatarSrc: string;
   gapAfterHeading?: boolean;
   trimBottomSpacing?: boolean;
+  leftAlignLanguagesTypography?: boolean;
 }) {
   return (
     <div
@@ -756,11 +771,15 @@ function GitHubProfileAndRepositoriesBlock({
         </div>
         <div
           className={cn(
-            "min-w-0 px-2 pt-2 sm:px-3 md:px-4",
+            "min-w-0 px-0 pt-2",
             trimBottomSpacing ? "pb-0" : "pb-2 sm:pb-3",
           )}
         >
-          <GitHubLanguagesBar data={data} trimBottomSpacing={trimBottomSpacing} />
+          <GitHubLanguagesBar
+            data={data}
+            trimBottomSpacing={trimBottomSpacing}
+            leftAlignLanguagesTypography={leftAlignLanguagesTypography}
+          />
         </div>
       </div>
     </div>
@@ -843,6 +862,7 @@ export function LiveSnapshotGithubDashboard({
   className,
   gapAfterHeading = true,
   trimBottomSpacing = false,
+  leftAlignLanguagesTypography = false,
 }: LiveSnapshotGithubDashboardProps) {
   const isDemo = !result.ok;
   const displayData: GithubDashboardData = isDemo ? DEMO_GITHUB_DASHBOARD_DATA : result.data;
@@ -858,6 +878,7 @@ export function LiveSnapshotGithubDashboard({
         avatarSrc={avatarSrc}
         gapAfterHeading={gapAfterHeading}
         trimBottomSpacing={trimBottomSpacing}
+        leftAlignLanguagesTypography={leftAlignLanguagesTypography}
       />
     </div>
   );

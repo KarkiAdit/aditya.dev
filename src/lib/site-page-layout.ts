@@ -77,6 +77,8 @@ export const pageStackSnapshotHeadingTailPaddingClass = "pb-8 sm:pb-10 md:pb-12"
  */
 export const pageStackSnapshotIntroLeadToDashboardClass = "mb-8 sm:mb-10 md:mb-12";
 
+export const pageStackSnapshotIntroLeadToProjectCardGapClass = "gap-8 sm:gap-10 md:gap-12";
+
 /** Snapshot `h2` (no intro) → GitHub stack (languages row): one margin rhythm, do not stack with `h2` padding-bottom. */
 export const pageStackSnapshotHeadingToLanguagesGapClass = "mt-8 sm:mt-10 md:mt-12";
 

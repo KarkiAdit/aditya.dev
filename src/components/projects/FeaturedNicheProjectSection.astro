@@ -27,7 +27,7 @@ import { featuredNicheBestPicksLeadTypography } from "@/lib/link-styles";
 import {
   experienceStackSectionTitleClassName,
   pageStackSectionIntroToBodySpacingClass,
-  pageStackSnapshotIntroLeadToDashboardClass,
+  pageStackSnapshotIntroLeadToProjectCardGapClass,
 } from "@/lib/site-page-layout";
 import { cn } from "@/lib/utils";
 
@@ -69,31 +69,36 @@ const showResearchPaper = project.researchPaper != null;
     </header>
   ) : null}
 
-  <div class="flex w-full min-w-0 flex-col gap-0 pt-1">
-    <p
-      class:list={[
-        cn(
-          featuredNicheBestPicksLeadTypography,
-          "mt-6 text-balance font-extrabold tracking-tight text-foreground/85",
-          "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
-          pageStackSnapshotIntroLeadToDashboardClass,
-        ),
-      ]}
-    >
-      {project.description}
-    </p>
-  </div>
+  <div
+    class:list={cn(
+      "flex w-full min-w-0 flex-col items-stretch",
+      pageStackSnapshotIntroLeadToProjectCardGapClass,
+    )}
+  >
+    <div class="pt-1 text-left">
+      <p
+        class:list={[
+          cn(
+            featuredNicheBestPicksLeadTypography,
+            "mt-3 font-extrabold tracking-tight text-foreground/85",
+            "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
+          ),
+        ]}
+      >
+        {project.description}
+      </p>
+    </div>
 
-  <article {...{ [HOMEPAGE_STACK_INTRO_CARD_ATTR]: "" }} class:list={[cn(projectsPageStackCardClassName, "p-7 sm:p-8 lg:p-9")]}>
-    <div
-      class:list={[
-        "relative z-10 flex w-full min-w-0 flex-1 flex-col gap-6",
-        "items-center text-center sm:items-stretch sm:text-left",
-      ]}
-    >
+    <article {...{ [HOMEPAGE_STACK_INTRO_CARD_ATTR]: "" }} class:list={[cn(projectsPageStackCardClassName, "p-7 sm:p-8 lg:p-9")]}>
       <div
         class:list={[
-          "flex w-full flex-col items-center gap-4",
+          "relative z-10 flex w-full min-w-0 flex-col gap-6",
+          "items-stretch text-left",
+        ]}
+      >
+      <div
+        class:list={[
+          "flex w-full flex-col items-start gap-4",
           "sm:flex-row sm:items-start sm:justify-between sm:gap-4",
         ]}
       >
@@ -105,7 +110,7 @@ const showResearchPaper = project.researchPaper != null;
         </div>
         <div
           class:list={[
-            "flex w-full flex-wrap items-center justify-center gap-3",
+            "flex w-full flex-wrap items-center justify-start gap-3",
             "sm:w-auto sm:justify-end",
           ]}
         >
@@ -143,7 +148,7 @@ const showResearchPaper = project.researchPaper != null;
         </div>
       </div>
 
-      <div class="flex w-full flex-wrap justify-center gap-2 sm:justify-start">
+      <div class="flex w-full flex-wrap justify-start gap-2">
         {project.techStack.map((tech) => (
           <span class:list={[featuredNicheTechStackChipClassName]}>{tech}</span>
         ))}
@@ -184,7 +189,7 @@ const showResearchPaper = project.researchPaper != null;
                       />
                     </div>
                   ) : (
-                    <div class="flex min-h-[12rem] w-full items-center justify-center p-6 text-center">
+                    <div class="flex min-h-[12rem] w-full items-center justify-start p-6 text-left">
                       <p class="text-sm font-semibold text-foreground-muted">
                         Add{" "}
                         <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
@@ -200,7 +205,7 @@ const showResearchPaper = project.researchPaper != null;
                 {project.projectDocs && project.projectDocs.length > 0 ? (
                   <div class="w-full min-w-0 text-left">
                     <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
-                    <div class:list={["flex w-full flex-wrap justify-center gap-2 sm:justify-start"]}>
+                    <div class:list={["flex w-full flex-wrap justify-start gap-2"]}>
                       {project.projectDocs.map((doc) => (
                         <a
                           href={doc.href}
@@ -264,7 +269,7 @@ const showResearchPaper = project.researchPaper != null;
                       />
                     </div>
                   ) : (
-                    <div class="flex min-h-[12rem] w-full items-center justify-center p-6 text-center">
+                    <div class="flex min-h-[12rem] w-full items-center justify-start p-6 text-left">
                       <p class="text-sm font-semibold text-foreground-muted">
                         Add{" "}
                         <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
@@ -279,7 +284,7 @@ const showResearchPaper = project.researchPaper != null;
               <div class="flex w-full min-w-0 flex-col justify-center gap-4 text-left">
                 <div>
                   <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
-                  <div class="mt-2 flex w-full flex-wrap justify-center gap-2 sm:justify-start">
+                  <div class="mt-2 flex w-full flex-wrap justify-start gap-2">
                     {project.projectDocs.map((doc) => (
                       <a
                         href={doc.href}
@@ -330,7 +335,7 @@ const showResearchPaper = project.researchPaper != null;
                     />
                   </div>
                 ) : (
-                  <div class="flex min-h-[12rem] w-full items-center justify-center p-6 text-center">
+                  <div class="flex min-h-[12rem] w-full items-center justify-start p-6 text-left">
                     <p class="text-sm font-semibold text-foreground-muted">
                       Add <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{project.heroImageSlug}.png</code>{" "}
                       to public/projects/
@@ -346,7 +351,7 @@ const showResearchPaper = project.researchPaper != null;
           {project.projectDocs && project.projectDocs.length > 0 ? (
             <div class="w-full min-w-0 text-left">
               <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
-              <div class:list={["flex w-full flex-wrap justify-center gap-2 sm:justify-start"]}>
+              <div class:list={["flex w-full flex-wrap justify-start gap-2"]}>
                 {project.projectDocs.map((doc) => (
                   <a
                     href={doc.href}
@@ -381,11 +386,11 @@ const showResearchPaper = project.researchPaper != null;
       ) : null}
 
       {project.screenshots.length > 0 ? (
-        <div class:list={["flex w-full min-w-0 justify-center sm:justify-start"]}>
+        <div class:list={["flex w-full min-w-0 justify-start"]}>
           <div
             class:list={[
               "inline-grid w-max max-w-full shrink-0 content-start gap-[25px] sm:w-auto",
-              "min-w-0 justify-items-center justify-self-center sm:justify-items-start sm:justify-self-start",
+              "min-w-0 justify-items-start justify-self-start",
               "[grid-template-columns:max-content]",
               "sm:[grid-template-columns:repeat(2,max-content)]",
               "lg:[grid-template-columns:repeat(3,max-content)]",
@@ -411,7 +416,7 @@ const showResearchPaper = project.researchPaper != null;
                   >
                     <figcaption
                       class:list={[
-                        "shrink-0 border-b border-border/25 px-3 py-2.5 text-center",
+                        "shrink-0 border-b border-border/25 px-3 py-2.5 text-left",
                         "text-xs font-bold leading-snug text-foreground sm:text-sm",
                       ]}
                     >
@@ -443,7 +448,7 @@ const showResearchPaper = project.researchPaper != null;
                           />
                         </>
                       ) : (
-                        <div class="flex min-h-0 min-w-[12rem] max-h-full w-full max-w-[min(320px,92vw)] flex-1 flex-col items-center justify-center gap-2 p-6 text-center sm:max-w-[min(350px,92vw)]">
+                        <div class="flex min-h-0 min-w-[12rem] max-h-full w-full max-w-[min(320px,92vw)] flex-1 flex-col items-start justify-center gap-2 p-6 text-left sm:max-w-[min(350px,92vw)]">
                           <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-widest text-white/50">
                             Placeholder
                           </span>
@@ -468,7 +473,7 @@ const showResearchPaper = project.researchPaper != null;
       {!project.setupCode && !project.heroImageSlug && project.projectDocs && project.projectDocs.length > 0 ? (
         <div class="w-full min-w-0 text-left">
           <h2 class:list={[featuredNicheProjectDocSectionLabelClassName]}>Documentation</h2>
-          <div class:list={["flex w-full flex-wrap justify-center gap-2 sm:justify-start"]}>
+          <div class:list={["flex w-full flex-wrap justify-start gap-2"]}>
             {project.projectDocs.map((doc) => (
               <a
                 href={doc.href}
@@ -483,7 +488,8 @@ const showResearchPaper = project.researchPaper != null;
         </div>
       ) : null}
     </div>
-  </article>
+    </article>
+  </div>
 
   {
     Astro.slots.has("extended") ? (

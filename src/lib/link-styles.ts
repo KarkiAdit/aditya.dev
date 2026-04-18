@@ -100,7 +100,7 @@ export const featuredNicheDescriptionTypography = cn(
  */
 export const featuredNicheBestPicksLeadTypography = cn(
   memoryLaneNoteBodyTypography,
-  "block w-full min-w-0 max-w-none self-stretch text-pretty",
+  "block !w-full min-w-0 !max-w-none self-stretch text-pretty",
 );
 
 /**
@@ -108,7 +108,7 @@ export const featuredNicheBestPicksLeadTypography = cn(
  */
 export const featuredIntroParagraphTypography = cn(
   featuredNicheDescriptionTypography,
-  "max-w-3xl text-balance font-extrabold tracking-tight text-foreground/85",
+  "w-full min-w-0 max-w-none self-stretch text-balance font-extrabold tracking-tight text-foreground/85",
   "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
 );
 
@@ -118,7 +118,7 @@ export const featuredIntroParagraphTypography = cn(
  */
 export const featuredSectionLeadTypography = cn(
   featuredNicheDescriptionTypography,
-  "max-w-3xl text-balance font-extrabold tracking-tight text-foreground/85",
+  "w-full min-w-0 max-w-none self-stretch text-balance font-extrabold tracking-tight text-foreground/85",
   "text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl",
 );
 
