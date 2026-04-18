@@ -59,7 +59,7 @@ const filterSpec = [
 ];
 
 const gh = githubDashboardResult.ok ? githubDashboardResult.data : DEMO_GITHUB_DASHBOARD_DATA;
-const statTotalCommits = gh.repos.reduce((sum, r) => sum + r.commitCount, 0);
+const statTotalCommits = gh.totalAuthorCommits;
 const statTotalRepositories = gh.user.publicRepos;
 const statFollowers = gh.user.followers;
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -145,7 +145,7 @@ const projectsMainColumnClass = "flex w-full min-w-0 flex-col gap-0 pb-0";
                       <span class="text-heading font-black tabular-nums">{fmt(statTotalRepositories)}</span>{" "}
                       active public {repoWord},{" "}
                       <span class="text-heading font-black tabular-nums">{fmt(statTotalCommits)}</span> commits across
-                      the repositories charted below, and{" "}
+                      all my public repositories, and{" "}
                       <span class="text-heading font-black tabular-nums">{fmt(statFollowers)}</span> followers count.
                     </p>
                     <LiveSnapshotGithubDashboard

@@ -26,6 +26,11 @@ export type GithubDashboardRepo = {
 export type GithubDashboardData = {
   user: GithubDashboardUser;
   repos: readonly GithubDashboardRepo[];
+  /**
+   * Your commits on default branches, summed over every owned non-fork repo returned from the API
+   * (GraphQL fetches up to 100; REST fallback yields 0 here), not only the six repos in `repos`.
+   */
+  totalAuthorCommits: number;
   /** Merged language bytes across sampled repositories, sorted descending. */
   languageUsage: readonly { name: string; bytes: number }[];
   /** repo id → language → bytes (for filtering). */
@@ -220,6 +225,7 @@ export const DEMO_GITHUB_DASHBOARD_DATA: GithubDashboardData = {
     "9004": { Python: 124000 },
     "9011": { C: 52000, Makefile: 3100 },
   },
+  totalAuthorCommits: 771,
 };
 
 type GhUserResponse = {
@@ -467,6 +473,8 @@ export async function fetchGithubDashboard(login: string, token?: string): Promi
       });
     }
 
+    const totalAuthorCommits = enrichedAll.reduce((sum, e) => sum + e.repo.commitCount, 0);
+
     const picked = pickDashboardRepos(enrichedAll);
     const topSix: GithubDashboardRepo[] = picked.map(({ repo, map }) => {
       const dom = dominantLanguageName(map);
@@ -503,6 +511,7 @@ export async function fetchGithubDashboard(login: string, token?: string): Promi
         followers: userJson.followers,
       },
       repos: topSix,
+      totalAuthorCommits,
       languageUsage,
       repoLanguages,
     };

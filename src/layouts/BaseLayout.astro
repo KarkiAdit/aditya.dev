@@ -37,6 +37,8 @@ const navbarVariant = overlayNavbar ? "overlay" : "static";
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? siteConfig.url);
 const pathnameNormalized = (pathname.replace(/\/$/, "") || "/") as "/" | string;
 const footerFlushTop = pathnameNormalized === "/" || pathnameNormalized === "/projects";
+/** Avoid `main` stretching to fill the viewport when content is shorter — removes a dead band above the footer (common on `/projects` / iPad). */
+const mainHugContent = pathnameNormalized === "/projects";
 ---
 
 <!doctype html>
@@ -73,7 +75,12 @@ const footerFlushTop = pathnameNormalized === "/" || pathnameNormalized === "/pr
         "flex min-h-0 w-full min-w-0 flex-1 flex-col pl-[var(--sidebar-width)] max-lg:pl-0",
       ]}
     >
-      <main class="m-0 flex w-full min-w-0 flex-1 flex-col p-0">
+      <main
+        class:list={[
+          "m-0 flex w-full min-w-0 flex-col p-0",
+          !mainHugContent && "flex-1",
+        ]}
+      >
         <slot />
       </main>
       <Footer flushTop={footerFlushTop} />
