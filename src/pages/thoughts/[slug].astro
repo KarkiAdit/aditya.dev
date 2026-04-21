@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PageStackBody from "@/components/layout/PageStackBody.astro";
+import { ThoughtPostBackLink } from "@/components/thoughts/ThoughtPostBackLink";
 import { ThoughtShareButton } from "@/components/thoughts/ThoughtShareButton";
 import {
   absoluteOnSite,
@@ -173,12 +174,7 @@ const thoughtPostPageShellClass =
           <span class="text-[#6b6b6b]/50" aria-hidden="true">
             ·
           </span>
-          <a
-            href="/thoughts"
-            class="font-sans font-medium text-[#6b6b6b] underline-offset-4 transition-colors hover:text-[#242424] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/25"
-          >
-            All posts
-          </a>
+          <ThoughtPostBackLink client:load />
           <span class="text-[#6b6b6b]/50 max-sm:hidden" aria-hidden="true">
             ·
           </span>

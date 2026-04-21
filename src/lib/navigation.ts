@@ -23,6 +23,24 @@ export const footerLegal = [
   { href: "/terms", label: "Terms" },
 ] as const;
 
+function normalizePathname(pathname: string): string {
+  const trimmed =
+    pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  return trimmed || "/";
+}
+
+/**
+ * Fixed left rail (glass tiles): shown on main site sections only.
+ * Hidden on legal pages and individual long-form posts so reading/legal layouts stay full-width.
+ */
+export function shouldShowSiteNav(pathname: string): boolean {
+  const path = normalizePathname(pathname);
+  if (path === "/privacy-policy" || path === "/terms") return false;
+  if (path.startsWith("/thoughts/")) return false;
+  if (path.startsWith("/blogs/")) return false;
+  return true;
+}
+
 const socialDefaults = {
   x: "X",
   linkedin: "L",

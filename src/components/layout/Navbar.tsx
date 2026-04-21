@@ -49,6 +49,11 @@ function isActiveNavPath(pathname: string, href: string): boolean {
   return path === href || path.startsWith(`${href}/`);
 }
 
+/** Destinations other than the current route — rail only shows where you can go next. */
+function railEntriesExcludingCurrent(pathname: string): readonly RailEntry[] {
+  return RAIL_ENTRIES.filter((entry) => !isActiveNavPath(pathname, entry.href));
+}
+
 const NavLucideTile = React.forwardRef<
   HTMLAnchorElement,
   {
@@ -110,10 +115,12 @@ type NavbarProps = {
 };
 
 export function Navbar({ className, pathname = "" }: NavbarProps) {
+  const railEntries = railEntriesExcludingCurrent(pathname);
+
   return (
     <aside
       className={cn(
-        "pointer-events-none fixed bottom-[max(10vh,env(safe-area-inset-bottom,0px))] left-0 top-auto z-50 flex w-[var(--sidebar-width)] flex-col items-stretch max-lg:z-[70]",
+        "pointer-events-none fixed bottom-[max(15%,env(safe-area-inset-bottom,0px))] left-0 top-auto z-50 flex w-[var(--sidebar-width)] flex-col items-stretch max-lg:z-[70]",
         className,
       )}
       aria-label="Site"
@@ -121,7 +128,7 @@ export function Navbar({ className, pathname = "" }: NavbarProps) {
       <div className="pointer-events-none flex w-full flex-col px-2 pb-0 pt-0 max-lg:px-1.5">
         <nav className={cn(navRailNavClass, "pointer-events-none")} aria-label="Main">
           <div className={navRailIconGroupClass}>
-            {RAIL_ENTRIES.map((entry) => (
+            {railEntries.map((entry) => (
               <NavRailLink key={entry.href} entry={entry} pathname={pathname} />
             ))}
           </div>

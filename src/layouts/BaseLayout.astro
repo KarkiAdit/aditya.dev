@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import SEO from "@/components/additional/SEO.astro";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { shouldShowSiteNav } from "@/lib/navigation";
 import type { ArticleOpenGraph } from "@/lib/metadata";
 import { siteConfig } from "@/lib/metadata";
 
@@ -36,6 +37,7 @@ const {
 const navbarVariant = overlayNavbar ? "overlay" : "static";
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? siteConfig.url);
 const pathnameNormalized = (pathname.replace(/\/$/, "") || "/") as "/" | string;
+const showSiteNav = shouldShowSiteNav(pathname);
 const footerFlushTop = pathnameNormalized === "/" || pathnameNormalized === "/projects";
 /** Avoid `main` stretching to fill the viewport when content is shorter — removes a dead band above the footer (common on `/projects` / iPad). */
 const mainHugContent = pathnameNormalized === "/projects";
@@ -69,10 +71,11 @@ const mainHugContent = pathnameNormalized === "/projects";
     />
   </head>
   <body class="flex min-h-dvh flex-col">
-    <Navbar client:load variant={navbarVariant} pathname={pathname} />
+    {showSiteNav && <Navbar client:load variant={navbarVariant} pathname={pathname} />}
     <div
       class:list={[
-        "flex min-h-0 w-full min-w-0 flex-1 flex-col pl-[var(--sidebar-width)] max-lg:pl-0",
+        "flex min-h-0 w-full min-w-0 flex-1 flex-col",
+        showSiteNav && "pl-[var(--sidebar-width)] max-lg:pl-0",
       ]}
     >
       <main

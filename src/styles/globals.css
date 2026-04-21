@@ -161,19 +161,28 @@ body::-webkit-scrollbar {
 
   /**
    * Nav rail — glassmorphic “app icon” tiles: layered gradient, specular ::before, depth shadows, strong blur.
+   * Gradients are on custom properties so `button.nav-rail-glass-tile` can re-apply them (preflight uses transparent `button` bg).
    */
   .nav-rail-glass-tile {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    border-radius: 0.9375rem;
-    border: 1px solid var(--nav-rail-tile-border);
-    background: linear-gradient(
+    --nav-rail-glass-tile-bg-idle: linear-gradient(
       158deg,
       oklch(0.96 0.055 40 / 0.88) 0%,
       oklch(0.92 0.08 40 / 0.62) 42%,
       oklch(0.88 0.09 40 / 0.52) 100%
     );
+    --nav-rail-glass-tile-bg-active: linear-gradient(
+      152deg,
+      oklch(0.94 0.09 52 / 0.95) 0%,
+      oklch(0.88 0.1 50 / 0.78) 44%,
+      color-mix(in oklch, var(--nav-rail-active-accent) 40%, oklch(0.96 0.03 55 / 0.85)) 100%
+    );
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 0.9375rem;
+    border: 1px solid var(--nav-rail-tile-border);
+    background: var(--nav-rail-glass-tile-bg-idle);
     backdrop-filter: blur(22px) saturate(1.45);
     -webkit-backdrop-filter: blur(22px) saturate(1.45);
     box-shadow:
@@ -219,12 +228,7 @@ body::-webkit-scrollbar {
 
   .nav-rail-glass-tile--active {
     border: 2px solid var(--nav-rail-tile-border-active);
-    background: linear-gradient(
-      152deg,
-      oklch(0.94 0.09 52 / 0.95) 0%,
-      oklch(0.88 0.1 50 / 0.78) 44%,
-      color-mix(in oklch, var(--nav-rail-active-accent) 40%, oklch(0.96 0.03 55 / 0.85)) 100%
-    );
+    background: var(--nav-rail-glass-tile-bg-active);
     box-shadow:
       inset 0 1px 0 0 oklch(1 0.03 55 / 0.48),
       inset 0 -1px 0 0 color-mix(in oklch, var(--primary) 22%, transparent),
@@ -277,6 +281,17 @@ body::-webkit-scrollbar {
       0 10px 34px -8px color-mix(in oklch, var(--primary) 18%, transparent),
       0 0 0 2px color-mix(in oklch, var(--primary) 42%, transparent),
       0 0 0 4px color-mix(in oklch, var(--background) 92%, transparent);
+  }
+
+  /**
+   * Buttons: base styles reset `background` to transparent — restore the same frosted card fill as `<a>`.
+   */
+  button.nav-rail-glass-tile:not(.nav-rail-glass-tile--active) {
+    background: var(--nav-rail-glass-tile-bg-idle);
+  }
+
+  button.nav-rail-glass-tile.nav-rail-glass-tile--active {
+    background: var(--nav-rail-glass-tile-bg-active);
   }
 
   /** Smaller tiles on iPad / phone — matches Tailwind `max-lg` breakpoint. */

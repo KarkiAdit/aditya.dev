@@ -18,6 +18,9 @@ export const THOUGHT_GENRE_ORDER: readonly ThoughtGenreId[] = [
   "additional",
 ] as const;
 
+/** Hub tab when `?g=` is missing (server first paint + client pager); order above is unchanged. */
+export const THOUGHT_HUB_DEFAULT_GENRE: ThoughtGenreId = "spirituality";
+
 export const THOUGHT_GENRE_LABEL: Record<ThoughtGenreId, string> = {
   spirituality: "Spirituality",
   philosophy: "Philosophy",

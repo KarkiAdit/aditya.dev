@@ -3,3 +3,6 @@ export const siteChromeGutters =
 
 export const siteChromeInner =
   "mx-auto w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90rem] min-[2000px]:max-w-none";
+
+/** Full width between {@link siteChromeGutters} padding — no max-width cap on the content column. */
+export const siteChromeInnerFullWidth = "mx-auto w-full min-w-0 max-w-none";
