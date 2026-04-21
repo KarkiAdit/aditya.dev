@@ -2,7 +2,7 @@
 import HomeKnowledgeContent from "@/components/homepage/HomeKnowledgeContent.astro";
 import type { CurrentFocusBookCard } from "@/lib/current-focus-books";
 import { pageStackKnowledgeSlabContentPaddingClass } from "@/lib/site-page-layout";
-import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
+import { siteChromeGutters, siteChromeInnerFullWidth } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -16,7 +16,7 @@ const { currentFocusBooks, className } = Astro.props;
 <div class={cn("w-full bg-transparent", className)}>
   <div class={cn(siteChromeGutters)}>
     <div
-      class={cn(siteChromeInner, pageStackKnowledgeSlabContentPaddingClass)}
+      class={cn(siteChromeInnerFullWidth, pageStackKnowledgeSlabContentPaddingClass)}
     >
       <HomeKnowledgeContent currentFocusBooks={currentFocusBooks} />
     </div>

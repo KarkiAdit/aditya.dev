@@ -1,7 +1,10 @@
 ---
 import type { CurrentFocusBookCard } from "@/lib/current-focus-books";
 import { SophisticationReadMoreOverlay } from "@/components/homepage/SophisticationReadMoreOverlay";
-import { featuredNicheDescriptionTypography, polaroidOverlayCaptionElementClassName } from "@/lib/link-styles";
+import {
+  featuredNicheBestPicksLeadTypography,
+  polaroidOverlayCaptionElementClassName,
+} from "@/lib/link-styles";
 import {
   polaroidCardArticleRootClassName,
   polaroidCardCoverImageHoverClassName,
@@ -24,31 +27,35 @@ interface Props {
 const { currentFocusBooks } = Astro.props;
 ---
 
-<div class="relative min-w-0 bg-transparent p-0" id="knowledge" role="region" aria-labelledby="current-focus-heading">
-  <article class="relative min-w-0 bg-transparent p-0">
-    <header class={cn("flex flex-col gap-3", pageStackSectionIntroToBodySpacingClass)}>
-      <div>
-        <h2
-          id="current-focus-heading"
-          class="heading-gradient mt-2 text-balance text-3xl font-extrabold tracking-tighter sm:text-4xl md:text-5xl"
-        >
-          About me
-        </h2>
-        <p
-          class={cn(
-            featuredNicheDescriptionTypography,
-            "mt-6 text-balance font-extrabold tracking-tight text-foreground/85",
-            "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
-          )}
-        >
-          I am endlessly fascinated by the intersection of complex system design and the human stories behind
-          world-changing innovation.{" "}
-          <b>These are my favorite books.</b>
-        </p>
-      </div>
-    </header>
+<div class="relative min-w-0 w-full bg-transparent p-0" id="knowledge" role="region" aria-labelledby="current-focus-heading">
+  <article class="relative flex min-w-0 w-full flex-col items-stretch bg-transparent p-0">
+    <div class="flex w-full min-w-0 flex-col items-stretch">
+      <header class={cn("w-full min-w-0", pageStackSectionIntroToBodySpacingClass)}>
+        <div class="min-w-0 w-full">
+          <h2
+            id="current-focus-heading"
+            class="heading-gradient mt-2 text-balance text-3xl font-extrabold tracking-tighter sm:text-4xl md:text-5xl"
+          >
+            About me
+          </h2>
+          <div class="min-w-0 w-full pt-1 text-left">
+            <p
+              class={cn(
+                featuredNicheBestPicksLeadTypography,
+                "mt-6 box-border max-w-none text-pretty font-extrabold tracking-tight text-foreground/85",
+                "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
+                "w-full min-w-0 self-stretch",
+              )}
+            >
+              I am driven by the mechanics of complex systems and the human stories that fuel world-changing
+              innovation.{" "}
+              <b>These are my favorite books.</b>
+            </p>
+          </div>
+        </div>
+      </header>
 
-    <div class={polaroidCardGridClassName}>
+      <div class={polaroidCardGridClassName}>
       {
         currentFocusBooks.map((book: CurrentFocusBookCard) => (
           <div class={polaroidCardArticleRootClassName}>
@@ -90,6 +97,7 @@ const { currentFocusBooks } = Astro.props;
           </div>
         ))
       }
+    </div>
     </div>
   </article>
 </div>

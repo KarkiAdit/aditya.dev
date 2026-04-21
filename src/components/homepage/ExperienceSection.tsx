@@ -32,7 +32,7 @@ import {
   githubDashboardLegendTypography,
   heroIntroLeadMutedClauseCompactTypography,
   featuredIntroParagraphTypography,
-  featuredSectionLeadTypography,
+  featuredNicheBestPicksLeadTypography,
 } from "@/lib/link-styles";
 import {
   experienceStackSectionTitleClassName,
@@ -43,7 +43,7 @@ import {
   pageStackSnapshotHeadingToLanguagesGapClass,
   pageStackSnapshotIntroLeadToDashboardClass,
 } from "@/lib/site-page-layout";
-import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
+import { siteChromeGutters, siteChromeInner, siteChromeInnerFullWidth } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 export type ExperienceSectionProps = {
@@ -89,9 +89,18 @@ export type LiveSnapshotGithubDashboardProps = {
 
 function JourneyBegunIntroLead({ className }: { className?: string }) {
   return (
-    <p className={cn(featuredSectionLeadTypography, "mt-4", className)}>
-      The journey has just begun. I am a <b>3x Google intern</b>, now stepping into a full-time role.
-    </p>
+    <div className={cn("min-w-0 w-full pt-1 text-left", className)}>
+      <p
+        className={cn(
+          featuredNicheBestPicksLeadTypography,
+          "mt-4 box-border max-w-none text-pretty font-extrabold tracking-tight text-foreground/85",
+          "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl",
+          "w-full min-w-0 self-stretch",
+        )}
+      >
+        The journey has just begun. I am a <b>3x Google intern</b>, now stepping into a full-time role.
+      </p>
+    </div>
   );
 }
 
@@ -800,11 +809,11 @@ export function ExperienceSection({ result, avatarSrc, className }: ExperienceSe
         <div className={cn(siteChromeInner, "py-0", pageStackSectionInnerTopPaddingClass)}>
           <div
             className={cn(
-              "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+              "flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
               pageStackSectionIntroToBodySpacingClass,
             )}
           >
-            <div>
+            <div className="flex min-w-0 w-full flex-1 flex-col items-stretch">
               <h2 id="works-heading" className={experienceStackSectionTitleClassName}>
                 Experience
               </h2>
@@ -837,14 +846,14 @@ export function ExperienceRoadmapSection({ className }: ExperienceRoadmapSection
       aria-label="Experience roadmap"
     >
       <div className={cn(siteChromeGutters)}>
-        <div className={cn(siteChromeInner, "py-0", pageStackSectionInnerTopPaddingClass)}>
+        <div className={cn(siteChromeInnerFullWidth, "py-0", pageStackSectionInnerTopPaddingClass)}>
           <div
             className={cn(
-              "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+              "flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
               pageStackSectionIntroToBodySpacingClass,
             )}
           >
-            <div>
+            <div className="flex min-w-0 w-full flex-1 flex-col items-stretch">
               <h2 className={experienceStackSectionTitleClassName}>Experience</h2>
               <JourneyBegunIntroLead />
             </div>

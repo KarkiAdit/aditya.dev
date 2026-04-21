@@ -8,7 +8,7 @@ import { formatDocumentTitle, thoughtsHubMetaDescription } from "@/lib/metadata"
 import {
   compareThoughtPostsByDate,
   featuredFirstPostByGenre,
-  THOUGHT_GENRE_ORDER,
+  THOUGHT_HUB_DEFAULT_GENRE,
   THOUGHT_SECONDARY_MUTED_CLASS,
   thoughtFeedExcludingGenreFeatured,
   thoughtGenreFromQueryParam,
@@ -22,7 +22,7 @@ const sorted = [...posts].sort(compareThoughtPostsByDate);
 const featuredByGenre = featuredFirstPostByGenre(sorted);
 const feed = thoughtFeedExcludingGenreFeatured(sorted, featuredByGenre);
 const gParam = Astro.url.searchParams.get("g");
-const initialThoughtGenre = thoughtGenreFromQueryParam(gParam) ?? THOUGHT_GENRE_ORDER[0];
+const initialThoughtGenre = thoughtGenreFromQueryParam(gParam) ?? THOUGHT_HUB_DEFAULT_GENRE;
 ---
 
 <BaseLayout title={title} description={description} pathname={Astro.url.pathname}>
