@@ -26,7 +26,7 @@ import {
   pageStackSectionInnerTopPaddingClass,
   pageStackSectionIntroToBodyFlexGapClass,
 } from "@/lib/site-page-layout";
-import { siteChromeGutters, siteChromeInner } from "@/lib/site-chrome";
+import { siteChromeGutters, siteChromeInnerFullWidth } from "@/lib/site-chrome";
 import { cn } from "@/lib/utils";
 
 /** Compatibility alias — same tuple as {@link MemoryLaneSevenStrings}. */
@@ -123,7 +123,7 @@ export function MoreAboutMeSection({ noteImageSrcs, notionHrefs, noteBodies, cla
         <div className={cn(siteChromeGutters)}>
           <div
             className={cn(
-              siteChromeInner,
+              siteChromeInnerFullWidth,
               "flex flex-col",
               pageStackSectionIntroToBodyFlexGapClass,
               pageStackSectionInnerTopPaddingClass,
