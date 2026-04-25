@@ -20,7 +20,15 @@ export type MemoryLaneSevenStrings = readonly [
   string,
 ];
 
-export const memoryLaneNotionHrefs = ["", "", "", "", "", "", ""] as const satisfies MemoryLaneSevenStrings;
+export const memoryLaneNotionHrefs = [
+  "https://www.notion.so/Nepal-Wrap-December-2025-2d671fe447a6806889e5ce44049b1d41?source=copy_link",
+  "https://www.notion.so/author-in-play-34d71fe447a6800388d4f0e27676d888?source=copy_link",
+  "https://www.notion.so/run-untangles-34d71fe447a680678ab2e3fe69f8fdd0?source=copy_link",
+  "",
+  "",
+  "",
+  "",
+] as const satisfies MemoryLaneSevenStrings;
 
 export const memoryLaneNoteBodies = [
   "Hometown Skies",

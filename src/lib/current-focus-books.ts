@@ -21,7 +21,7 @@ export const CURRENT_FOCUS_BOOKS: readonly CurrentFocusBook[] = [
     id: "untethered-soul-book-cover",
     title: "The Untethered Soul",
     author: "Michael A. Singer",
-    href: "https://a.co/d/0H2tGx4L",
+    href: "https://www.amazon.com/Untethered-Soul-Journey-Beyond-Yourself/dp/1572245379",
   },
   {
     id: "steve-jobs-book-cover",

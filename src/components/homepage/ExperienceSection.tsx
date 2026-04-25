@@ -631,11 +631,11 @@ function GithubLanguageBarAxisDisplayName({ name }: { name: string }) {
     return (
       <>
         <span className="sm:hidden">TypeSc</span>
-        <span className="hidden sm:inline">{name}</span>
+        <span className="hidden sm:inline">TypeScript</span>
       </>
     );
   }
-  return <>{name}</>;
+  return name;
 }
 
 function GitHubLanguagesBar({
@@ -668,6 +668,8 @@ function GitHubLanguagesBar({
   if (barSegments.length === 0) return null;
 
   const columnTemplate = `repeat(${barSegments.length}, minmax(0, 1fr))`;
+  const languageBarStripClass =
+    "mx-auto w-full min-w-0 max-w-[3.75rem] sm:max-w-[4.25rem]";
 
   return (
     <div
@@ -680,27 +682,35 @@ function GitHubLanguagesBar({
       role="group"
       aria-label={`Languages in selected repositories. Each bar height is that language's share of total bytes (0 to 100 percent).`}
     >
-      <div className="grid w-full min-w-0 grid-cols-[minmax(3rem,3.75rem)_1fr] grid-rows-[auto_auto] gap-x-2 gap-y-0 sm:gap-x-3">
+      <div className="flex w-full min-w-0 items-start gap-x-2 sm:gap-x-3">
         <div
-          className="row-start-1 flex min-h-[45vh] flex-col justify-between self-stretch pt-1 pr-1.5 text-right text-xs font-medium tabular-nums leading-none text-heading sm:pr-2 sm:text-sm md:text-base"
+          className={cn(
+            "flex min-h-[45vh] shrink-0 flex-col justify-between pt-1 pr-1.5 text-right text-xs font-medium tabular-nums leading-none text-heading sm:pr-2 sm:text-sm md:text-base",
+            "min-w-[3rem] max-w-[3.75rem] basis-[3.75rem]",
+          )}
           aria-hidden="true"
         >
           <span>{formatGithubLanguageShareAxisTick(yAxisMaxPct)}</span>
           <span>{formatGithubLanguageShareAxisTick(yMidShare)}</span>
           <span>0%</span>
         </div>
-        <div className="row-start-1 flex min-h-[45vh] min-w-0 flex-col border-b-2 border-l-2 border-heading/45 pl-2 sm:pl-2.5">
+
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col border-l-2 border-heading/45 pl-2 sm:pl-2.5">
           <div
-            className="grid min-h-[45vh] w-full flex-1 gap-1.5 sm:gap-2 md:gap-3"
-            style={{ gridTemplateColumns: columnTemplate }}
+            className="grid min-h-0 min-w-0 w-full gap-x-1.5 gap-y-2 sm:gap-x-2 md:gap-x-3"
+            style={{
+              gridTemplateColumns: columnTemplate,
+              gridTemplateRows: "minmax(45vh, auto) auto",
+            }}
           >
-            {barSegments.map((u, i) => (
+            {barSegments.flatMap((u, i) => [
               <div
-                key={u.name}
-                className="group/langbar flex h-full min-h-0 min-w-0 flex-col justify-end self-stretch rounded-none"
+                key={`${u.name}-bar`}
+                className="group/langbar flex min-h-0 min-w-0 flex-col justify-end self-stretch border-b-2 border-heading/45"
+                style={{ gridColumn: i + 1, gridRow: 1 }}
                 title={`${u.name} — ${formatRepoByteLabel(u.bytes)} bytes (${u.pct.toFixed(1)}%)`}
               >
-                <div className="mx-auto flex h-full min-h-0 w-full max-w-[3.75rem] flex-col justify-end sm:max-w-[4.25rem]">
+                <div className={cn("flex h-full flex-col justify-end", languageBarStripClass)}>
                   <div
                     className={cn(
                       "w-full shrink-0 rounded-none shadow-sm ring-1 ring-inset ring-primary/15 transition-[filter,transform] duration-200",
@@ -710,40 +720,28 @@ function GitHubLanguagesBar({
                     style={{ height: `${u.pct}%` }}
                   />
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="row-start-2 col-start-1" aria-hidden="true" />
-
-        <div className="row-start-2 min-w-0 pt-2">
-          <div className="grid w-full gap-1.5 sm:gap-2" style={{ gridTemplateColumns: columnTemplate }}>
-            {barSegments.map((u) => (
+              </div>,
               <div
-                key={`${u.name}-label`}
+                key={`${u.name}-lab`}
                 className={cn(
-                  "flex min-w-0 flex-col gap-1 px-0.5",
+                  "flex min-h-0 flex-col gap-1",
+                  languageBarStripClass,
                   leftAlignLanguagesTypography
                     ? "items-start text-left"
                     : "items-center text-center",
                 )}
+                style={{ gridColumn: i + 1, gridRow: 2 }}
               >
-                <span className="line-clamp-2 w-full max-w-[6rem] text-sm font-semibold leading-snug tracking-tight text-heading sm:max-w-none sm:text-base md:text-lg">
+                <span className="line-clamp-2 w-full text-sm font-semibold leading-snug tracking-tight text-heading sm:text-base md:text-lg">
                   <GithubLanguageBarAxisDisplayName name={u.name} />
                 </span>
-                <span className="text-sm tabular-nums text-foreground/85 sm:text-base md:text-[1.05rem]">
+                <span className="w-full text-sm tabular-nums text-foreground/85 sm:text-base md:text-[1.05rem]">
                   {u.pct.toFixed(1)}%
                 </span>
-              </div>
-            ))}
+              </div>,
+            ])}
           </div>
-          <p
-            className={cn(
-              "mt-3 pb-2 text-sm font-semibold tracking-wide text-foreground/70 sm:pb-2.5 sm:text-base md:pb-3 md:text-lg",
-              leftAlignLanguagesTypography ? "text-left" : "text-center",
-            )}
-          >
+          <p className="mt-3 pb-2 text-center text-sm font-semibold tracking-wide text-foreground/70 sm:pb-2.5 sm:text-base md:pb-3 md:text-lg">
             languages used
           </p>
         </div>
